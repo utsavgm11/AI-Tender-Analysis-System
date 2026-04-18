@@ -1,0 +1,68 @@
+This updated **Master Strategic Reference Knowledge** integrates your industry list, historical dashboard data, specific contract requirements from BPCL/HPCL, and the advanced decision logic required for a production-grade RAG system.
+
+### 📄 **Aarvi Encon Master Strategic Reference (Integrated Knowledge Base)**
+**Version:** 3.0 (Advanced Intelligence Edition)
+**Date:** April 2026
+
+---
+
+### **Section 1: Serviceable Industries & Sectors**
+The system identifies and approves tenders within these specific industries:
+* **Primary Focus:** Oil & Gas, Petrochemical, Refinery, Pipeline.
+* **Infrastructure & Transport:** Metro, Mono Rail, Railways, Infrastructure.
+* **Energy & Power:** Power, Renewable Energy, CGD (City Gas Distribution), CNG.
+* **Industrial & Technical:** Cement, Fertilizer, Metals & Minerals, EPC (Engineering, Procurement, Construction).
+* **Services:** Engineering, IT, Telecom.
+
+---
+
+### **Section 2: Explicit Decision Rules (Gatekeeper Logic)**
+A tender must pass these **Hard Filters** to be considered a "GO":
+1.  **Sector Match:** Must belong to one of the 19 industries listed above.
+2.  **Service Match:** Must require Manpower Supply, Technical Staffing, O&M, or PMC.
+3.  [cite_start]**Banned List Check:** If the client is not a recognized PSU/Public Listed Company or is on Aarvi’s internal "Negative List," it is an automatic **"NO-GO"**[cite: 1349, 2164].
+4.  [cite_start]**PQ Mandatory:** Aarvi must satisfy the financial requirement of having successfully completed similar work in the last 3 years[cite: 1952, 4270].
+
+---
+
+### **Section 3: The Weighted Scoring System (1-100)**
+Tenders are scored based on the following weights:
+* **Financial PQ (30 pts):** 30 pts if we have 1 PO > 1.38 Cr; [cite_start]20 pts if we have 2 POs > 86.25 Lac[cite: 1952, 3980].
+* **Service Category Match (25 pts):** 25 pts for "Highly Skilled" roles (TA, Analyst); [cite_start]15 pts for semi-skilled[cite: 1731, 2984].
+* [cite_start]**Client Reputation (20 pts):** 20 pts for Tier-1 PSUs (BPCL, HPCL, IOCL, ONGC)[cite: 1719, 3088].
+* **Location Focus (15 pts):** 15 pts for Eastern/Western Regions; [cite_start]5 pts for remote/unfamiliar regions[cite: 2066, 3435].
+* **Contract Longevity (10 pts):** 10 pts for 24+ months; [cite_start]5 pts for <12 months[cite: 1678, 3047].
+
+---
+
+### **Section 4: Manpower Feasibility & Costing Logic**
+* **Requirement Matching:** Compare the tender's role profile against Aarvi’s standard pool:
+    * [cite_start]**Technology Assistant (TA):** BE/B.Tech/PG in Engineering[cite: 1919, 2984].
+    * [cite_start]**Lab Analyst:** B.Sc Chemistry/Diploma in Chemical Engineering[cite: 97, 163].
+* **Cost -> Profit Mapping:**
+    * [cite_start]**Baseline CTC:** Use ₹36,465/month as the standard "Highly Skilled" benchmark[cite: 1732, 3101].
+    * [cite_start]**Profit Floor:** Automatic flag if "Service Charge" quoted is below **3.85%**[cite: 1953, 3322].
+    * [cite_start]**Hidden Costs:** System must account for Group Insurance (₹5 Lakh sum assured) if ESI is missing[cite: 1748, 3117].
+
+---
+
+### **Section 5: Negative Filters (The "Red Flags")**
+The AI will reject or flag for manual review if:
+* [cite_start]**Payment Terms:** Payment cycle mentioned exceeds **60 days** (Aarvi standard is 7-21 days)[cite: 199, 1862].
+* [cite_start]**Penalty Clause:** Liquidated Damages (LD) exceed **10% of total contract value** (Aarvi standard is 5%)[cite: 843, 4170].
+* [cite_start]**EMD Restrictions:** Tenders requiring EMD from MSE-registered firms (MSEs are legally exempt)[cite: 389, 1261].
+* [cite_start]**Liability:** Tenders requiring "Unlimited Liability" (Aarvi standard is 100% of PO value)[cite: 579, 889].
+
+---
+
+### **Section 6: Tender Pattern Recognition**
+* [cite_start]**Limited vs. Open:** Limited tenders (like HPCL Mahul) indicate a higher win probability due to pre-existing vendor relationships[cite: 3, 195].
+* [cite_start]**Reverse Auction:** Identify if the "Reverse Auction" field is "YES"; if so, win probability decreases by 15% due to price wars[cite: 3, 1612].
+* [cite_start]**Consolidated Bidding:** If the tender is for multiple locations (like the 13 Eastern Region spots), Aarvi has a strategic advantage due to regional scale[cite: 2066, 3435].
+
+---
+
+### **Section 7: Statutory & MII References**
+* [cite_start]**Make in India (MII):** Preference given to Class-I (50% local content) and Class-II (20% local content) suppliers[cite: 1123, 1124].
+* [cite_start]**MSME Preference:** MSEs quoting within $L1+15\%$ can match L1 and supply 25% of quantity[cite: 1262, 1265].
+* [cite_start]**Wages:** Adhere to CLC notifications for "Construction/Maintenance" workers (e.g., Highly Skilled Area A = ₹1028/day)[cite: 169, 1737].
