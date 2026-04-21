@@ -1,0 +1,19 @@
+# Web Server & API
+fastapi
+uvicorn
+python-multipart
+
+# Environment & Security
+python-dotenv
+
+# AI & LLM
+google-generativeai
+
+# Document Processing (PDF, Word, Excel)
+pypdf
+python-docx
+pandas
+openpyxl
+
+# Utilities
+typing-extensions

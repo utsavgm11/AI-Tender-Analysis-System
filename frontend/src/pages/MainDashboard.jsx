@@ -1,41 +1,91 @@
-import React, { useState } from 'react'
+import React, { useRef, useEffect, useState } from 'react';
+import LandingPage from './LandingPage';
+import AnalysisChat from './AnalysisChat';
+import MasterDashboard from './MasterDashboard'; 
+import AnalyticsDashboard from './AnalyticsDashboard'; // New BI View
 
-// Import Layout Components
-import Sidebar from '../components/layout/Sidebar'
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
-
-// Import View Components
-import AnalysisChat from './AnalysisChat'
-import DashboardView from './DashboardView'
+// Importing layout components
+import Navbar from '../components/layout/Navbar';
+import Sidebar from '../components/layout/Sidebar';
+import Footer from '../components/layout/Footer';
 
 const MainDashboard = () => {
-  // This state decides which page is currently visible
-  const [activeTab, setActiveTab] = useState('analysis')
+  const dashboardSectionRef = useRef(null);
+  
+  // Tabs: 'analysis' (Chat), 'dashboard' (Table), 'analytics' (Charts)
+  const [activeTab, setActiveTab] = useState('dashboard'); 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Force scroll to top on refresh for landing page effect
+  useEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+  }, []);
+
+  const handleStart = () => {
+    dashboardSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  // Dynamic Navbar Title
+  const getNavbarTitle = () => {
+    switch(activeTab) {
+      case 'analysis': return "AI Analysis Chat";
+      case 'analytics': return "Executive Analytics Dashboard";
+      default: return "Master Tender Dashboard";
+    }
+  };
 
   return (
-    <div className="flex h-screen bg-slate-50 text-slate-900 w-full overflow-hidden font-sans">
+    <div className="w-full bg-[#0f172a]">
       
-      {/* 1. Static Sidebar on the left */}
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-      
-      {/* 2. Main column on the right */}
-      <div className="flex-1 flex flex-col relative w-full h-full overflow-hidden">
-        
-        {/* Top Navbar */}
-        <Navbar title={activeTab === 'analysis' ? 'Tender Analysis' : 'Master Dashboard'} />
-        
-        {/* Dynamic Content Area */}
-        <main className="flex-1 overflow-hidden relative">
-          {activeTab === 'analysis' ? <AnalysisChat /> : <DashboardView />}
-        </main>
-        
-        {/* Bottom Footer */}
-        <Footer />
-        
-      </div>
-    </div>
-  )
-}
+      {/* SECTION 1: THE SMART LANDING PAGE */}
+      <section className="h-screen w-full sticky top-0 z-0">
+        <LandingPage onStart={handleStart} />
+      </section>
 
-export default MainDashboard
+      {/* SECTION 2: THE MAIN APPLICATION INTERFACE */}
+      <section 
+        ref={dashboardSectionRef}
+        className="relative z-10 h-screen w-full bg-slate-50 flex shadow-[0_-20px_50px_rgba(0,0,0,0.5)]"
+      >
+        {/* Sidebar with Navigation Props */}
+        <Sidebar 
+          isOpen={isSidebarOpen} 
+          onClose={() => setIsSidebarOpen(false)} 
+          activeTab={activeTab} 
+          setActiveTab={setActiveTab} 
+        />
+
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col h-full overflow-hidden">
+          {/* Navbar with Hamburger toggle */}
+          <Navbar 
+            title={getNavbarTitle()}
+            onMenuClick={() => setIsSidebarOpen(true)} 
+          />
+          
+          {/* Dynamic Content Area - Switching between Chat, Table, and Charts */}
+          <main className="flex-1 overflow-auto relative bg-white">
+            {activeTab === 'analysis' && <AnalysisChat />}
+            {activeTab === 'dashboard' && <MasterDashboard />}
+            {activeTab === 'analytics' && <AnalyticsDashboard />}
+          </main>
+          
+          <Footer />
+        </div>
+      </section>
+
+      {/* CUSTOM CSS FOR THE VERTICAL STACK */}
+      <style jsx global>{`
+        body { overflow-x: hidden; background-color: #0f172a; }
+        section { scroll-snap-align: start; }
+        /* Ensure smooth scrolling for snap sections */
+        html { scroll-behavior: smooth; }
+      `}</style>
+    </div>
+  );
+};
+
+export default MainDashboard;

@@ -1,70 +1,84 @@
-# ai_service.py
 import google.generativeai as genai
 import json
+import os
+import re
 from config import GEMINI_API_KEY
 
-# 1. Configure the Gemini API
+# Configure Gemini
 genai.configure(api_key=GEMINI_API_KEY)
-
-# Using gemini-1.5-flash for its massive context window (ideal for reading full Excel dashboards)
+# Using 1.5-flash for the best balance of speed and context handling
 model = genai.GenerativeModel('gemini-2.5-flash')
 
-def generate_tender_summary(tender_text: str, strategy_context: str, history_context: str) -> dict:
+def generate_tender_summary(tender_text=None, strategy_context="", history_context="", custom_prompt=None):
     """
-    Advanced RAG function: Compares a new tender against Aarvi's Strategy 
-    and Historical Dashboard to calculate win probability and extract data.
+    Handles two distinct modes:
+    1. INITIAL ANALYSIS: Creates a structured JSON for the UI card.
+    2. CONSULTANT CHAT: Answers follow-up questions using tender context.
     """
-    # Increase character limit to capture full context
-    safe_tender = tender_text[:25000] 
+
+    # --- MODE 1: CONSULTANT CHAT (FOLLOW-UP) ---
+    # If custom_prompt is passed, we are in "Chat Mode"
+    if custom_prompt:
+        try:
+            response = model.generate_content(custom_prompt)
+            return response.text # Return as plain text for the chat bubble
+        except Exception as e:
+            return f"Consultant Engine Error: {str(e)}"
+
+    # --- MODE 2: INITIAL TENDER ANALYSIS (JSON CARD) ---
+    # We limit text to 25k characters to keep the prompt efficient
+    safe_tender = tender_text[:25000] if tender_text else ""
     
-    prompt = f"""
+    analysis_prompt = f"""
     ROLE: You are the Chief Bidding Officer at Aarvi Encon.
     
-    CONTEXT 1 (Aarvi Strategic Grading Rubric):
-    {strategy_context}
-    
-    CONTEXT 2 (Historical Bid Dashboard - Past Wins/Losses):
-    {history_context}
+    CONTEXT:
+    Strategy Rubric: {strategy_context}
+    Historical Dashboard: {history_context}
     
     TASK:
-    Analyze the NEW TENDER text below. You must cross-reference it with our Strategy and History.
+    Analyze the NEW TENDER text below. Cross-reference with Strategy and History.
     
-    CRITICAL ANALYTICS:
-    1. PQ Check: Compare the new tender's financial requirements against our past POs in the History.
-    2. Win Probability: Score 0-100% based on our success rate with this client/service in history.
-    3. Profit Forecast: Flag if the client's budget or service charge benchmark is below 3.85%.
-    4. Pattern Match: Identify if we have won a similar tender (e.g., "13 TAs" or "Mahul Lab") before.
-
-    REQUIRED JSON SCHEMA (No markdown, no filler):
+    OUTPUT INSTRUCTIONS:
+    You MUST output ONLY a valid JSON object. No markdown blocks, no conversational text.
+    
+    JSON SCHEMA:
     {{
       "client_name": "Full name of client",
-      "tender_no": "Official RFQ/Tender Number",
-      "tender_value": "Estimated total value",
-      "manpower_requirement": "Specific roles and quantities (e.g. 13 TAs)",
-      "pq_eligibility_status": "ELIGIBLE or RISKY (Based on historical POs found in dashboard)",
-      "win_probability": "X% - give a one-sentence historical reason",
-      "historical_match": "Mention specific Tender No from dashboard that is similar",
+      "tender_no": "Official Number",
+      "tender_value": "Estimated value",
+      "manpower_requirement": "Roles and quantities",
+      "pq_eligibility_status": "ELIGIBLE or RISKY",
+      "win_probability": "X% - historical reason",
+      "historical_match": "Similar past project ID",
       "profit_forecast": "High/Medium/Low based on 3.85% benchmark",
-      "pre_qualification_criteria": "Briefly list the PO requirements from the document",
-      "penalty_terms": "Brief summary of LD clause",
+      "pre_qualification_criteria": "Key technical/financial rules",
+      "penalty_terms": "LD/Penalty summary",
       "summary": "3-sentence strategic advice for the Director"
     }}
 
-    NEW TENDER TEXT TO ANALYZE:
+    NEW TENDER TEXT:
     {safe_tender}
     """
     
     try:
-        response = model.generate_content(prompt)
+        response = model.generate_content(analysis_prompt)
+        raw_output = response.text.strip()
         
-        # Clean potential markdown or extra spaces
-        clean_json = response.text.replace("```json", "").replace("```", "").strip()
+        # CLEANING LOGIC: Use regex to find the JSON structure {...} 
+        # even if Gemini adds "Here is the JSON:" text.
+        json_match = re.search(r'\{.*\}', raw_output, re.DOTALL)
         
-        return json.loads(clean_json)
-        
+        if json_match:
+            clean_json = json_match.group(0)
+            return json.loads(clean_json)
+        else:
+            raise ValueError("No valid JSON structure found in AI response")
+            
     except Exception as e:
+        # Fallback if AI fails to produce JSON
         return {
-            "error": "RAG Intelligence failed",
-            "details": str(e),
-            "raw_ai_output": response.text if 'response' in locals() else "No response"
+            "summary": "The AI provided an analysis, but it couldn't be formatted. Check terminal logs.",
+            "error_debug": str(e),
+            "pq_eligibility_status": "ERROR"
         }

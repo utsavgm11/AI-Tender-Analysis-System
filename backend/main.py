@@ -1,152 +1,142 @@
-import logging
-import os
-from fastapi import FastAPI, UploadFile, File, HTTPException, Body
-from fastapi.responses import RedirectResponse
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Optional, Dict, Any
+from fastapi.responses import StreamingResponse
+import sqlite3
+import pandas as pd
+import io
+import os
+from pydantic import BaseModel
+from typing import Optional
 
-# Internal Module Imports
-from file_parser import extract_text_from_file
-from logic import analyze_tender_eligibility
-from ai_service import generate_tender_summary
+app = FastAPI()
 
-# 1. Setup Logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# Initialize FastAPI
-app = FastAPI(title="Aarvi Tender Intelligence (Consultant Edition)")
-
-# 2. Configure CORS (Critical for React frontend)
+# Enable CORS for React Frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5175", "http://127.0.0.1:5173"], 
-    allow_credentials=True,
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# --- RAG CONTEXT CONFIGURATION ---
-KNOWLEDGE_PATH = "knowledge_base/"
-STRATEGY_FILE = os.path.join(KNOWLEDGE_PATH, "reference_knowledge.txt")
-DASHBOARD_FILE = os.path.join(KNOWLEDGE_PATH, "Tender Status Dashboard 23-24 (1).xlsm")
+def get_db_connection():
+    # Adjust path if needed depending on where you run the server
+    db_path = os.path.join(os.getcwd(), 'backend', 'tender_data.db')
+    if not os.path.exists(db_path):
+        db_path = 'tender_data.db' # fallback
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    return conn
 
-def load_aarvi_memory():
-    """Loads historical context and strategy documents to guide the AI."""
-    memory_context = {"strategy": "", "history": ""}
+# 1. EXPANDED PYDANTIC MODEL (Matches your 19 DB Columns perfectly)
+class Tender(BaseModel):
+    tender_no: str
+    name_of_client: str
+    tender_status: str
+    received_date: Optional[str] = None
+    due_date: Optional[str] = None
+    location: Optional[str] = None
+    tender_open_price: Optional[float] = None
+    quoted_value: Optional[float] = 0.0
+    description: Optional[str] = None
+    project_manager: Optional[str] = None
+    emd: Optional[str] = None
+    emd_status: Optional[str] = None
+    tender_fee_status: Optional[str] = None
+    price_status: Optional[str] = None
+    source: Optional[str] = None
+    comments: Optional[str] = None
+    docs_prepared_by: Optional[str] = None
+    financial_year: Optional[str] = "2023-2024"
+
+# 2. GET ALL TENDERS
+@app.get("/tenders")
+def get_tenders():
+    conn = get_db_connection()
+    tenders = conn.execute("SELECT * FROM tenders").fetchall()
+    conn.close()
+    return [dict(t) for t in tenders]
+
+# 3. ADD NEW TENDER (Saves all columns to DB)
+@app.post("/tenders")
+def add_tender(t: Tender):
+    conn = get_db_connection()
     try:
-        if os.path.exists(STRATEGY_FILE):
-            with open(STRATEGY_FILE, "r", encoding="utf-8") as f:
-                memory_context["strategy"] = f.read()
-        
-        if os.path.exists(DASHBOARD_FILE):
-            with open(DASHBOARD_FILE, "rb") as f:
-                dashboard_bytes = f.read()
-                memory_context["history"] = extract_text_from_file(dashboard_bytes, DASHBOARD_FILE)
-        
-        logger.info("Aarvi Encon memory context loaded successfully.")
+        conn.execute("""
+            INSERT INTO tenders (
+                tender_no, name_of_client, tender_status, received_date, due_date, 
+                location, tender_open_price, quoted_value, description, project_manager, 
+                emd, emd_status, tender_fee_status, price_status, source, comments, 
+                docs_prepared_by, financial_year
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            t.tender_no, t.name_of_client, t.tender_status, t.received_date, t.due_date,
+            t.location, t.tender_open_price, t.quoted_value, t.description, t.project_manager,
+            t.emd, t.emd_status, t.tender_fee_status, t.price_status, t.source, t.comments,
+            t.docs_prepared_by, t.financial_year
+        ))
+        conn.commit()
+        return {"message": "Tender added successfully"}
     except Exception as e:
-        logger.warning(f"Memory context load failed: {e}. Running without history.")
-    return memory_context
+        return {"error": str(e)}
+    finally:
+        conn.close()
 
-# Initial Load of RAG Memory
-aarvi_memory = load_aarvi_memory()
-
-@app.get("/")
-async def root():
-    return RedirectResponse(url="/docs")
-
-# --- ENDPOINT 1: PRIMARY ANALYSIS ---
-@app.post("/analyze-file/")
-async def analyze_file(file: UploadFile = File(...)):
-    logger.info(f"Incoming Tender: {file.filename}")
-    
+# 4. EDIT/UPDATE ENTIRE TENDER 
+@app.put("/tenders/{tender_no:path}")
+def edit_tender_full(tender_no: str, t: Tender):
+    conn = get_db_connection()
     try:
-        # 1. Extraction
-        file_bytes = await file.read()
-        extracted_text = extract_text_from_file(file_bytes, file.filename)
-        
-        if not extracted_text or str(extracted_text).startswith("Error"):
-            return {"status": "Failed", "message": "Could not extract text from document."}
-
-        # 2. Gatekeeper Eligibility Logic
-        decision = analyze_tender_eligibility(extracted_text)
-        
-        # 3. AI Intelligence (Only run if eligible or specifically forced)
-        ai_intel = {}
-        if decision.get("is_eligible", False):
-            logger.info("Tender is ELIGIBLE. Generating strategic intelligence...")
-            ai_intel = generate_tender_summary(
-                tender_text=extracted_text, 
-                strategy_context=aarvi_memory["strategy"],
-                history_context=aarvi_memory["history"]
-            )
-        else:
-            logger.info("Tender is INELIGIBLE. Skipping AI summary.")
-            ai_intel = {
-                "summary": "Tender falls outside Aarvi's primary technical scope.",
-                "win_probability": "0%",
-                "pq_eligibility_status": "INELIGIBLE"
-            }
-        
-        return {
-            "filename": file.filename,
-            "status": "Success",
-            "decision": decision,
-            "aarvi_intelligence": ai_intel
-        }
-
+        conn.execute("""
+            UPDATE tenders SET 
+                name_of_client=?, tender_status=?, received_date=?, due_date=?, 
+                location=?, tender_open_price=?, quoted_value=?, description=?, 
+                project_manager=?, emd=?, emd_status=?, tender_fee_status=?, 
+                price_status=?, source=?, comments=?, docs_prepared_by=?, financial_year=?
+            WHERE tender_no=?
+        """, (
+            t.name_of_client, t.tender_status, t.received_date, t.due_date,
+            t.location, t.tender_open_price, t.quoted_value, t.description,
+            t.project_manager, t.emd, t.emd_status, t.tender_fee_status,
+            t.price_status, t.source, t.comments, t.docs_prepared_by,
+            t.financial_year, tender_no
+        ))
+        conn.commit()
+        return {"message": "Tender updated completely"}
     except Exception as e:
-        logger.exception("Unexpected processing error")
-        raise HTTPException(status_code=500, detail=str(e))
+        return {"error": str(e)}
+    finally:
+        conn.close()
 
-# --- ENDPOINT 2: CONSULTANT CHAT (FOLLOW-UP) ---
-@app.post("/chat/")
-async def chat(payload: Dict[Any, Any] = Body(...)):
-    """Handles follow-up questions using the current tender context."""
-    user_query = payload.get("query")
-    context = payload.get("context") # This is the 'aarvi_intelligence' object sent from React
-
-    if not user_query:
-        raise HTTPException(status_code=400, detail="Missing user query.")
-
+# 5. QUICK STATUS UPDATE FROM DROPDOWN
+@app.patch("/tenders/{tender_no:path}")
+def update_tender_status(tender_no: str, payload: dict):
+    new_status = payload.get("tender_status")
+    conn = get_db_connection()
     try:
-        # Constructing a prompt that uses the analyzed data as context
-        consultant_prompt = f"""
-        CONTEXT OF THE TENDER ANALYZED:
-        {context}
-
-        USER QUESTION:
-        {user_query}
-
-        INSTRUCTIONS:
-        You are the Aarvi Encon Strategic Consultant. Answer the user's question based ONLY on the 
-        provided tender context and our historical strategy. Be professional, concise, and prioritize 
-        Aarvi's profitability and technical safety.
-        """
-        
-        # We reuse the summary generator logic but with the new prompt
-        reply = generate_tender_summary(consultant_prompt)
-        
-        # If the ai_service returns a dict, we extract just the text
-        if isinstance(reply, dict):
-            reply_text = reply.get("summary", "I'm sorry, I couldn't generate a response.")
-        else:
-            reply_text = reply
-
-        return {"reply": reply_text}
-
+        conn.execute("UPDATE tenders SET tender_status = ? WHERE tender_no = ?", (new_status, tender_no))
+        conn.commit()
+        return {"message": "Status updated"}
     except Exception as e:
-        logger.error(f"Chat error: {e}")
-        return {"reply": "Consultant encountered an error processing your query."}
+        return {"error": str(e)}
+    finally:
+        conn.close()
 
-# --- ENDPOINT 3: REFRESH MEMORY ---
-@app.post("/refresh-memory/")
-async def refresh_memory():
-    global aarvi_memory
-    aarvi_memory = load_aarvi_memory()
-    return {"message": "Knowledge base (History & Strategy) refreshed."}
+# 6. EXPORT TO EXCEL
+@app.get("/export-tenders")
+def export_tenders():
+    conn = get_db_connection()
+    df = pd.read_sql_query("SELECT * FROM tenders", conn)
+    conn.close()
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False)
+    output.seek(0)
+    return StreamingResponse(
+        output,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": "attachment; filename=Tender_Export.xlsx"}
+    )
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8001)
