@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import sqlite3
@@ -7,6 +7,12 @@ import io
 import os
 from pydantic import BaseModel
 from typing import Optional
+
+# Importing your modular components
+from ai_service import generate_tender_summary
+from file_parser import extract_text_from_upload 
+# Ensure models.py is saved in the same backend folder!
+from models import AnalysisResponse 
 
 app = FastAPI()
 
@@ -19,15 +25,14 @@ app.add_middleware(
 )
 
 def get_db_connection():
-    # Adjust path if needed depending on where you run the server
-    db_path = os.path.join(os.getcwd(), 'backend', 'tender_data.db')
-    if not os.path.exists(db_path):
-        db_path = 'tender_data.db' # fallback
+    # Absolute path to ensure DB is found regardless of where terminal is opened
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(base_dir, 'tender_data.db')
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     return conn
 
-# 1. EXPANDED PYDANTIC MODEL (Matches your 19 DB Columns perfectly)
+# Database Model for SQLite
 class Tender(BaseModel):
     tender_no: str
     name_of_client: str
@@ -48,7 +53,37 @@ class Tender(BaseModel):
     docs_prepared_by: Optional[str] = None
     financial_year: Optional[str] = "2023-2024"
 
-# 2. GET ALL TENDERS
+# --- AI ENDPOINTS ---
+
+@app.post("/analyze-tender", response_model=AnalysisResponse)
+async def analyze_tender(file: UploadFile = File(...)):
+    # 1. Parse PDF/File using the modular parser
+    tender_text = await extract_text_from_upload(file) 
+    
+    # 2. Check for parser errors or empty files
+    if tender_text.startswith("Error"):
+        # Wrap the error in the schema so the frontend doesn't crash
+        return {"aarvi_intelligence": {"tender_no": "PARSE_ERROR", "client_name": tender_text, "bid_decision": "NO-BID", "key_eligibility": "", "financial_eligibility": "", "technical_eligibility": "", "min_experience": "", "net_worth_check": "", "similar_work": "", "scope_of_work": "", "mandatory_compliance": "", "penalty_terms": "", "pq_status": "", "win_probability": "", "profit_forecast": "", "manpower_requirement": "", "strategic_advice": "Check PDF format."}}
+
+    if len(tender_text.strip()) < 50:
+        return {"aarvi_intelligence": {"tender_no": "EMPTY_FILE", "client_name": "The file contains no readable text. If it's a scanned PDF, an OCR parser is required.", "bid_decision": "NO-BID", "key_eligibility": "", "financial_eligibility": "", "technical_eligibility": "", "min_experience": "", "net_worth_check": "", "similar_work": "", "scope_of_work": "", "mandatory_compliance": "", "penalty_terms": "", "pq_status": "", "win_probability": "", "profit_forecast": "", "manpower_requirement": "", "strategic_advice": ""}}
+
+    # 3. Get AI Summary
+    analysis_dict = generate_tender_summary(tender_text=tender_text)
+    
+    # 4. Return validated data
+    return {"aarvi_intelligence": analysis_dict}
+
+@app.post("/chat")
+async def chat_tender(data: dict):
+    reply = generate_tender_summary(
+        custom_prompt=data.get("query"), 
+        strategy_context=data.get("context")
+    )
+    return {"reply": reply}
+
+# --- DATABASE ROUTES ---
+
 @app.get("/tenders")
 def get_tenders():
     conn = get_db_connection()
@@ -56,7 +91,6 @@ def get_tenders():
     conn.close()
     return [dict(t) for t in tenders]
 
-# 3. ADD NEW TENDER (Saves all columns to DB)
 @app.post("/tenders")
 def add_tender(t: Tender):
     conn = get_db_connection()
@@ -81,7 +115,6 @@ def add_tender(t: Tender):
     finally:
         conn.close()
 
-# 4. EDIT/UPDATE ENTIRE TENDER 
 @app.put("/tenders/{tender_no:path}")
 def edit_tender_full(tender_no: str, t: Tender):
     conn = get_db_connection()
@@ -107,13 +140,11 @@ def edit_tender_full(tender_no: str, t: Tender):
     finally:
         conn.close()
 
-# 5. QUICK STATUS UPDATE FROM DROPDOWN
 @app.patch("/tenders/{tender_no:path}")
 def update_tender_status(tender_no: str, payload: dict):
-    new_status = payload.get("tender_status")
     conn = get_db_connection()
     try:
-        conn.execute("UPDATE tenders SET tender_status = ? WHERE tender_no = ?", (new_status, tender_no))
+        conn.execute("UPDATE tenders SET tender_status = ? WHERE tender_no = ?", (payload.get("tender_status"), tender_no))
         conn.commit()
         return {"message": "Status updated"}
     except Exception as e:
@@ -121,7 +152,6 @@ def update_tender_status(tender_no: str, payload: dict):
     finally:
         conn.close()
 
-# 6. EXPORT TO EXCEL
 @app.get("/export-tenders")
 def export_tenders():
     conn = get_db_connection()

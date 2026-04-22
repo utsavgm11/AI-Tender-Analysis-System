@@ -1,77 +1,48 @@
 import React from 'react';
-import { 
-  CheckCircle, XCircle, AlertTriangle, TrendingUp, 
-  DollarSign, BookOpen, Briefcase, Scale, ShieldCheck 
-} from 'lucide-react';
 
-const DecisionCard = ({ result }) => {
-  const { decision, aarvi_intelligence } = result;
-  
-  // Safeguard against missing data
-  const intel = aarvi_intelligence || {};
-  const isEligible = decision?.is_eligible;
+const DecisionCard = ({ result, onClose }) => {
+  const data = result.aarvi_intelligence || result; // Handle wrapper or direct obj
+
+  const downloadReport = () => {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Tender_Report_${data.tender_no || 'Analysis'}.json`;
+    a.click();
+  };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl shadow-lg w-full max-w-4xl overflow-hidden animate-in fade-in zoom-in duration-300">
-      {/* Executive Header */}
-      <div className={`px-6 py-5 border-b flex justify-between items-center ${isEligible ? 'bg-emerald-50' : 'bg-rose-50'}`}>
-        <div>
-          <h2 className="text-2xl font-bold text-slate-900">{intel.tender_no || "Unknown Tender"}</h2>
-          <p className="text-sm text-slate-600 font-medium">{intel.client_name}</p>
-        </div>
-        <div className={`px-4 py-2 rounded-full font-bold text-sm flex items-center gap-2 ${isEligible ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
-          {isEligible ? <CheckCircle size={18} /> : <XCircle size={18} />}
-          {isEligible ? "GO - PROCEED" : "NO-GO - OUT OF SCOPE"}
-        </div>
+    <div className="bg-white p-6 rounded-xl border shadow-lg max-w-4xl mx-auto my-4 text-sm">
+      <div className="flex justify-between items-center border-b pb-4 mb-4">
+        <h2 className="text-xl font-bold">Strategic Tender Analysis</h2>
+        <button onClick={downloadReport} className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-xs font-bold">
+          Download Report
+        </button>
       </div>
 
-      <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        {/* Metric Grid */}
-        <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <MetricCard icon={<TrendingUp size={20}/>} label="Win Probability" value={intel.win_probability} color="blue" />
-          <MetricCard icon={<ShieldCheck size={20}/>} label="PQ Status" value={intel.pq_eligibility_status} color="emerald" />
-          <MetricCard icon={<DollarSign size={20}/>} label="Profit Forecast" value={intel.profit_forecast} color="amber" />
-        </div>
+      <div className="grid grid-cols-2 gap-6">
+        <Section title="Eligibility & PQ" content={data.key_eligibility} />
+        <Section title="Financial & Tech" content={data.financial_eligibility} />
+        <Section title="Experience Req." content={data.min_experience} />
+        <Section title="Net Worth Check" content={data.net_worth_check} />
+        <Section title="Scope of Work" content={data.scope_of_work} />
+        <Section title="Penalty Terms" content={data.penalty_terms} />
+        <Section title="Similar Work History" content={data.similar_work} />
+        <Section title="Strategic Advice" content={data.strategic_advice} />
+      </div>
 
-        {/* Deep Dive Sections */}
-        <div className="space-y-4">
-          <Section icon={<Briefcase size={18}/>} title="Manpower Scope">
-            <p className="text-sm text-slate-600">{intel.manpower_requirement}</p>
-          </Section>
-          <Section icon={<BookOpen size={18}/>} title="PQ Criteria">
-            <p className="text-sm text-slate-600 leading-relaxed">{intel.pre_qualification_criteria}</p>
-          </Section>
-        </div>
-
-        <div className="space-y-4">
-          <Section icon={<Scale size={18}/>} title="Strategic Advice">
-            <p className="text-sm text-slate-700 bg-slate-50 p-3 rounded-lg border italic">{intel.summary}</p>
-          </Section>
-          <Section icon={<AlertTriangle size={18}/>} title="Penalty & Terms">
-            <p className="text-sm text-slate-600">{intel.penalty_terms}</p>
-          </Section>
-        </div>
+      <div className="mt-6 p-4 bg-slate-100 rounded-lg font-black text-center text-lg">
+        DECISION: {data.bid_decision}
       </div>
     </div>
   );
 };
 
-// Helper Components for clean layout
-const MetricCard = ({ icon, label, value, color }) => (
-  <div className={`p-4 rounded-xl border bg-${color}-50 border-${color}-100`}>
-    <div className={`text-${color}-600 mb-1`}>{icon}</div>
-    <div className="text-xs font-bold text-slate-500 uppercase">{label}</div>
-    <div className={`text-md font-bold text-${color}-900`}>{value}</div>
-  </div>
-);
-
-const Section = ({ icon, title, children }) => (
-  <div className="border border-slate-100 rounded-xl p-4 bg-white shadow-sm">
-    <h4 className="font-bold text-slate-800 flex items-center gap-2 mb-2 border-b pb-2">
-      {icon} {title}
-    </h4>
-    {children}
+const Section = ({ title, content }) => (
+  <div>
+    <h4 className="font-bold text-slate-500 uppercase text-[10px]">{title}</h4>
+    <p className="text-slate-800">{content}</p>
   </div>
 );
 

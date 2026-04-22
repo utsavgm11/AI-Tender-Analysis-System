@@ -1,13 +1,20 @@
-# file_parser.py
 import io
 import PyPDF2
 import docx
 import pandas as pd
+from fastapi import UploadFile
+
+async def extract_text_from_upload(file: UploadFile) -> str:
+    """
+    This is the function you call from main.py. 
+    It handles the file reading asynchronously.
+    """
+    file_bytes = await file.read()
+    return extract_text_from_file(file_bytes, file.filename)
 
 def extract_text_from_file(file_bytes: bytes, filename: str) -> str:
     """
-    Takes the uploaded file and extracts all text.
-    Updated to support .xlsm (Macro-enabled) for the Aarvi Historical Dashboard.
+    Core extraction logic for various file types.
     """
     text = ""
     filename_lower = filename.lower()
@@ -29,23 +36,17 @@ def extract_text_from_file(file_bytes: bytes, filename: str) -> str:
 
         # 3. Handle Excel Sheets (Including .xlsm Dashboard)
         elif filename_lower.endswith((".xlsx", ".xls", ".xlsm")):
-            # We use engine='openpyxl' to handle .xlsm files correctly
-            # sheet_name=None reads every single tab in your dashboard
             dfs = pd.read_excel(io.BytesIO(file_bytes), sheet_name=None, engine='openpyxl')
             
             text += f"--- EXCEL DATA START: {filename} ---\n"
             for sheet_name, df in dfs.items():
-                # Ignore completely empty sheets
-                if df.empty:
-                    continue
-                    
+                if df.empty: continue
                 text += f"\n[SHEET: {sheet_name}]\n"
-                # to_string preserves the table layout so the AI can read columns correctly
                 text += df.to_string(index=False) + "\n"
             text += "\n--- EXCEL DATA END ---\n"
-                
+            
         else:
-            return "Error: Unsupported file format. Please upload PDF, DOCX, or Excel (.xlsx/.xlsm)."
+            return "Error: Unsupported file format."
 
     except Exception as e:
         return f"Error reading file: {str(e)}"
