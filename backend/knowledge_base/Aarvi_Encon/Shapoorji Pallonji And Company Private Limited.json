@@ -1,0 +1,83 @@
+{
+  "company_name": "Aarvi Encon Private Limited",
+
+  "client_name": "Shapoorji Pallonji And Company Private Limited",
+
+  "client_type": "EPC / Construction Company",
+
+  "project_type": "Completion Certificate",
+
+  "projects_summary": {
+    "total_projects": 1,
+    "total_executed_value_inr": 3209364,
+    "highest_project_value_inr": 3209364,
+    "engagement_type": "Engineering & Construction Manpower Services",
+    "duration": "2014 to 2015"
+  },
+
+  "project_details": {
+    "project_name": "Engineering & Construction Manpower Deployment",
+
+    "client": "Shapoorji Pallonji And Company Private Limited",
+
+    "location": "Gujarat",
+
+    "scope_of_work": [
+      "Deployment of engineering manpower",
+      "Construction site manpower support",
+      "Technical services for EPC project execution"
+    ],
+
+    "execution_model": "Manpower-based EPC support",
+
+    "duration": "Approx. 1 year",
+
+    "financials": {
+      "total_executed_value_inr": 3209364
+    },
+
+    "performance_feedback": "Project executed successfully and services found satisfactory",
+
+    "document_type": "Completion Certificate"
+  },
+
+  "core_capabilities": [
+    "EPC Manpower Services",
+    "Construction Site Support",
+    "Engineering Manpower Deployment",
+    "Industrial Project Execution"
+  ],
+
+  "tender_relevance": {
+    "strong_sectors": [
+      "Construction",
+      "EPC Projects",
+      "Industrial Infrastructure"
+    ],
+
+    "suitable_for": [
+      "EPC manpower tenders",
+      "Construction support contracts",
+      "Engineering staffing projects"
+    ],
+
+    "strength_indicators": [
+      "Execution with reputed EPC company",
+      "Successful completion certificate",
+      "Construction project exposure",
+      "Mid-value project (~32 Lakhs)"
+    ]
+  },
+
+  "financial_strength": {
+    "mid_value_project_experience": true,
+    "execution_capacity_indicator": "Medium"
+  },
+
+  "important_clauses": [
+    "Project completed successfully",
+    "Client satisfaction confirmed",
+    "Manpower deployment for EPC execution",
+    "No negative remarks recorded"
+  ]
+}

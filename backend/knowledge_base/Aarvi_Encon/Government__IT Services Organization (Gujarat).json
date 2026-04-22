@@ -1,0 +1,157 @@
+{
+  "company_name": "Aarvi Encon Private Limited",
+
+  "client_name": "Guj Info Petro Limited",
+
+  "client_type": "Government / IT Services Organization (Gujarat)",
+
+  "projects_summary": {
+    "total_projects": 1,
+    "engagement_type": "IT & Technical Manpower Services",
+    "work_order_reference": "GIPL/HR & Admin/2015",
+    "work_order_start_year": "2015",
+    "engagement_duration": "Multi-year (2015–2018+ with multiple extensions)",
+    "billing_model": "Monthly per-resource billing",
+    "project_nature": "Recurring manpower deployment",
+    "max_manpower_deployed": 45
+  },
+
+  "projects": [
+    {
+      "project_name": "IT & Technical Manpower Deployment for Government Departments",
+
+      "client": "Guj Info Petro Limited",
+
+      "end_clients": [
+        "GSDMA (Gujarat State Disaster Management Authority)",
+        "Transport Department (RTO Offices)",
+        "Labour Commissioner Office",
+        "Boilers Department",
+        "Gujarat Maritime Board",
+        "GIPL Head Office"
+      ],
+
+      "location": "Gandhinagar, Gujarat (Multiple Government Locations)",
+
+      "scope_of_work": [
+        "Deployment of IT support engineers",
+        "Software engineering manpower supply",
+        "Technical support for government systems",
+        "Outsourced staffing for e-governance projects",
+        "Replacement and continuity management of deployed resources"
+      ],
+
+      "roles_deployed": [
+        "IT Support Engineer",
+        "Software Engineer",
+        "Software Tester",
+        "Assistant Programmer",
+        "Project Coordinator",
+        "Hardware Engineer"
+      ],
+
+      "execution_model": "Outsourced manpower services",
+
+      "duration": "2015 to 2018+ (with multiple extensions)",
+
+      "scale": {
+        "maximum_personnel_deployed": 45,
+        "deployment_type": "Multi-department government staffing"
+      },
+
+      "financials": {
+        "monthly_rate_range_inr": "16000 - 45000",
+        "increment_pattern": "10% to 15% periodic increase",
+        "billing_model": "Per resource monthly billing"
+      },
+
+      "extensions": [
+        {
+          "period": "December 2016",
+          "details": "Work order extended for one month (01 Dec 2016 to 31 Dec 2016)",
+          "resource": "Software Tester (Trainee)",
+          "special_condition": "Replacement required after contract period"
+        }
+      ],
+
+      "contractual_features": [
+        "Principal-to-principal contract structure",
+        "No employer-employee relationship with client",
+        "Aarvi responsible for PF, ESI, wages and statutory compliance",
+        "Monthly invoicing based on attendance",
+        "Short payment cycle",
+        "One-month termination clause",
+        "Indemnity and liability clause on Aarvi",
+        "Responsibility for manpower replacement and continuity"
+      ],
+
+      "key_highlights": [
+        "Multi-year engagement with government IT organization",
+        "Deployment across multiple government departments",
+        "45 personnel deployed at scale",
+        "Recurring revenue manpower model",
+        "Multiple contract extensions granted",
+        "Strong compliance and contract execution capability",
+        "Operational continuity ensured via resource replacement"
+      ]
+    }
+  ],
+
+  "core_capabilities": [
+    "IT Manpower Supply",
+    "Government Project Staffing",
+    "Technical Support Services",
+    "Software Engineering Resource Deployment",
+    "Multi-department Government Execution",
+    "Compliance-driven Contract Execution",
+    "Resource Replacement & Continuity Management",
+    "Recurring Staffing Model"
+  ],
+
+  "tender_relevance": {
+    "strong_sectors": [
+      "Government IT Projects",
+      "E-Governance",
+      "Technical Support Services"
+    ],
+
+    "suitable_for": [
+      "IT manpower tenders",
+      "Government staffing contracts",
+      "Technical outsourcing projects",
+      "E-governance implementations"
+    ],
+
+    "strength_indicators": [
+      "Government IT client (GIPL)",
+      "Deployment across multiple departments",
+      "Multi-year engagement with extensions",
+      "45 manpower scale execution",
+      "Strong compliance structure",
+      "Proven continuity and replacement capability"
+    ]
+  },
+
+  "financial_behavior": {
+    "billing_consistency": "High",
+    "revenue_pattern": "Recurring per resource",
+    "scalability": "High (based on manpower deployment)"
+  },
+
+  "relationship_strength": {
+    "repeat_engagement": true,
+    "extensions_granted": true,
+    "client_trust_level": "High",
+    "continuity_responsibility": "Handled successfully"
+  },
+
+  "important_clauses": [
+    "Aarvi responsible for all statutory compliance (PF, ESI, wages)",
+    "No employer-employee relationship with client",
+    "Monthly billing based on deployed manpower",
+    "Contract extensions based on performance",
+    "Replacement of manpower required upon exit",
+    "Short payment cycle defined",
+    "Indemnity and liability on Aarvi"
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "company_name": "Aarvi Encon Private Limited",
+
+  "client_name": "Mahatma Gandhi Institute for Rural Industrialization",
+
+  "client_type": "Government Institute (Ministry of MSME)",
+
+  "project_type": "Completion Certificate",
+
+  "projects_summary": {
+    "total_projects": 1,
+    "total_executed_value_inr": 99581583,
+    "highest_project_value_inr": 99581583,
+    "engagement_type": "Long-term manpower contract",
+    "duration": "March 2012 to October 2014"
+  },
+
+  "project_details": {
+    "project_name": "Supply of Technical & Non-Technical Manpower",
+
+    "client": "MGIRI, Wardha",
+
+    "location": "Wardha, Maharashtra",
+
+    "scope_of_work": [
+      "Deployment of technical manpower",
+      "Deployment of non-technical manpower",
+      "Support services for institutional operations"
+    ],
+
+    "execution_model": "Large-scale manpower deployment",
+
+    "duration": "Approx. 2.5 years",
+
+    "financials": {
+      "total_executed_value_inr": 99581583
+    },
+
+    "scale": "Large number of personnel deployed",
+
+    "performance_feedback": "Work executed successfully and services found satisfactory",
+
+    "document_type": "Completion Certificate"
+  },
+
+  "core_capabilities": [
+    "Large-scale Manpower Deployment",
+    "Technical & Non-Technical Staffing",
+    "Government Project Execution",
+    "Long-term Contract Management",
+    "Institutional Support Services"
+  ],
+
+  "tender_relevance": {
+    "strong_sectors": [
+      "Government Projects",
+      "MSME Sector",
+      "Institutional Contracts"
+    ],
+
+    "suitable_for": [
+      "Large manpower supply tenders",
+      "Government staffing contracts",
+      "Long-duration service contracts"
+    ],
+
+    "strength_indicators": [
+      "High-value project (~10 Crore)",
+      "Multi-year execution (2.5 years)",
+      "Government client experience",
+      "Successful completion certificate",
+      "Large workforce handling capability"
+    ]
+  },
+
+  "financial_strength": {
+    "high_value_project_experience": true,
+    "largest_project_in_dataset_inr": 99581583,
+    "execution_capacity_indicator": "High"
+  },
+
+  "important_clauses": [
+    "Services executed successfully over long duration",
+    "Client satisfaction confirmed",
+    "Large-scale manpower deployment achieved",
+    "Government project compliance maintained"
+  ]
+}

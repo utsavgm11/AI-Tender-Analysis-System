@@ -1,0 +1,83 @@
+{
+  "company_name": "Aarvi Encon Private Limited",
+
+  "client_name": "FLSmidth Private Limited",
+
+  "client_type": "Industrial Engineering / EPC Company",
+
+  "projects_summary": {
+    "total_projects": 1,
+    "total_executed_value_inr": 225000,
+    "highest_project_value_inr": 225000,
+    "project_type": "Service Engineer Deployment"
+  },
+
+  "projects": [
+    {
+      "project_name": "Service Engineer Deputation",
+
+      "po_number": "Not Specified",
+      "po_date": "Not Clearly Mentioned",
+
+      "client": "FLSmidth Private Limited",
+
+      "location": "Bokaro, Jharkhand",
+
+      "scope_of_work": [
+        "Deployment of service engineer",
+        "On-site technical support",
+        "Industrial project assistance"
+      ],
+
+      "execution_model": "Manpower-based engineering service",
+
+      "duration": "3 months",
+
+      "financials": {
+        "monthly_rate_inr": 75000,
+        "total_order_value_inr": 225000,
+        "tax": "GST extra"
+      },
+
+      "key_highlights": [
+        "Experience with global engineering company",
+        "Industrial site deployment",
+        "Service engineer capability",
+        "Short-term execution"
+      ]
+    }
+  ],
+
+  "core_capabilities": [
+    "Service Engineer Deployment",
+    "Industrial Technical Support",
+    "On-site Engineering Services",
+    "Short-term Project Execution"
+  ],
+
+  "tender_relevance": {
+    "strong_sectors": [
+      "Industrial Engineering",
+      "Cement / Mining / Heavy Industry"
+    ],
+
+    "suitable_for": [
+      "Service engineer tenders",
+      "Technical support contracts",
+      "Short-duration industrial projects"
+    ],
+
+    "strength_indicators": [
+      "Execution for reputed engineering client",
+      "Industrial site experience",
+      "Engineering manpower capability"
+    ]
+  },
+
+  "important_clauses": [
+    "Payment within 30 days from invoice",
+    "GST applicable on services",
+    "Fixed monthly rate for engineer deployment",
+    "Short-term contract execution"
+  ]
+}

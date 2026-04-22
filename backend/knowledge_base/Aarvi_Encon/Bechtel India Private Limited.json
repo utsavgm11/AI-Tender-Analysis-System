@@ -1,0 +1,139 @@
+{
+  "client_name": "Bechtel India Private Limited",
+  "projects": [
+    {
+      "project_name": "Recruitment Services and Supply of Temporary Staff",
+      "contract_number": "50529-100-HC5-W000-15004",
+      "start_date": "08-Apr-2015",
+      "end_date": "31-Dec-2023",
+      "description": "Provision of recruitment services and supply of temporary manpower for oil & gas, infrastructure and engineering projects.",
+      
+      "work_scope": [
+        "Recruitment services",
+        "Supply of temporary staff",
+        "Engineering manpower deployment",
+        "Support for oil & gas and infrastructure projects"
+      ],
+
+      "manpower_details": {
+        "max_average_per_month": 247,
+        "other_instances": [
+          {
+            "average": 20,
+            "man_months": 346
+          }
+        ],
+        "total_man_months_known": [
+          5916
+        ]
+      },
+
+      "roles_deployed": [
+        "Tekla Modeler",
+        "Steel Detailer",
+        "Checker",
+        "Designer (Civil / Plant / Process / Electrical / Instrumentation / Communications)",
+        "Design Engineer",
+        "Construction Engineer",
+        "Document Controller"
+      ],
+
+      "financials": {
+        "executed_values": [
+          {
+            "amount": 422503765,
+            "currency": "INR",
+            "remarks": "With tax"
+          },
+          {
+            "amount": 43600050,
+            "currency": "INR",
+            "remarks": "Without tax"
+          }
+        ],
+        "po_values": [
+          124083920,
+          104189340,
+          139245243,
+          353252793
+        ]
+      },
+
+      "duration_breakdown": [
+        "Apr 2015 – Mar 2018",
+        "Jul 2018 – Jun 2020",
+        "Jul 2020 – Jun 2021",
+        "Jul 2021 – Dec 2021",
+        "Jan 2023 – Dec 2023"
+      ],
+
+      "project_type": [
+        "Manpower Supply",
+        "Recruitment Services",
+        "Oil & Gas Support Services",
+        "Infrastructure Support"
+      ],
+
+      "client_location": "Gurgaon, Haryana, India"
+    }
+  ],
+
+  "key_personnel": [
+    {
+      "name": "Dalbir Singh",
+      "designation": "Sr. Designer",
+      "experience_years": 30,
+      "skills": ["SP3D", "TEKLA", "PDS", "Microstation", "AutoCAD"],
+      "domain": ["Oil & Gas", "Power Plants", "Infrastructure"],
+      "bechtel_experience": true
+    },
+    {
+      "name": "Gurdeep Singh",
+      "designation": "Senior Technical Officer",
+      "experience_years": 13,
+      "skills": ["AutoCAD", "Revit", "SP3D", "Microstation"],
+      "domain": ["Bridges", "Oil & Gas", "Power Plants"],
+      "bechtel_experience": true
+    },
+    {
+      "name": "Naresh Mohan Bisht",
+      "designation": "Civil Structural Designer",
+      "experience_years": 29,
+      "skills": ["SP3D", "TEKLA", "AutoCAD", "Microstation", "Revit"],
+      "domain": ["Refinery", "Steel Structures", "Infrastructure"],
+      "bechtel_experience": true
+    },
+    {
+      "name": "Noel Karmakar",
+      "designation": "Tekla / SP3D Designer",
+      "experience_years": 21,
+      "skills": ["Tekla", "AutoCAD", "SP3D"],
+      "domain": ["Steel Detailing", "Oil & Gas"],
+      "bechtel_experience": true
+    },
+    {
+      "name": "Pradeep Mittal",
+      "designation": "Principal Engineer",
+      "experience_years": 41,
+      "skills": ["Mechanical Engineering", "HVAC", "Project Management"],
+      "domain": ["Oil & Gas", "Power", "Infrastructure"],
+      "bechtel_experience": true
+    },
+    {
+      "name": "Reju Abraham",
+      "designation": "Steel Checker / Designer",
+      "experience_years": 30,
+      "skills": ["Tekla", "AutoCAD", "Bocad"],
+      "domain": ["Power Plants", "Refineries", "Steel Structures"],
+      "bechtel_experience": true
+    },
+    {
+      "name": "Yogesh Chandra Pant",
+      "designation": "Senior Structural Designer",
+      "experience_years": 37,
+      "skills": ["SP3D", "Microstation", "PDS"],
+      "domain": ["Oil & Gas", "Mining", "Infrastructure"],
+      "bechtel_experience": true
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "company_name": "Aarvi Encon Private Limited",
+
+  "client_group": "Cairn Oil & Gas (Vedanta Ltd) - Ravva Field",
+
+  "clients": [
+    "Cairn Oil & Gas",
+    "Vedanta Limited"
+  ],
+
+  "projects_summary": {
+    "total_projects": 3,
+    "total_executed_value_inr": 0,
+    "highest_single_project_value_inr": 0,
+    "domains": [
+      "Upstream Oil & Gas",
+      "Field Operations & Maintenance",
+      "Technical Manpower Services"
+    ]
+  },
+
+  "projects": [
+    {
+      "project_name": "Ravva Field Operations Support",
+      "client": "Cairn Oil & Gas",
+      "location": "Ravva Field",
+      "scope_of_work": [
+        "Contractual operational support for Ravva field operations"
+      ],
+      "execution_model": "Contract-based",
+      "duration": "2015-Ongoing",
+      "financials": {
+        "contract_reference": "Contract No. 6344",
+        "status": "Accepted"
+      },
+      "key_highlights": [
+        "Upstream O&G sector exposure",
+        "Formal contract acceptance provided"
+      ]
+    },
+    {
+      "project_name": "Technical Field Services - New Contract",
+      "client": "Cairn Oil & Gas",
+      "location": "Ravva Field",
+      "scope_of_work": [
+        "Field engineering and technical support services"
+      ],
+      "execution_model": "Service Contract",
+      "financials": {
+        "contract_reference": "Contract No. 4600006674"
+      },
+      "key_highlights": [
+        "Continued engagement in Ravva field",
+        "Formal contract documentation"
+      ]
+    },
+    {
+      "project_name": "Project Completion - Ravva Field",
+      "client": "Cairn Oil & Gas",
+      "location": "Ravva Field",
+      "scope_of_work": [
+        "Operational field services completion"
+      ],
+      "execution_model": "Completion-based",
+      "financials": {
+        "contract_reference": "Contract No. 4600002480"
+      },
+      "key_highlights": [
+        "Formal Completion Certificate verified",
+        "Proven project delivery in upstream O&G"
+      ]
+    }
+  ],
+
+  "core_capabilities": [
+    "Upstream Oil & Gas Field Operations",
+    "On-site Technical Services",
+    "Contractual Compliance and Execution",
+    "Project Delivery and Completion Management"
+  ],
+
+  "tender_relevance": {
+    "strong_sectors": [
+      "Upstream Oil & Gas",
+      "Field Maintenance",
+      "Energy Sector"
+    ],
+    "suitable_for": [
+      "Field O&M Tenders",
+      "Manpower Services for Upstream O&G",
+      "Engineering Support for Energy Plants"
+    ],
+    "strength_indicators": [
+      "Proven track record with Vedanta/Cairn",
+      "Verified contract completion records",
+      "Specialized upstream field experience"
+    ]
+  },
+
+  "important_clauses": [
+    "Formal contract acceptance required before mobilization",
+    "Standardized completion documentation required for close-out"
+  ]
+}

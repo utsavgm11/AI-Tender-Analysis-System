@@ -1,0 +1,155 @@
+{
+  "company_name": "Aarvi Encon Private Limited",
+
+  "client_group": "Aker Powergas Private Limited",
+
+  "clients": [
+    "Aker Powergas Private Limited"
+  ],
+
+  "projects_summary": {
+    "total_projects": 2,
+    "total_executed_value_inr": 6741000,
+    "highest_single_project_value_inr": 3945000,
+    "domains": [
+      "Piping Department Services"
+    ]
+  },
+
+  "projects": [
+    {
+      "project_name": "Providing services in Piping Department for Project IHI-Kiewit 2090/8173, RIL IDY 2090/1809 & Petrofac 2090/8222",
+      "client": "Aker Powergas Private Limited",
+      "location": "Mumbai Office",
+
+      "scope_of_work": [
+        "Providing services in Piping Department",
+        "PDMS Designer services",
+        "SP3D Designer services"
+      ],
+
+      "execution_model": "Hourly rate contract",
+
+      "duration": "01-05-2015 to 31-12-2015",
+
+      "financials": {
+        "total_order_value_inr": 3945000
+      },
+
+      "key_highlights": [
+        "Contract based on hourly rate",
+        "Estimated 200 hours per month",
+        "Multiple amendments applied to purchase order 11593"
+      ],
+
+      "amendments": [
+        {
+          "type": "Amendment 1",
+          "date": "30-06-2015",
+          "value_inr": 480000
+        },
+        {
+          "type": "Amendment 2",
+          "details": "Refer changes in Clause 2 of Annexure A"
+        },
+        {
+          "type": "Amendment 3",
+          "date": "30-12-2015",
+          "value_inr": 3945000
+        }
+      ]
+    },
+
+    {
+      "project_name": "Providing services in Piping Department for Project IHI-Kiewit 2090/8173 & RIL IDY 2090/1809",
+      "client": "Aker Powergas Private Limited",
+      "location": "Mumbai Office",
+
+      "scope_of_work": [
+        "Providing services in Piping Department",
+        "PDMS Designer services",
+        "SP3D Designer services"
+      ],
+
+      "execution_model": "Hourly rate contract",
+
+      "duration": "01-01-2014 to 31-07-2014 (extended till 31-08-2015)",
+
+      "financials": {
+        "total_order_value_inr": 4341000
+      },
+
+      "key_highlights": [
+        "Multiple amendments up to Amendment 5",
+        "Estimated 200 hours per month",
+        "Contract value increased through amendments"
+      ],
+
+      "amendments": [
+        {
+          "type": "Amendment 5",
+          "date": "30-03-2015",
+          "value_inr": 1050000
+        }
+      ]
+    }
+  ],
+
+  "core_capabilities": [
+    "Piping Department Services",
+    "PDMS Designer Services",
+    "SP3D Designer Services"
+  ],
+
+  "tender_relevance": {
+    "strong_sectors": [
+      "Engineering Services",
+      "Piping Design"
+    ],
+
+    "suitable_for": [
+      "Piping engineering services",
+      "Design manpower contracts",
+      "Hourly rate technical services"
+    ],
+
+    "strength_indicators": [
+      "Multiple amendments indicating extended engagement",
+      "Work executed for Aker Powergas",
+      "Deployment of multiple designers"
+    ]
+  },
+
+  "important_clauses": [
+    "Contract based on hourly rate including all costs",
+    "Payment based on certified manhours",
+    "Invoice submission with certified timesheets",
+    "5% retention towards security",
+    "One month notice period for termination",
+    "Compliance with statutory obligations (PF, ESI, etc.)",
+    "Personal accident insurance of Rs. 15,00,000 per staff"
+  ],
+
+  "search_keywords": [
+    "piping department services",
+    "PDMS designer contract",
+    "SP3D designer manpower",
+    "Aker Powergas project",
+    "hourly rate engineering services"
+  ],
+
+  "financial_strength_tag": "Medium",
+
+  "experience_level": "Engineering design manpower services",
+
+  "raw_text": [
+    {
+      "file_name": "WO 11593 and amendments",
+      "content": "Providing services in Piping Department for Project IHI-Kiewit 2090/8173, RIL IDY 2090/1809 & Petrofac 2090/8222. Contract based on hourly rate with estimated 200 hours per month. Total contract value up to Rs. 39,45,000 after amendments."
+    },
+    {
+      "file_name": "WO 11231 and amendments",
+      "content": "Providing services in Piping Department for Project IHI-Kiewit and RIL IDY. Multiple amendments up to amendment 5 increasing contract value to Rs. 43,41,000."
+    }
+  ]
+}

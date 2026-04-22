@@ -1,0 +1,85 @@
+{
+  "company_name": "Aarvi Encon Private Limited",
+
+  "client_group": "BCPL (Brahmaputra Cracker and Polymer Limited)",
+
+  "clients": [
+    "BCPL GSU (Gas Sweetening Unit)",
+    "BCPL ECU (Ethylene Cracker Unit)"
+  ],
+
+  "projects_summary": {
+    "total_projects": 1,
+    "total_executed_value_inr": 28500000,
+    "highest_single_project_value_inr": 3500000,
+    "domains": [
+      "Petrochemical Plant Maintenance",
+      "GSU & ECU Operational Support",
+      "Industrial Manpower Services"
+    ]
+  },
+
+  "projects": [
+    {
+      "project_name": "Operation and Maintenance of GSU & ECU Units",
+      "client": "BCPL",
+      "location": "Lepetkata, Dibrugarh, Assam",
+
+      "scope_of_work": [
+        "Operational support for Gas Sweetening Unit (GSU)",
+        "Operational support for Ethylene Cracker Unit (ECU)",
+        "Monthly measurement of operational activities",
+        "Statutory compliance management (ESIC, Wages, Arrears)"
+      ],
+
+      "execution_model": "Manpower and unit-rate measurement based",
+      "duration": "2018-2019 (Multi-month contract)",
+
+      "financials": {
+        "estimated_total_contract_value_inr": 28500000,
+        "billing_structure": "Monthly measurement-based billing",
+        "notes": "Values derived from continuous measurement sheets and invoice annexures from July 2018 to March 2019"
+      },
+
+      "key_highlights": [
+        "Verified by formal Execution and Completion Certificates",
+        "Strict adherence to wage and statutory (ESIC) filing",
+        "Continuous 9-month operational record with detailed measurement documentation"
+      ]
+    }
+  ],
+
+  "core_capabilities": [
+    "Petrochemical Plant Operations (GSU/ECU)",
+    "Contractual Measurement & Reporting",
+    "Statutory Compliance (ESIC/PF)",
+    "Technical Manpower Support",
+    "Measurement Sheet Reconciliation"
+  ],
+
+  "tender_relevance": {
+    "strong_sectors": [
+      "Petrochemicals",
+      "Oil & Gas",
+      "Large-scale Industrial Manufacturing"
+    ],
+
+    "suitable_for": [
+      "Plant O&M Tenders",
+      "Measurement-based Service Contracts",
+      "Statutory Compliance-heavy Service Tenders"
+    ],
+
+    "strength_indicators": [
+      "Documented execution record (Certificates available)",
+      "High-level reporting capability (Monthly measurements provided)",
+      "Strong historical statutory compliance record"
+    ]
+  },
+
+  "important_clauses": [
+    "Detailed monthly measurement sheets required for billing",
+    "ESIC and wage disbursement documentation mandatory for payment processing",
+    "Formal LOI and Certificate-backed service delivery"
+  ]
+}

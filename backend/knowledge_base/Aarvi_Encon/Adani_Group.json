@@ -1,0 +1,145 @@
+{
+  "company_name": "Aarvi Encon Private Limited",
+
+  "client_group": "Adani Group",
+
+  "clients": [
+    "Mundra Petrochem",
+    "Mundra Solar Technology Ltd",
+    "Kutch Copper Limited"
+  ],
+
+  "projects_summary": {
+    "total_projects": 3,
+    "total_executed_value_inr": 10000000,
+    "highest_single_project_value_inr": 6512800,
+    "domains": [
+      "Solar Manufacturing",
+      "Petrochemical",
+      "Copper Plant",
+      "Industrial Engineering Services"
+    ]
+  },
+
+  "projects": [
+    {
+      "project_name": "2.0 GW Ingot & Wafer Solar Project",
+      "client": "Mundra Solar Technology Ltd",
+      "location": "Mundra, Gujarat",
+
+      "scope_of_work": [
+        "Deployment of skilled manpower",
+        "Commissioning support",
+        "Electrical, Mechanical, Instrumentation roles"
+      ],
+
+      "execution_model": "Manpower-based (BOQ / Man-month)",
+      "duration": "Minimum 4 months (extendable)",
+
+      "financials": {
+        "total_order_value_inr": 6512800
+      },
+
+      "key_highlights": [
+        "Large-scale renewable energy project",
+        "Multi-discipline manpower deployment",
+        "High-value contract (~65 Lakhs)",
+        "2.0 GW industrial project exposure"
+      ]
+    },
+
+    {
+      "project_name": "Green PVC / Petrochemical Project",
+      "client": "Mundra Petrochem",
+      "location": "Mundra, Gujarat",
+
+      "scope_of_work": [
+        "Industrial project support services",
+        "Engineering and commissioning assistance"
+      ],
+
+      "execution_model": "Technical manpower services",
+
+      "financials": {
+        "total_order_value_inr": 1500000
+      },
+
+      "key_highlights": [
+        "Petrochemical sector experience",
+        "Exposure to PVC plant setup",
+        "Industrial execution environment"
+      ]
+    },
+
+    {
+      "project_name": "Deployment of Piping Engineers",
+      "client": "Kutch Copper Limited",
+      "location": "Mundra, Gujarat",
+
+      "scope_of_work": [
+        "Material handling & mapping",
+        "BOQ preparation and validation",
+        "Field engineering & contractor coordination",
+        "As-built drawing preparation"
+      ],
+
+      "execution_model": "Manpower-based (BOQ billing)",
+
+      "duration": "4 months",
+
+      "financials": {
+        "total_order_value_inr": 2180640,
+        "monthly_rate_per_engineer_inr": 66000,
+        "number_of_engineers": 7
+      },
+
+      "key_highlights": [
+        "Piping engineering expertise",
+        "Execution in copper plant",
+        "Engineering + supervision role",
+        "Adani group industrial project"
+      ]
+    }
+  ],
+
+  "core_capabilities": [
+    "Electrical Commissioning",
+    "Mechanical & Piping Engineering",
+    "Instrumentation Support",
+    "Industrial Plant Execution",
+    "Technical Manpower Deployment",
+    "BOQ Preparation & Validation",
+    "Field Engineering Services"
+  ],
+
+  "tender_relevance": {
+    "strong_sectors": [
+      "Renewable Energy",
+      "Petrochemical",
+      "Metals & Mining",
+      "Industrial EPC Projects"
+    ],
+
+    "suitable_for": [
+      "Commissioning contracts",
+      "Manpower supply tenders",
+      "Engineering support services",
+      "Industrial project execution"
+    ],
+
+    "strength_indicators": [
+      "Multiple projects within Adani Group",
+      "High-value project execution (~65 Lakhs)",
+      "Multi-discipline engineering capability",
+      "Experience across sectors (solar, petrochemical, copper)"
+    ]
+  },
+
+  "important_clauses": [
+    "Manpower deployment based on technical evaluation",
+    "BOQ-based billing structure",
+    "Full statutory compliance (PF, ESI, insurance)",
+    "12-hour working shifts, 6 days a week",
+    "Execution under strict industrial safety norms"
+  ]
+}

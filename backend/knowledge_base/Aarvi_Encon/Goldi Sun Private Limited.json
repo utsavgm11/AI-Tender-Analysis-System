@@ -1,0 +1,69 @@
+{
+  "company_name": "Aarvi Encon Private Limited",
+
+  "client_group": "Goldi Sun Private Limited",
+
+  "projects_summary": {
+    "total_projects": 1,
+    "total_executed_value_inr": 0,
+    "domains": [
+      "Solar Power",
+      "Technical Manpower Services",
+      "O&M Support"
+    ]
+  },
+
+  "financial_capability_assessment": {
+    "proven_revenue_capacity_inr": "Contract-based value",
+    "total_known_contract_value": 0,
+    "average_monthly_billing_capability": 0,
+    "financial_reliability": "Verified through formal contract execution",
+    "contract_types": ["Service Contract", "Manpower Deployment"]
+  },
+
+  "projects": [
+    {
+      "project_name": "Technical Manpower & Operational Support",
+      "client": "Goldi Sun Private Limited",
+      "location": "Project Site",
+      "scope_of_work": [
+        "Deployment of technical manpower for solar project operations",
+        "Operational support services"
+      ],
+      "execution_model": "Manpower-based service contract",
+      "duration": "Contract-defined duration",
+      "financials": {
+        "status": "Contract Executed"
+      },
+      "key_highlights": [
+        "Engagement in renewable energy/solar sector",
+        "Formal contract documentation completed"
+      ]
+    }
+  ],
+
+  "core_capabilities": [
+    "Solar Plant Technical Support",
+    "Technical Manpower Outsourcing",
+    "Contractual Service Delivery"
+  ],
+
+  "tender_relevance": {
+    "strong_sectors": [
+      "Renewable Energy",
+      "Solar Manufacturing & Operations"
+    ],
+    "suitable_for": [
+      "Solar Power O&M Tenders",
+      "Technical Manpower Supply"
+    ],
+    "strength_indicators": [
+      "Proven contract execution history with Goldi Sun"
+    ]
+  },
+
+  "important_clauses": [
+    "Compliance with service contract terms",
+    "Standardized manpower deployment protocols"
+  ]
+}

@@ -1,0 +1,152 @@
+{
+  "client": "Central UP Gas Limited (CUGL)",
+  "industry": "City Gas Distribution (CNG / PNG Infrastructure)",
+  "client_type": "Joint Venture of GAIL (India) Limited and BPCL",
+
+  "projects": [
+    {
+      "project_name": "Third Party Inspection – Steel & MDPE Pipeline Project",
+      "locations": [
+        "Kanpur",
+        "Bareilly",
+        "Unnao"
+      ],
+
+      "tender_details": {
+        "tender_number": "CUGL/C&P/Tender/29",
+        "tender_date": "10-02-2015"
+      },
+
+      "loi_details": {
+        "loi_number": "CUGL/HO/C&P/TPI/LOI",
+        "date": "26-03-2015",
+        "contract_value_inr": 5396280
+      },
+
+      "work_order": {
+        "wo_number": "10024",
+        "date": "27-04-2015",
+        "contract_value_inr": 5396280
+      },
+
+      "contract_duration": {
+        "start": "01-04-2015",
+        "end": "31-03-2017",
+        "extension": "31-05-2017"
+      },
+
+      "scope_of_work": [
+        "Third party inspection services",
+        "Site supervision and certification",
+        "Execution supervision of steel pipeline",
+        "MDPE pipeline network supervision",
+        "Monitoring domestic, commercial and industrial connections",
+        "Supervision of commissioning of gas infrastructure (DRS/MRS/PMS)"
+      ],
+
+      "billing_model": {
+        "type": "Man-month based",
+        "payment_terms": [
+          "90% payment after invoice submission and certification",
+          "10% payment after contract closure"
+        ]
+      },
+
+      "execution_proof": {
+        "completion_certificate": true,
+        "performance": "Satisfactory",
+        "executed_value_inr": 3443510.59
+      }
+    },
+
+    {
+      "project_name": "Third Party Inspection – Pipeline Network Expansion",
+
+      "loi_details": {
+        "loi_number": "CUGL/KNP/C&P/17-18/05/LOI/AEPL",
+        "date": "01-06-2017",
+        "contract_value_inr": 7671972
+      },
+
+      "tender_reference": "CUGL/C&P/TEN1718/6,005 dated 24-04-2017",
+
+      "contract_duration": {
+        "period": "2 years",
+        "start": "01-06-2017"
+      },
+
+      "scope_of_work": [
+        "Hiring of third party inspection agency",
+        "Site supervision for steel pipeline network",
+        "MDPE pipeline supervision",
+        "City gas distribution infrastructure monitoring",
+        "Execution support for pipeline projects"
+      ],
+
+      "technical_structure": {
+        "locations": [
+          "Kanpur",
+          "Unnao",
+          "Bareilly"
+        ],
+        "manpower_based_execution": true,
+        "billing_unit": "Man-month"
+      },
+
+      "commercial_terms": {
+        "performance_bank_guarantee": "10% of annualized order value",
+        "tax_included": true
+      }
+    }
+  ],
+
+  "total_contract_value_inr": 13068252,
+
+  "technical_capabilities": [
+    "Third Party Inspection (TPI)",
+    "Pipeline supervision (Steel & MDPE)",
+    "City Gas Distribution (CGD) projects",
+    "Commissioning supervision",
+    "Industrial and domestic gas network execution",
+    "Quality and safety inspection services"
+  ],
+
+  "key_strengths": [
+    "Government PSU client (GAIL + BPCL JV)",
+    "Multi-city gas distribution project execution",
+    "Pipeline inspection and supervision expertise",
+    "Execution across multiple locations (Kanpur, Bareilly, Unnao)",
+    "Long-term contracts (2015–2017 + 2017 onward)",
+    "Invoice and completion proof available",
+    "Engineering supervision capability in gas infrastructure"
+  ],
+
+  "project_type": [
+    "Third Party Inspection",
+    "Manpower Services",
+    "Pipeline Supervision",
+    "Gas Distribution Infrastructure"
+  ],
+
+  "tender_capability": {
+    "eligible_for": [
+      "City Gas Distribution Projects",
+      "Pipeline Inspection Contracts",
+      "Third Party Inspection Services",
+      "O&M and Supervision Contracts"
+    ],
+    "strength_indicators": [
+      "Executed CGD projects",
+      "Multi-location deployment",
+      "Government-linked client",
+      "Inspection + supervision capability"
+    ]
+  },
+
+  "raw_text_summary": [
+    "Tender for hiring third party inspection agency for city gas distribution projects.",
+    "Work order issued for inspection and supervision of steel and MDPE pipeline projects.",
+    "Execution completed with satisfactory performance and certified by CUGL.",
+    "Additional LOI issued in 2017 for extended inspection services worth INR 76.7 lakhs."
+  ]
+}

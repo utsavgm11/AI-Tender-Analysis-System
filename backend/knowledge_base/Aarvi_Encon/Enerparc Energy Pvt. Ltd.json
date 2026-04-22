@@ -1,0 +1,82 @@
+{
+  "company_name": "Aarvi Encon Private Limited",
+
+  "client_name": "Enerparc Energy Pvt. Ltd.",
+
+  "client_type": "Solar EPC Company",
+
+  "projects_summary": {
+    "total_projects": 1,
+    "total_executed_value_inr": 75240,
+    "highest_project_value_inr": 75240,
+    "project_type": "Manpower Deployment (Engineering)"
+  },
+
+  "projects": [
+    {
+      "project_name": "QC / Safety Engineer Deployment for HIAL Project",
+
+      "po_number": "EPEPL201506-06",
+      "po_date": "16-06-2015",
+
+      "client": "Enerparc Energy Pvt. Ltd.",
+
+      "location": "Bangalore (Client Office Reference)",
+
+      "scope_of_work": [
+        "Deployment of QC Engineer",
+        "Safety supervision",
+        "Quality control at project site"
+      ],
+
+      "execution_model": "Short-term manpower deployment",
+
+      "duration": "3 months",
+
+      "financials": {
+        "base_value_inr": 66000,
+        "tax_percent": 14,
+        "total_order_value_inr": 75240
+      },
+
+      "key_highlights": [
+        "Experience in solar / EPC project",
+        "QC and safety engineering capability",
+        "Short-term project execution"
+      ]
+    }
+  ],
+
+  "core_capabilities": [
+    "Quality Control Engineering",
+    "Safety Supervision",
+    "Solar Project Support",
+    "Short-term Technical Deployment"
+  ],
+
+  "tender_relevance": {
+    "strong_sectors": [
+      "Renewable Energy",
+      "Solar EPC Projects"
+    ],
+
+    "suitable_for": [
+      "QC engineering tenders",
+      "Safety supervision contracts",
+      "Short-term manpower deployment"
+    ],
+
+    "strength_indicators": [
+      "Execution in solar EPC environment",
+      "Engineering manpower deployment capability",
+      "Quick deployment (within 10 days)"
+    ]
+  },
+
+  "important_clauses": [
+    "Payment within 15 days of invoice",
+    "Invoice must reference PO number",
+    "Delivery within 10 days from work order",
+    "Fixed price contract"
+  ]
+}

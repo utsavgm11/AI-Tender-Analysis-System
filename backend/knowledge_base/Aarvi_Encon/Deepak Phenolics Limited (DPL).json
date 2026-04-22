@@ -1,0 +1,178 @@
+{
+  "company_name": "Aarvi Encon Limited",
+
+  "client": "Deepak Phenolics Limited (DPL)",
+  "location": "Dahej, Gujarat",
+  "industry": "Chemical / Petrochemical Manufacturing",
+
+  "projects_summary": {
+    "total_projects": 1,
+    "project_type": "Operation & Maintenance (O&M) – Tank Farm Operations",
+    "total_executed_value_inr": 100000000,
+    "note": "Combined execution across multiple work orders, extensions and ARC contracts (approx based on CA + certificates)"
+  },
+
+  "project": {
+    "project_name": "Tank Farm Loading / Unloading & Operations (O&M)",
+
+    "timeline": {
+      "initial_start_date": "22-02-2018",
+      "phase_1_completion": "30-04-2019",
+      "phase_2_completion": "30-06-2020",
+      "final_completion": "31-03-2022"
+    },
+
+    "work_orders": [
+      {
+        "wo_number": "DPL-WO-C-OM-LOA-006",
+        "start_date": "22-02-2018",
+        "end_date": "30-04-2019",
+        "contract_value_inr": 16560000,
+        "executed_value_inr": 23273334.70,
+        "source_files": [
+          "1st - Work Order (22.02.2018).pdf",
+          "Rev-01 Amendment",
+          "Completion Certificate"
+        ]
+      },
+      {
+        "wo_number": "DPL-WO-C-OM-LOA-044",
+        "start_date": "01-05-2019",
+        "end_date": "30-06-2020",
+        "contract_value_inr": 21541633,
+        "executed_value_inr": 27868512,
+        "source_files": [
+          "Deepak Phenolics Work Order",
+          "Completion Certificate"
+        ]
+      },
+      {
+        "wo_number": "DPL-ARC-C-OM-143 (ARC Contracts)",
+        "start_date": "01-07-2020",
+        "end_date": "31-03-2022",
+        "contract_value_inr": 38850000,
+        "executed_value_inr": 37508095,
+        "extensions": [
+          "01-07-2020 to 30-09-2021",
+          "01-10-2021 to 31-12-2021",
+          "01-01-2022 to 28-02-2022",
+          "01-03-2022 to 31-03-2022"
+        ],
+        "source_files": [
+          "ARC Work Orders",
+          "Final Completion Certificate"
+        ]
+      }
+    ],
+
+    "financial_validation": {
+      "ca_certified_values": [
+        {
+          "wo_number": "DPL-WO-C-OM-LOA-006",
+          "executed_value_inr": 23273334.70,
+          "source": "CA Certificate"
+        },
+        {
+          "wo_number": "DPL-WO-C-OM-LOA-044",
+          "executed_value_inr": 76890290.57,
+          "source": "CA Certificate"
+        }
+      ],
+      "validation_note": "Values verified using CA certificates, invoices and completion documents"
+    },
+
+    "scope_of_work": [
+      "Tank farm loading & unloading operations",
+      "Handling of chemicals (Propane, Propylene, Benzene, Cumene, Acetone, HCL, Caustic, H2SO4, AMS, PIPB)",
+      "Operation & maintenance of tank farm facilities",
+      "Manpower deployment (40–60+ personnel)",
+      "Shift-based operations (round-the-clock)",
+      "Auto tank gauging & gantry loading systems handling",
+      "Material handling & coordination",
+      "Safety compliance and industrial standards execution"
+    ],
+
+    "technical_details": {
+      "plant_capacity": "Above 0.6 to 1.0 MMTPA",
+      "storage_capacity": "Above 50,000 KL",
+      "automation_level": "Semi-automated to fully automated",
+      "manpower_strength": "49 to 60+ personnel deployed",
+      "operation_type": "Continuous industrial operation"
+    },
+
+    "billing_model": {
+      "type": "Manpower-based (monthly invoicing)",
+      "payment_terms": "Invoices certified by engineer and released within defined period",
+      "compliance": [
+        "PF",
+        "ESI",
+        "GST",
+        "Workmen compensation",
+        "Labour law compliance"
+      ]
+    },
+
+    "safety_and_compliance": [
+      "HSE (Health, Safety & Environment) compliance",
+      "PPE mandatory usage",
+      "Safety training programs",
+      "Incident reporting system",
+      "Contractor safety management procedures",
+      "Audit and inspection compliance"
+    ],
+
+    "execution_proof": {
+      "completion_certificates": true,
+      "ca_certificates": true,
+      "work_orders": true,
+      "amendments_and_extensions": true,
+      "performance": "Satisfactory"
+    }
+  },
+
+  "core_capabilities": [
+    "Industrial Operation & Maintenance (O&M)",
+    "Tank Farm Management",
+    "Chemical Handling Operations",
+    "Manpower Deployment (Large-scale)",
+    "Process Plant Operations",
+    "Safety & Compliance Management",
+    "Continuous Shift Operations",
+    "Petrochemical & Chemical Industry Execution"
+  ],
+
+  "tender_relevance": {
+    "strong_sectors": [
+      "Petrochemical",
+      "Chemical Plants",
+      "Oil & Gas",
+      "Tank Farm Operations",
+      "Industrial O&M"
+    ],
+    "suitable_for": [
+      "O&M contracts",
+      "Manpower supply tenders",
+      "Plant operation services",
+      "Tank farm management",
+      "Industrial support services"
+    ],
+    "strength_indicators": [
+      "Long-term project (2018–2022)",
+      "High-value execution (7+ Cr verified)",
+      "Multi-phase contract handling",
+      "Large manpower deployment",
+      "Chemical plant expertise",
+      "Strong documentation (WO + CA + Completion)"
+    ]
+  },
+
+  "important_clauses": [
+    "Penalty for absenteeism and misconduct",
+    "Strict safety compliance mandatory",
+    "No escalation in contract price",
+    "Attrition limit control",
+    "Third-party validation of manpower",
+    "Confidentiality and contract compliance",
+    "Termination clauses for non-performance"
+  ]
+}

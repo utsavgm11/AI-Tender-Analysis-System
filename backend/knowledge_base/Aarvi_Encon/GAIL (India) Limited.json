@@ -1,0 +1,126 @@
+{
+  "company_name": "Aarvi Encon Private Limited",
+
+  "client_name": "GAIL (India) Limited",
+
+  "client_type": "Government PSU (Maharatna)",
+
+  "projects_summary": {
+    "total_projects": 2,
+    "total_executed_value_inr": 12000000,
+    "highest_project_value_inr": 13151420,
+    "engagement_type": "Operational & Technical Manpower Services",
+    "repeat_client": true
+  },
+
+  "projects": [
+    {
+      "project_name": "Operational Assistance for LPG/NTGG Unit",
+
+      "location": "GPU Vaghodia, Vadodara, Gujarat",
+
+      "scope_of_work": [
+        "Operational assistance in LPG/NTGG units",
+        "Field operations support",
+        "Industrial manpower deployment"
+      ],
+
+      "execution_model": "Long-term manpower contract",
+
+      "duration": "September 2014 to November 2016 (Extended)",
+
+      "financials": {
+        "contract_value_inr": 13151420,
+        "executed_value_inr": 10988453
+      },
+
+      "key_highlights": [
+        "Oil & Gas sector experience",
+        "Long-term PSU contract",
+        "Operational plant support",
+        "Contract extension handled"
+      ]
+    },
+
+    {
+      "project_name": "Operational & Laboratory Assistance Services",
+
+      "location": "GAIL Plant, Vaghodia, Gujarat",
+
+      "scope_of_work": [
+        "Laboratory operational support",
+        "Manpower deployment for testing & operations",
+        "Plant assistance services"
+      ],
+
+      "execution_model": "Manpower-based service contract",
+
+      "duration": "January 2018 to December 2019",
+
+      "financials": {
+        "contract_value_inr": 1205208,
+        "executed_value_inr": 302356
+      },
+
+      "key_highlights": [
+        "Laboratory operations exposure",
+        "Repeat engagement with GAIL",
+        "Industrial testing environment"
+      ]
+    }
+  ],
+
+  "core_capabilities": [
+    "Oil & Gas Operations Support",
+    "Industrial Plant Assistance",
+    "Laboratory Support Services",
+    "Technical Manpower Deployment",
+    "PSU Project Execution",
+    "Long-term Contract Management"
+  ],
+
+  "tender_relevance": {
+    "strong_sectors": [
+      "Oil & Gas",
+      "PSU Projects",
+      "Industrial Operations",
+      "Process Plants"
+    ],
+
+    "suitable_for": [
+      "Plant operations tenders",
+      "PSU manpower contracts",
+      "Laboratory support services",
+      "Industrial maintenance & operations"
+    ],
+
+    "strength_indicators": [
+      "Maharatna PSU client (GAIL)",
+      "Repeat business with same client",
+      "High-value project (~1.3 Crore)",
+      "Multi-year execution capability",
+      "Oil & Gas sector expertise",
+      "Successful completion certificates"
+    ]
+  },
+
+  "financial_strength": {
+    "high_value_project_experience": true,
+    "project_value_category": "1+ Crore",
+    "execution_capacity_indicator": "High"
+  },
+
+  "relationship_strength": {
+    "repeat_projects": true,
+    "client_trust_level": "High",
+    "engagement_type": "Multi-project association"
+  },
+
+  "important_clauses": [
+    "Work completed as per contract terms",
+    "Services found satisfactory",
+    "Contracts extended successfully",
+    "Execution under PSU compliance standards",
+    "Manpower deployment based on operational requirements"
+  ]
+}

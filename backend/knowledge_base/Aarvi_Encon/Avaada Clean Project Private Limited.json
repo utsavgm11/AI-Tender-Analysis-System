@@ -1,0 +1,95 @@
+{
+  "client": "Avaada Clean Project Private Limited",
+  "project_type": "Manpower Deployment (Technical / Stores / Admin / Safety)",
+  "industry": "Solar / Renewable Energy",
+  "work_description": "Deployment of Engineering, Technical, Stores, Admin and Safety manpower at multiple solar project sites on contract basis",
+
+  "project_duration": {
+    "start_year": 2019,
+    "end_year": 2023
+  },
+
+  "orders": [
+    {
+      "po_number": "7000000235",
+      "date": "31-01-2020",
+      "revision_date": "11-03-2021",
+      "value_inr": 20260493.80
+    },
+    {
+      "po_number": "7000000398",
+      "date": "18-09-2021",
+      "value_inr": 36049000.00
+    },
+    {
+      "po_number": "7000000525",
+      "date": "13-10-2022",
+      "value_inr": 3956540.00
+    },
+    {
+      "po_number": "7000000629",
+      "date": "13-07-2023",
+      "value_inr": 7923700.00
+    },
+    {
+      "po_number": "7000000629",
+      "revision": "Amendment",
+      "revision_date": "08-08-2023",
+      "revised_value_inr": 7982700.00,
+      "increment": 50000
+    }
+  ],
+
+  "total_combined_value_inr": 76172433.80,
+
+  "roles_deployed": [
+    "Civil Engineer (B.E / Diploma / ITI)",
+    "Electrical Engineer (B.E / Diploma / ITI)",
+    "Civil Supervisor",
+    "Electrical Supervisor",
+    "Store Supervisor",
+    "Safety Officer",
+    "Site Admin",
+    "Manpower Mobilization / Demobilization"
+  ],
+
+  "experience_required": "3 to 6 years of total work experience including solar execution experience",
+
+  "commercial_terms": {
+    "payment_terms": "Within 15 days of invoice submission",
+    "payment_mode": "RTGS",
+    "tax": "GST applicable as per law",
+    "price_variation": "Fixed (no escalation)",
+    "quantity_variation": "±20%"
+  },
+
+  "scope_details": {
+    "aarvi_scope": [
+      "Manpower sourcing and deployment",
+      "Salary and compliance management",
+      "HR services and payroll",
+      "Replacement and workforce management"
+    ],
+    "avaada_scope": [
+      "Accommodation, transport, and food",
+      "Safety equipment (PPE)",
+      "Office infrastructure and logistics",
+      "Attendance and site management"
+    ]
+  },
+
+  "contract_type": "Service Order / Manpower Contract",
+
+  "project_location": "Multiple solar project sites across India (primarily Noida and other locations)",
+
+  "key_contacts": [
+    {
+      "name": "Piyush Kumar Gupta",
+      "role": "Buyer / Contracts"
+    },
+    {
+      "name": "Ashraf Ansari",
+      "role": "Buyer"
+    }
+  ]
+}

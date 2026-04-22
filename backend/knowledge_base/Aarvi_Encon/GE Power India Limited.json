@@ -1,0 +1,132 @@
+{
+  "company_name": "Aarvi Encon Private Limited",
+
+  "client_name": "GE Power India Limited",
+
+  "client_type": "Global Engineering / EPC Company",
+
+  "project_type": "Experience / Completion Certificate",
+
+  "projects_summary": {
+    "total_projects": 1,
+    "total_executed_value_inr": 47334476,
+    "highest_project_value_inr": 47334476,
+    "engagement_type": "Long-term engineering manpower deployment",
+    "duration": "June 2013 to September 2017"
+  },
+
+  "projects": [
+    {
+      "project_name": "Engineering & Technical Manpower Deployment for Power Projects",
+
+      "client": "GE Power India Limited",
+
+      "locations": [
+        "Noida (Engineering Design Office)",
+        "Construction Sites",
+        "Thermal Power Project Locations",
+        "Pan India"
+      ],
+
+      "scope_of_work": [
+        "Engineering design support",
+        "Construction site manpower deployment",
+        "Commissioning support services",
+        "Technical manpower supply across disciplines"
+      ],
+
+      "execution_model": "Engineering manpower secondment",
+
+      "duration": "Approx. 4+ years",
+
+      "scale": {
+        "total_engineers_deployed": 115,
+        "manmonths_consumed": 80000
+      },
+
+      "disciplines": [
+        "Piping Design",
+        "PDMS Modeling",
+        "P&ID Engineering",
+        "Tekla Modeling",
+        "Mechanical Engineering",
+        "Civil & Structural Engineering",
+        "Commissioning",
+        "Rotary Equipment",
+        "Pressure Parts",
+        "Site Administration",
+        "Accounts Support"
+      ],
+
+      "financials": {
+        "total_executed_value_inr": 47334476
+      },
+
+      "performance_feedback": "Work completed as per contract and personnel were sincere, skilled and technically knowledgeable",
+
+      "document_type": "Experience / Completion Certificate",
+
+      "key_highlights": [
+        "Deployment of 115 engineers",
+        "80,000+ manmonths execution",
+        "Multi-discipline engineering capability",
+        "Long-term contract (4+ years)",
+        "High-value project (~4.7 Crore)",
+        "Execution across design, construction and commissioning"
+      ]
+    }
+  ],
+
+  "core_capabilities": [
+    "Large-scale Engineering Manpower Deployment",
+    "Multi-discipline Engineering Services",
+    "Design Engineering Support",
+    "Construction & Commissioning Support",
+    "Thermal Power Project Execution",
+    "Engineering Secondment Services"
+  ],
+
+  "tender_relevance": {
+    "strong_sectors": [
+      "Power Generation",
+      "Thermal Power Projects",
+      "EPC Engineering",
+      "Industrial Infrastructure"
+    ],
+
+    "suitable_for": [
+      "Engineering manpower tenders",
+      "EPC support contracts",
+      "Design engineering services",
+      "Large-scale deployment projects"
+    ],
+
+    "strength_indicators": [
+      "Global engineering client (GE Power)",
+      "High-value project (~4.7 Crore)",
+      "115 engineers deployed",
+      "80,000+ manmonths execution",
+      "Multi-discipline capability",
+      "Long-term engagement (4+ years)",
+      "Strong client satisfaction"
+    ]
+  },
+
+  "financial_strength": {
+    "high_value_project_experience": true,
+    "project_value_category": "4+ Crore",
+    "execution_capacity_indicator": "Very High"
+  },
+
+  "relationship_strength": {
+    "long_term_engagement": true,
+    "client_trust_level": "High"
+  },
+
+  "important_clauses": [
+    "Work completed as per contract provisions",
+    "Personnel found technically skilled and knowledgeable",
+    "Execution across multiple project phases",
+    "Long-term manpower deployment model"
+  ]
+}

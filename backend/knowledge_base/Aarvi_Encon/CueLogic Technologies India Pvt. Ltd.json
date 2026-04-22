@@ -1,0 +1,110 @@
+{
+  "company_name": "Aarvi Encon Pvt. Ltd.",
+  "client": "CueLogic Technologies India Pvt. Ltd.",
+  "industry": "IT Recruitment / Staffing Services",
+
+  "agreement_details": {
+    "agreement_title": "Agreement for Resourcing Services",
+    "agreement_date": "11-07-2013",
+    "validity": {
+      "start": "11-07-2013",
+      "end": "11-06-2014"
+    }
+  },
+
+  "scope_of_work": [
+    "Providing recruitment and staffing services in IT and Non-IT sectors",
+    "Sourcing manpower based on client requirements",
+    "Providing candidate resumes with required skills and experience",
+    "Supporting placements across management levels (junior, middle, senior)"
+  ],
+
+  "operational_process": {
+    "client_responsibilities": [
+      "Provide job description and responsibilities",
+      "Define designation and hierarchy",
+      "Specify job location",
+      "Define salary, remuneration and benefits",
+      "Specify contract/permanent nature",
+      "Provide skill requirements and experience criteria",
+      "Define number of positions and timelines"
+    ],
+
+    "vendor_responsibilities": [
+      "Source candidates as per requirement",
+      "Submit properly formatted resumes",
+      "Provide candidate availability",
+      "Highlight technical skills, experience, personality and communication skills",
+      "Respond to requirements within 3 business days"
+    ],
+
+    "selection_process": [
+      "Client provides feedback within 3 business days",
+      "Client conducts interviews within 1 week of shortlisting",
+      "Final selection decision communicated within 2 business days"
+    ]
+  },
+
+  "replacement_policy": {
+    "replacement_period_days": 60,
+    "conditions": [
+      "Replacement provided if candidate leaves within 60 days",
+      "No extra cost for replacement",
+      "Vendor not responsible for termination decisions by client"
+    ]
+  },
+
+  "pricing_terms": {
+    "payment_terms": "Payment within 30 days from invoice date",
+    "fee_structure": [
+      {
+        "experience_range": "1 to 5 years",
+        "fee_percentage": 8.33
+      },
+      {
+        "experience_range": "5 to 10 years",
+        "fee_percentage": 10.5
+      },
+      {
+        "experience_range": "10+ years",
+        "fee_percentage": 12.66
+      }
+    ],
+    "tax_applicability": "Service tax applicable"
+  },
+
+  "confidentiality_terms": [
+    "All agreement information must be kept confidential",
+    "No disclosure without written consent of client",
+    "No use of client name for publicity without permission",
+    "Protection of client intellectual property (copyright, trademark, etc.)"
+  ],
+
+  "legal_conditions": [
+    "Agreement binding only if authorized and signed by both parties",
+    "No disclosure of agreement in publications",
+    "Confidential handling of all data and processes"
+  ],
+
+  "service_type": [
+    "Recruitment Services",
+    "Manpower Staffing",
+    "Talent Acquisition"
+  ],
+
+  "key_strengths": [
+    "Structured recruitment process defined",
+    "Fast turnaround (3-day response time)",
+    "End-to-end hiring support",
+    "Experience-based pricing model",
+    "Replacement guarantee within 60 days",
+    "Multi-level hiring capability (junior to senior roles)"
+  ],
+
+  "raw_text_summary": [
+    "Agreement for providing recruitment and staffing services to CueLogic Technologies India Pvt. Ltd.",
+    "Aarvi Encon will source candidates based on client requirements and respond within 3 business days.",
+    "Client will conduct interviews and provide feedback within defined timelines.",
+    "Fee structure is based on candidate experience and payable within 30 days."
+  ]
+}

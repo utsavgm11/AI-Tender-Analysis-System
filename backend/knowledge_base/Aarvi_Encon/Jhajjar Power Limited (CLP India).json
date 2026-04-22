@@ -1,0 +1,154 @@
+{
+  "client": "Jhajjar Power Limited (CLP India)",
+  "industry": "Power Plant / Utilities (Thermal Power - Water & Treatment Systems)",
+
+  "location": "Village Khanpur, Tehsil Matenhail, District Jhajjar, Haryana, India",
+
+  "projects": [
+    {
+      "project_name": "Manpower Services for BOP-Water System",
+      
+      "po_details": {
+        "po_number": "5030006918",
+        "issue_date": "21-12-2017",
+        "contract_value_inr": 10562652
+      },
+
+      "contract_period": {
+        "start": "11-01-2018",
+        "end": "10-01-2019"
+      },
+
+      "scope_of_work": [
+        "Hiring of manpower services for BOP-water treatment system",
+        "Operation of canal pump house",
+        "Pre-treatment plant operations",
+        "O&M plant support",
+        "Chemical laboratory support",
+        "Township sewage treatment plant operations"
+      ],
+
+      "billing_model": {
+        "type": "Monthly manpower billing",
+        "payment_terms": "90% within 30 days, 10% retention",
+        "retention": "10% security deposit released after each year"
+      },
+
+      "execution_proof": {
+        "completion_certificate_available": true,
+        "completion_details": {
+          "service": "WTP Operation Analysis System",
+          "period": "11-01-2018 to 10-01-2019"
+        }
+      },
+
+      "special_conditions": [
+        "Unit rate contract based on BOQ",
+        "Initial 1-year contract extendable for 2 additional years",
+        "Performance-based renewal",
+        "12 months defect liability period",
+        "PBG required for retention release"
+      ]
+    },
+
+    {
+      "project_name": "Extended / Revised Manpower Services for BOP-Water",
+
+      "po_details": {
+        "po_number": "5030006918 (Amended / Revised)",
+        "issue_date": "03-01-2020",
+        "contract_value_inr": 34308572
+      },
+
+      "scope_of_work": [
+        "Continued manpower services for BOP-water systems",
+        "Operation of water treatment facilities",
+        "Handling of portable water systems",
+        "DM plant operations",
+        "Township sewage treatment plant",
+        "Chemical dosing and lab operations"
+      ],
+
+      "multi_year_execution": [
+        "Year 1 manpower services",
+        "Year 2 manpower services",
+        "Year 3 manpower services"
+      ],
+
+      "billing_model": {
+        "type": "Monthly manpower billing with GST",
+        "tax": "GST 18%"
+      }
+    },
+
+    {
+      "project_name": "Operation & Maintenance of Sewage Treatment Plant (STP)",
+
+      "po_details": {
+        "po_number": "5030007904",
+        "issue_date": "23-08-2018",
+        "contract_value_inr": 1584108
+      },
+
+      "scope_of_work": [
+        "Operation and maintenance of STP at JPL township",
+        "Civil construction work as per BOQ",
+        "Operation of sewage treatment system"
+      ],
+
+      "delivery_location": "Jhajjar Power Plant, Haryana"
+    }
+  ],
+
+  "total_contract_value_inr": 46555332,
+
+  "core_services": [
+    "Water Treatment Plant (WTP) Operations",
+    "Sewage Treatment Plant (STP) Operations",
+    "Manpower Deployment for Utility Systems",
+    "Chemical Laboratory Support",
+    "Pump House Operations",
+    "Industrial Water Systems Management"
+  ],
+
+  "technical_capabilities": [
+    "BOP Water System Management",
+    "DM Plant Operations",
+    "Pre-treatment and chemical dosing",
+    "Sewage treatment plant O&M",
+    "Industrial utilities support",
+    "Laboratory testing and monitoring"
+  ],
+
+  "commercial_terms_summary": {
+    "payment_cycle": "Monthly",
+    "retention_percentage": 10,
+    "payment_release": "Within 30 days after EIC certification",
+    "performance_security": "PBG required",
+    "defect_liability_period": "12 months"
+  },
+
+  "key_strengths": [
+    "Long-term engagement with CLP Group (Jhajjar Power)",
+    "Multi-year contract execution",
+    "High-value utility operations (~3.4 Cr project)",
+    "Experience in power plant utilities (critical systems)",
+    "O&M + manpower combined capability",
+    "Execution proof via completion certificate",
+    "Handling of water + sewage + chemical systems"
+  ],
+
+  "project_type": [
+    "Manpower Services",
+    "Operations & Maintenance",
+    "Utility Plant Management",
+    "Water & Wastewater Treatment"
+  ],
+
+  "raw_text_summary": [
+    "Manpower services for BOP-water system including pump house, treatment plant and laboratory operations.",
+    "Extended multi-year contract with revised value exceeding INR 3.4 crore.",
+    "STP operation and maintenance project executed at Jhajjar Power Plant.",
+    "Completion certificate confirms execution of WTP operation analysis system from Jan 2018 to Jan 2019."
+  ]
+}

@@ -1,0 +1,153 @@
+{
+  "client": "Chennai Petroleum Corporation Limited",
+  "industry": "Oil & Gas / Refinery (Indian Oil Group)",
+
+  "project_type": [
+    "Shutdown Maintenance Support",
+    "Engineering Manpower Services",
+    "Inspection Support Services"
+  ],
+
+  "project_duration": {
+    "start_year": 2015,
+    "end_year": 2018
+  },
+
+  "projects": [
+    {
+      "project_name": "Refinery III Shutdown – Manpower Assistance",
+      "location": "CPCL Manali, Chennai",
+
+      "po_details": {
+        "po_number": "24471127",
+        "date": "16-06-2015",
+        "contract_value_inr": 7020690
+      },
+
+      "scope_of_work": [
+        "Manpower assistance for onsite maintenance jobs",
+        "Shutdown support services",
+        "Engineering manpower deployment",
+        "Inspection and maintenance support"
+      ],
+
+      "execution_model": "Manpower-based (per man-day / per month)",
+
+      "roles_deployed": [
+        "Planning Engineer",
+        "Field Engineer",
+        "Inspection Engineer"
+      ],
+
+      "invoice_evidence": [
+        {
+          "invoice_no": "01/1472/15-16",
+          "date": "29-08-2015",
+          "amount_inr": 536059
+        },
+        {
+          "invoice_no": "01/1663/15-16",
+          "date": "14-09-2015",
+          "amount_inr": 182058,
+          "type": "Revised"
+        },
+        {
+          "invoice_no": "01/1734-D/15-16",
+          "date": "18-09-2015",
+          "amount_inr": 376464,
+          "type": "Revised"
+        },
+        {
+          "invoice_no": "01/2078/15-16",
+          "date": "15-10-2015",
+          "amount_inr": 216306
+        }
+      ],
+
+      "total_invoice_value_known_inr": 1310887,
+
+      "detailed_cost_structure": {
+        "billing_type": "Per man-day",
+        "sample_rates": [
+          2450,
+          2100
+        ],
+        "components": [
+          "Man-days worked",
+          "Overtime hours",
+          "Service tax and cess"
+        ]
+      }
+    },
+
+    {
+      "project_name": "Inspection Support Services",
+      "location": "CPCL Manali, Chennai",
+
+      "work_order": {
+        "wo_number": "25000484",
+        "date": "04-02-2017",
+        "contract_value_inr": 1024654
+      },
+
+      "scope_of_work": [
+        "Engaging engineers for inspection activities",
+        "Technical support for inspection department"
+      ]
+    },
+
+    {
+      "project_name": "Refinery II Shutdown – Engineering Manpower Support",
+      "location": "CPCL Manali, Chennai",
+
+      "work_orders": [
+        {
+          "wo_number": "25616683",
+          "date": "23-08-2018",
+          "contract_value_inr": 4997000
+        },
+        {
+          "wo_number": "25657957",
+          "date": "27-09-2018",
+          "contract_value_inr": 1326822
+        }
+      ],
+
+      "scope_of_work": [
+        "Engineering manpower assistance during shutdown",
+        "Inspection and maintenance support",
+        "Deployment of qualified inspection engineers"
+      ]
+    }
+  ],
+
+  "total_contract_value_inr": 13569166,
+
+  "execution_proof": {
+    "invoice_based": true,
+    "attendance_records_available": true,
+    "noc_documents_available": true
+  },
+
+  "key_strengths": [
+    "Multi-year refinery shutdown experience (2015–2018)",
+    "Execution for PSU client (Indian Oil group)",
+    "Engineering-level manpower deployment",
+    "Detailed cost and manpower structure available",
+    "Invoice-backed execution proof",
+    "Inspection and maintenance domain expertise"
+  ],
+
+  "technical_capabilities": [
+    "Refinery shutdown support",
+    "Inspection engineering services",
+    "Maintenance support services",
+    "Manpower deployment for oil & gas projects"
+  ],
+
+  "raw_text_summary": [
+    "Manpower assistance for onsite maintenance during refinery shutdown projects at CPCL Manali.",
+    "Invoices confirm execution for multiple months in 2015.",
+    "Work orders in 2017 and 2018 confirm continued engagement for inspection and shutdown activities."
+  ]
+}

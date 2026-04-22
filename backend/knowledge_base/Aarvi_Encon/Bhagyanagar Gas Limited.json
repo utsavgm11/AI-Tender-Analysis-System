@@ -1,0 +1,188 @@
+{
+  "client": "Bhagyanagar Gas Limited",
+  "industry": "City Gas Distribution (CNG / PNG)",
+
+  "projects": [
+    {
+      "project_name": "Manpower Support Services for CNG Operations",
+      "location": "Vijayawada, Andhra Pradesh",
+
+      "work_order": {
+        "order_reference": "BGUC&P/O&M/VJA/MO.008/16/2016-17",
+        "date": "28-04-2016",
+        "contract_value_inr": 22561822,
+        "duration": "24 months (from 01-05-2016)"
+      },
+
+      "scope_of_work": [
+        "Hiring manpower support services for CNG operations",
+        "Operation & maintenance of CNG stations",
+        "Pipeline and PNG network support",
+        "Compressor operation and maintenance",
+        "Electrical and mechanical maintenance",
+        "Gas leak detection and handling",
+        "Filling and dispensing services",
+        "Housekeeping and support services",
+        "Documentation and reporting"
+      ],
+
+      "roles_deployed": [
+        "Supervisor",
+        "Mechanical Technician",
+        "PNG Technician",
+        "Electrical Technician",
+        "Filling Assistant",
+        "Helper / Messenger",
+        "Sweeper",
+        "Compressor Operator",
+        "Compressor Technician"
+      ],
+
+      "execution_proof_invoices": [
+        {
+          "invoice_no": "01/735/16-17",
+          "date": "28-06-2016",
+          "amount_inr": 690780
+        },
+        {
+          "invoice_no": "01/947/16-17",
+          "date": "15-07-2016",
+          "amount_inr": 582575
+        },
+        {
+          "invoice_no": "01/1402/16-17",
+          "date": "20-08-2016",
+          "amount_inr": 582575
+        },
+        {
+          "invoice_no": "01/2001/16-17",
+          "date": "12-10-2016",
+          "amount_inr": 596501
+        },
+        {
+          "invoice_no": "01/2394/16-17",
+          "date": "11-11-2016",
+          "amount_inr": 605641
+        },
+        {
+          "invoice_no": "01/4351/16-17",
+          "date": "18-03-2017",
+          "amount_inr": 644356
+        },
+        {
+          "invoice_no": "01/4647/16-17",
+          "date": "31-03-2017",
+          "amount_inr": 643094,
+          "po_number": "BGL/C&P/O&M/VJA/WO-008/16/2016-17",
+          "location_details": "CNG Mother Station, APSRTC-Vidyadharapuram, Governorpet-II, Ajithsingh Nagar"
+        },
+        {
+          "invoice_no": "01/338/17-18",
+          "date": "18-05-2017",
+          "amount_inr": 645078
+        },
+        {
+          "invoice_no": "01/755/17-18",
+          "date": "16-06-2017",
+          "amount_inr": 650877
+        },
+        {
+          "invoice_no": "01/986/17-18",
+          "date": "28-06-2017",
+          "amount_inr": 655684
+        },
+        {
+          "invoice_no": "1828/17-18",
+          "date": "17-08-2017",
+          "amount_inr": 919126
+        },
+        {
+          "invoice_no": "2207/17-18",
+          "date": "16-09-2017",
+          "amount_inr": 927000
+        },
+        {
+          "invoice_no": "4014/17-18",
+          "date": "12-01-2018",
+          "amount_inr": 941185.22
+        }
+      ],
+
+      "total_invoice_value_known_inr": 5928528.22,
+
+      "billing_model": {
+        "type": "Manpower-based",
+        "basis": "Man-month / monthly billing",
+        "tax_transition": [
+          "Service Tax (pre-GST)",
+          "GST 18% (post-GST)"
+        ]
+      },
+
+      "detailed_workforce_structure": {
+        "supervisory_roles": "Shift coordination, reporting, documentation",
+        "technical_roles": [
+          "Mechanical O&M",
+          "Electrical maintenance",
+          "PNG network maintenance"
+        ],
+        "operational_roles": [
+          "CNG dispensing",
+          "Compressor operation",
+          "Station operations"
+        ],
+        "support_roles": [
+          "Housekeeping",
+          "Helper / messenger services"
+        ]
+      }
+    },
+
+    {
+      "project_name": "Projects, Operation and Maintenance Services",
+      "location": "Vijayawada, Andhra Pradesh",
+
+      "foa_details": {
+        "date": "25-05-2019",
+        "contract_value_inr": 9944738,
+        "duration": "01-06-2019 to 31-07-2021"
+      },
+
+      "completion_certificate": {
+        "executed_value_inr": 7042720,
+        "completion_date": "31-07-2021"
+      },
+
+      "scope_of_work": [
+        "Pipeline project execution",
+        "CNG station O&M",
+        "Mechanical and electrical commissioning",
+        "Compressor maintenance",
+        "PNG pipeline laying",
+        "Leak detection and repair",
+        "Meter installation and maintenance",
+        "Inventory management",
+        "Fire and safety services",
+        "Documentation and reporting"
+      ]
+    }
+  ],
+
+  "total_combined_project_value_inr": 32506560,
+
+  "key_strengths": [
+    "Multi-year execution (2016–2021)",
+    "Strong manpower deployment capability",
+    "Experience in CNG and PNG operations",
+    "Detailed workforce structure available",
+    "Monthly billing execution proof available",
+    "Repeat engagement with same client",
+    "Experience in O&M + pipeline + technical services"
+  ],
+
+  "project_type": [
+    "Manpower Services",
+    "Operations & Maintenance",
+    "Gas Distribution Services"
+  ]
+}

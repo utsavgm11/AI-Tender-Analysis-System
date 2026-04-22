@@ -1,0 +1,138 @@
+{
+  "company_name": "Aarvi Encon Limited",
+
+  "client_group": "Atul Limited",
+
+  "clients": [
+    "Atul Limited"
+  ],
+
+  "projects_summary": {
+    "total_projects": 1,
+    "total_executed_value_inr": 55112000,
+    "highest_single_project_value_inr": 55112000,
+    "domains": [
+      "Construction Management",
+      "Engineering Manpower Services"
+    ]
+  },
+
+  "projects": [
+    {
+      "project_name": "Hiring of Manpower for Construction Management - AGRINT - 1 Project",
+      "client": "Atul Limited",
+      "location": "Atul Site",
+
+      "scope_of_work": [
+        "Service of Project Construction Engineering Managers",
+        "Civil and Structure discipline",
+        "Mechanical and Piping discipline",
+        "Electrical discipline",
+        "Instrumentation discipline",
+        "Safety discipline"
+      ],
+
+      "execution_model": "Manpower-based (Per Man Month)",
+
+      "duration": "01-May-2022 to 31-Mar-2023",
+
+      "financials": {
+        "total_order_value_inr": 55112000,
+        "rate_details": [
+          "INR 46500 per man month (1–4 years experience, 6 man months)",
+          "INR 67000 per man month (5–9 years experience, 52 man months)",
+          "INR 87000 per man month (10–15 years experience, 16 man months)",
+          "INR 119000 per man month (15+ years experience, 3 man months)"
+        ]
+      },
+
+      "key_highlights": [
+        "Contract Purchase Agreement for manpower services",
+        "Multi-discipline engineering manpower deployment",
+        "Contract period defined from May 2022 to March 2023"
+      ]
+    }
+  ],
+
+  "core_capabilities": [
+    "Construction Engineering Manpower Services",
+    "Multi-discipline Engineering Support",
+    "Site-based Manpower Deployment"
+  ],
+
+  "tender_relevance": {
+    "strong_sectors": [
+      "Construction Management",
+      "Engineering Services"
+    ],
+
+    "suitable_for": [
+      "Manpower supply contracts",
+      "Engineering manpower services",
+      "Construction management services"
+    ],
+
+    "strength_indicators": [
+      "Large manpower contract with Atul Limited",
+      "Deployment across multiple engineering disciplines"
+    ]
+  },
+
+  "important_clauses": [
+    "Payment within 30 days from invoice certification",
+    "Working days: 6 days per week",
+    "Working hours: 8:00 AM to 6:00 PM",
+    "Mobilization within 3–4 weeks after interview",
+    "Termination: 30 days notice (15 days for disciplinary cases)",
+    "GST applicable at 18%",
+    "Billing cycle from 21st to 20th of next month",
+    "Contractor to comply with PF, ESIC, Bonus, Leave and statutory requirements",
+    "Minimum wages as per Minimum Wages Act 1948",
+    "Identity card mandatory for workers",
+    "Safety compliance mandatory for all workers",
+    "Contractor responsible for accidents and compensation",
+    "Contract can be terminated by company at any time",
+    "Penalty applicable for non-compliance with PF norms",
+    "Penalty applicable for misconduct and safety violations",
+    "HSE compliance mandatory including PPE usage",
+    "Work permit required before starting any work",
+    "Contractor must maintain confidentiality of information",
+    "Disputes subject to jurisdiction at Valsad",
+    "Arbitration as per Arbitration and Conciliation Act 1996"
+  ],
+
+  "search_keywords": [
+    "construction manpower services",
+    "engineering manpower contract",
+    "Atul Limited project",
+    "multi discipline manpower",
+    "construction management manpower"
+  ],
+
+  "financial_strength_tag": null,
+
+  "experience_level": null,
+
+  "raw_text": [
+    {
+      "file_name": "CPA Atul",
+      "content": "Contract Purchase Agreement for hiring manpower for construction management AGRINT-1 project with total contract value INR 55112000 for period 01-May-2022 to 31-Mar-2023."
+    },
+    {
+      "file_name": "HR Compliance Annexure",
+      "content": "Contractor must comply with labour laws including PF, ESIC, Minimum Wages Act, maintain registers, ensure worker safety, and follow penalty matrix for non-compliance including fines and possible contract termination."
+    },
+    {
+      "file_name": "HSE Annexure",
+      "content": "Contractor must follow safety guidelines including PPE usage, work permit system, hot work safety, working at height safety, crane safety, and accident reporting. Penalties applicable for safety violations."
+    },
+    {
+      "file_name": "General Terms Agreement",
+      "content": "Prices inclusive of all costs, buyer can withhold payment, GST compliance required, confidentiality mandatory, arbitration under Indian law, jurisdiction at Valsad, termination rights available to buyer."
+    },
+    {
+      "file_name": "Declaration Documents",
+      "content": "Contractor confirms acceptance of CPA terms and commits to follow safety guidelines, PPE usage, work permit system, and incident reporting during project execution."
+    }
+  ]
+}

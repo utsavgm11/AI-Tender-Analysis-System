@@ -1,0 +1,74 @@
+{
+  "client": "BPCL / Bharat Oman Refineries Limited (BORL)",
+  "industry": "Oil & Gas / Refining / Terminal Operations",
+  "projects": [
+    {
+      "project_name": "O&M of Bina Despatch Terminal (BDT)",
+      "location": "Bina, Madhya Pradesh",
+      "work_order": {
+        "order_reference": "LOA L 2021-1806",
+        "date": "2021-09-01",
+        "contract_value_inr": null,
+        "duration": "Ongoing O&M"
+      },
+      "scope_of_work": [
+        "Operation & Maintenance of BDT",
+        "PESO regulatory compliance support",
+        "Throughput confirmation support",
+        "Terminal dispatch operations"
+      ],
+      "execution_proof_invoices": [
+        {
+          "invoice_no": "Execution Cert 2023",
+          "date": "2023-03-23",
+          "amount_inr": null,
+          "notes": "Work execution verified"
+        },
+        {
+          "invoice_no": "Completion Certificate 4500039290",
+          "date": null,
+          "amount_inr": null,
+          "notes": "Project completion acknowledged"
+        }
+      ],
+      "billing_model": {
+        "type": "Fixed/Manpower-based",
+        "basis": "Monthly operational support"
+      }
+    },
+    {
+      "project_name": "General Technical & Procurement Support",
+      "location": "Various BPCL Locations",
+      "work_order": {
+        "order_reference": "Multiple (e.g., 4509114375, 4509498529, 4509618505)",
+        "date": "2022-2023",
+        "contract_value_inr": null,
+        "duration": "Short-term/PO based"
+      },
+      "scope_of_work": [
+        "Supply of technical materials",
+        "Procurement and supply chain support",
+        "Digital contract execution"
+      ],
+      "execution_proof_invoices": [
+        {
+          "invoice_no": "PO 4500042889",
+          "date": null,
+          "amount_inr": null,
+          "notes": "Purchase order executed"
+        }
+      ]
+    }
+  ],
+  "key_strengths": [
+    "Proven compliance with PESO regulations",
+    "Strategic partnership with major PSU refineries",
+    "Capability to manage complex terminal dispatch operations",
+    "Repeat engagement across multiple POs and tender cycles"
+  ],
+  "project_type": [
+    "Terminal Operations & Maintenance",
+    "Technical Supply",
+    "Regulatory Compliance Support"
+  ]
+}

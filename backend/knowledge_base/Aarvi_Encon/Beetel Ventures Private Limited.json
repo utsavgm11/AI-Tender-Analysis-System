@@ -1,0 +1,38 @@
+{
+  "client": "Beetel Ventures Private Limited",
+  "project_type": "Manpower Supply Services",
+  "industry": "Sales / HR / Logistics",
+
+  "work_description": "Providing manpower supply services including sourcing and placement of staff",
+
+  "project_duration": {
+    "reference_date": "25-11-2016",
+    "duration_statement": "Associated since last two years"
+  },
+
+  "roles_deployed": [
+    "Sales Executives",
+    "HR Executives",
+    "Logistic Manager",
+    "Area Sales Manager"
+  ],
+
+  "performance_feedback": [
+    "Successfully sourced and placed manpower",
+    "Client satisfied with services provided"
+  ],
+
+  "document_type": "Completion / Experience Certificate",
+
+  "signatory": {
+    "name": "Jagat Parikh",
+    "designation": "Co-Founder and Director"
+  },
+
+  "raw_text": [
+    {
+      "file_name": "Beetel Ventures Completion Certificate",
+      "content": "Aarvi Encon Pvt Ltd provided manpower supply services including Sales Executives, HR Executives, Logistic Manager and Area Sales Manager for Beetel Ventures Pvt Ltd and services were satisfactory."
+    }
+  ]
+}

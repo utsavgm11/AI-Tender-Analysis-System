@@ -1,0 +1,83 @@
+{
+  "company_name": "Aarvi Encon Private Limited",
+
+  "client_name": "Dodsal Engineering & Construction Pte Ltd",
+
+  "client_type": "EPC / Engineering Company",
+
+  "projects_summary": {
+    "total_projects": 1,
+    "project_type": "Engineering Services Contract",
+    "engagement_type": "Technical engineering support"
+  },
+
+  "projects": [
+    {
+      "project_name": "Engineering Services Contract",
+
+      "project_code": "D-08710-1034-01-S-00009-15",
+
+      "client": "Dodsal Engineering & Construction Pte Ltd",
+
+      "scope_of_work": [
+        "Engineering design support",
+        "Technical documentation",
+        "Project engineering services",
+        "Support across engineering lifecycle"
+      ],
+
+      "execution_model": "Engineering services (not just manpower)",
+
+      "project_nature": "Structured EPC engineering support",
+
+      "key_highlights": [
+        "Engineering services beyond manpower supply",
+        "Exposure to EPC project systems",
+        "Structured project coding and documentation",
+        "Technical consulting capability"
+      ]
+    }
+  ],
+
+  "core_capabilities": [
+    "Engineering Design Support",
+    "Technical Documentation",
+    "EPC Project Engineering",
+    "Engineering Consultancy Services",
+    "Structured Project Execution"
+  ],
+
+  "tender_relevance": {
+    "strong_sectors": [
+      "EPC Projects",
+      "Oil & Gas",
+      "Industrial Infrastructure"
+    ],
+
+    "suitable_for": [
+      "Engineering service tenders",
+      "Design support contracts",
+      "EPC engineering assignments",
+      "Technical consultancy projects"
+    ],
+
+    "strength_indicators": [
+      "Engineering services capability (not just manpower)",
+      "Execution with EPC contractor",
+      "Structured engineering project involvement",
+      "Technical documentation expertise"
+    ]
+  },
+
+  "capability_level_upgrade": {
+    "from": "Manpower Supply",
+    "to": "Engineering Service Provider"
+  },
+
+  "important_clauses": [
+    "Engineering services contract structure",
+    "Project-specific coding and documentation",
+    "Execution under EPC standards",
+    "Technical deliverables included"
+  ]
+}

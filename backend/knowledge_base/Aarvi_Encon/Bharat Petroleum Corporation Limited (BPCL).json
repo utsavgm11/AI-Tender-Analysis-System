@@ -1,0 +1,164 @@
+{
+  "company_name": "Aarvi Encon Private Limited",
+
+  "client_group": "Bharat Petroleum Corporation Limited (BPCL)",
+
+  "clients": [
+    "BPCL Kochi Refinery",
+    "BPCL Mumbai Refinery",
+    "BPCL Pipeline Division (Irugur-Devangonthi)",
+    "BPCL Retail/Depot Operations (Pan-India)",
+    "BPCL Rasayani"
+  ],
+
+  "projects_summary": {
+    "total_projects": 50,
+    "total_executed_value_inr": 45000000,
+    "highest_single_project_value_inr": 927000,
+    "domains": [
+      "Refinery Operations & Maintenance",
+      "Integrated Facility Management (IFM)",
+      "Pipeline Infrastructure",
+      "Laboratory Services",
+      "Technical Engineering (LOBS Revamp)"
+    ]
+  },
+
+  "projects": [
+    {
+      "project_name": "Pan-India Lab Analyst & Chemist Services",
+      "client": "BPCL",
+      "location": "Regional deployment: East, North, South, West",
+      "scope_of_work": [
+        "Deployment of Lab Chemists and Analysts",
+        "Quality control and laboratory testing",
+        "Regional operational support across 4 zones"
+      ],
+      "execution_model": "Manpower-based (Tender/LOA 2018-2020)",
+      "duration": "2018-2020",
+      "financials": {
+        "total_order_value_inr": 12000000
+      },
+      "key_highlights": [
+        "GCC 2020 compliant execution",
+        "Pan-India operational bandwidth",
+        "Verified by Job Completion Certificates"
+      ]
+    },
+    {
+      "project_name": "Integrated Facility Management (IFM) & Fleet",
+      "client": "BPCL",
+      "location": "Kolkata / Pan-India",
+      "scope_of_work": [
+        "Integrated Facility Management services",
+        "Fleet management integration",
+        "Administrative and operational support"
+      ],
+      "execution_model": "LOI / PO-based",
+      "financials": {
+        "total_order_value_inr": 8500000
+      },
+      "key_highlights": [
+        "High-frequency recurring billing model",
+        "Operational in Kolkata and other major depots",
+        "Includes fleet management support"
+      ]
+    },
+    {
+      "project_name": "Engineering Support - LOBS Revamp",
+      "client": "BPCL",
+      "location": "Lube Oil Blending Plant",
+      "scope_of_work": [
+        "Hiring of engineers for LOBS Revamp",
+        "Technical consulting and project execution",
+        "Mechanical and electrical oversight"
+      ],
+      "execution_model": "Project-based Engineering Consultancy",
+      "financials": {
+        "total_order_value_inr": 5000000
+      },
+      "key_highlights": [
+        "High-level engineering consultancy",
+        "Specialized refinery maintenance experience",
+        "Critically complex project delivery"
+      ]
+    },
+    {
+      "project_name": "Pipeline Construction & Infrastructure",
+      "client": "BPCL",
+      "location": "Irugur-Devangonthi",
+      "scope_of_work": [
+        "Pipeline project execution",
+        "MR Construction activities",
+        "Site supervision and management"
+      ],
+      "execution_model": "Contract-based construction",
+      "financials": {
+        "total_order_value_inr": 7500000
+      },
+      "key_highlights": [
+        "Pipeline infrastructure expertise",
+        "Irugur-Devangonthi strategic corridor work",
+        "Confirmed by formal Work Orders"
+      ]
+    },
+    {
+      "project_name": "Refinery Maintenance (Kochi/Rasayani)",
+      "client": "BPCL",
+      "location": "Kochi Refinery / Rasayani / Various",
+      "scope_of_work": [
+        "Refinery O&M support",
+        "Safety Engineering services",
+        "Construction and maintenance of depot facilities"
+      ],
+      "execution_model": "Recurring PO/Work Order based",
+      "financials": {
+        "total_order_value_inr": 12000000
+      },
+      "key_highlights": [
+        "Relationship longevity (2009-Present)",
+        "Safety compliance focus (Safety Engineer POs)",
+        "Regional unit-rate expertise (WR/CR/NR)"
+      ]
+    }
+  ],
+
+  "core_capabilities": [
+    "Refinery O&M",
+    "Pipeline Engineering",
+    "IFM & Facility Management",
+    "Laboratory Quality Control",
+    "Safety Engineering",
+    "GST/Statutory Compliance Management",
+    "Pan-India Regional Management"
+  ],
+
+  "tender_relevance": {
+    "strong_sectors": [
+      "Oil & Gas Refining",
+      "Petrochemicals",
+      "Infrastructure & Pipelines",
+      "Integrated Facility Management"
+    ],
+    "suitable_for": [
+      "Refinery O&M Tenders",
+      "Manpower Services for Lab/Technical roles",
+      "Pipeline Construction Projects",
+      "Facility Management Contracts"
+    ],
+    "strength_indicators": [
+      "15+ year relationship with BPCL",
+      "Proven GCC 2020 compliance",
+      "Ability to handle high-frequency procurement cycles",
+      "Capability to manage site-specific salary and unit-rate structures"
+    ]
+  },
+
+  "important_clauses": [
+    "Full GCC 2020 compliance required",
+    "Strict statutory adherence (PF, ESI, Insurance)",
+    "GST-compliant invoicing and revised PO handling",
+    "Site-specific safety norms and Safety Engineering mandates",
+    "Unit-rate variations handled by region (CR/NR/WR)"
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "company_name": "Aarvi Encon Private Limited",
+
+  "client_group": "Certification Engineers International Ltd. (CEIL)",
+
+  "clients": [
+    "Certification Engineers International Ltd. (CEIL)"
+  ],
+
+  "projects_summary": {
+    "total_projects": 2,
+    "total_executed_value_inr": 0,
+    "highest_single_project_value_inr": 0,
+    "domains": [
+      "Engineering Consultancy",
+      "Technical Manpower Services",
+      "Certification & Inspection Support"
+    ]
+  },
+
+  "projects": [
+    {
+      "project_name": "Manpower Empanelment & Operational Support",
+      "client": "CEIL",
+      "location": "Pan-India / Mumbai Office",
+      "scope_of_work": [
+        "Provision of technical manpower services",
+        "Recurring manpower supply through formal empanelment",
+        "Continuous operational support via contract extensions"
+      ],
+      "execution_model": "Manpower-based (Empanelment)",
+      "duration": "2011–2016",
+      "financials": {
+        "contract_reference": "Mum-HR_A Series",
+        "status": "Extension Accepted"
+      },
+      "key_highlights": [
+        "Long-term empanelment status (multiple annual renewals)",
+        "Verified provider for engineering manpower"
+      ]
+    },
+    {
+      "project_name": "Technical Engineering & Inspection Support",
+      "client": "CEIL",
+      "location": "Project Sites",
+      "scope_of_work": [
+        "Technical engineering support services",
+        "Project execution support"
+      ],
+      "execution_model": "PO-based Service Contract",
+      "financials": {
+        "contract_reference": "PO No. CEIL-8529"
+      },
+      "key_highlights": [
+        "Formal PO-based service delivery",
+        "Validated by Completion Certificate"
+      ]
+    }
+  ],
+
+  "core_capabilities": [
+    "Technical Manpower Empanelment",
+    "Engineering Consultancy Support",
+    "Certification & Inspection Project Assistance",
+    "Contractual Compliance & Renewal Management"
+  ],
+
+  "tender_relevance": {
+    "strong_sectors": [
+      "Engineering Consultancy",
+      "Certification Services",
+      "Technical Manpower"
+    ],
+    "suitable_for": [
+      "Engineering Service Tenders",
+      "Technical Manpower Empanelment",
+      "Inspection & Certification Support"
+    ],
+    "strength_indicators": [
+      "Verified empanelment history with CEIL (2011-2016)",
+      "Record of successful project completion",
+      "Reliable track record in manpower extension acceptance"
+    ]
+  },
+
+  "important_clauses": [
+    "Empanelment conditions for manpower supply",
+    "Requirement for formal extension acceptance",
+    "Compliance with CEIL technical standards"
+  ]
+}

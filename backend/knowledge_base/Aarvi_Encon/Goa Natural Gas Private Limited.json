@@ -1,0 +1,164 @@
+{
+  "company_name": "Aarvi Encon Limited",
+
+  "client_name": "Goa Natural Gas Private Limited",
+
+  "client_type": "Joint Venture (GAIL Gas Limited & BPCL) – City Gas Distribution",
+
+  "projects_summary": {
+    "total_projects": 1,
+    "engagement_type": "Technical & Non-Technical Manpower Services",
+    "work_order_reference": "GNGPL/2018-19/MP/FOA/01",
+    "work_order_start_year": "2018",
+    "engagement_duration": "2 years (2018–2021) with extension possibility",
+    "billing_model": "Monthly per-resource billing (CTC-based)",
+    "project_nature": "Manpower deployment for CGD project",
+    "max_manpower_deployed": 48
+  },
+
+  "projects": [
+    {
+      "project_name": "Technical & Non-Technical Manpower Deployment for City Gas Distribution Project",
+
+      "client": "Goa Natural Gas Private Limited",
+
+      "end_clients": [
+        "City Gas Distribution Project – North Goa"
+      ],
+
+      "location": "North Goa, India",
+
+      "scope_of_work": [
+        "Deployment of technical manpower (engineers, technicians)",
+        "Deployment of non-technical manpower (admin, support staff)",
+        "Support for city gas distribution infrastructure operations",
+        "Provision of safety officers and compliance staff",
+        "Administrative and HR support staffing",
+        "Continuity of manpower supply as per contract"
+      ],
+
+      "roles_deployed": [
+        "Graduate Engineers",
+        "Diploma Engineers",
+        "Technicians",
+        "Fire & Safety Officer",
+        "Accountant",
+        "HR Executive",
+        "Office Assistant",
+        "Office Attendant",
+        "Housekeeper",
+        "Caretaker"
+      ],
+
+      "execution_model": "Outsourced manpower services",
+
+      "duration": "September 2018 to January 2021",
+
+      "scale": {
+        "maximum_personnel_deployed": 48,
+        "deployment_type": "Project-based multi-role manpower deployment"
+      },
+
+      "financials": {
+        "total_contract_value_inr": "1,85,56,636 (including GST)",
+        "executed_value_inr": "1,54,40,992 (including GST)",
+        "billing_model": "CTC-based monthly billing per resource",
+        "rate_structure": "Includes basic pay, statutory compliance (EPF, ESI, insurance), and allowances"
+      },
+
+      "extensions": [
+        {
+          "period": "Post initial 2-year contract",
+          "details": "Contract allowed extension for additional 1 year at same terms",
+          "special_condition": "Extension at sole discretion of client"
+        }
+      ],
+
+      "contractual_features": [
+        "Performance Bank Guarantee required",
+        "Contract initially valid for 2 years",
+        "Extension clause for additional 1 year",
+        "CTC-based rate structure including statutory components",
+        "Detailed manpower rate schedule defined",
+        "Extra hours payment provision included",
+        "Agency service charges per person per month defined",
+        "GST applicable (18%)",
+        "Formal acceptance via Fax of Acceptance (FOA)"
+      ],
+
+      "key_highlights": [
+        "Executed for major CGD (City Gas Distribution) project",
+        "Client is JV of GAIL and BPCL",
+        "Multi-role manpower deployment including engineers and admin staff",
+        "Contract value exceeding INR 1.85 Cr",
+        "Successful completion with certified performance",
+        "Structured rate card with statutory compliance",
+        "Provision for scalability and extended duration",
+        "Combination of technical and non-technical staffing"
+      ]
+    }
+  ],
+
+  "core_capabilities": [
+    "Technical Manpower Supply",
+    "Non-Technical Staffing",
+    "Oil & Gas / CGD Project Staffing",
+    "Engineering Resource Deployment",
+    "Administrative & Support Staffing",
+    "Compliance-driven Payroll & Statutory Management",
+    "Large-scale Multi-role Deployment",
+    "Project-based Staffing Solutions"
+  ],
+
+  "tender_relevance": {
+    "strong_sectors": [
+      "Oil & Gas",
+      "City Gas Distribution (CGD)",
+      "Infrastructure Projects",
+      "Energy Sector Staffing"
+    ],
+
+    "suitable_for": [
+      "Manpower supply tenders",
+      "Oil & gas staffing contracts",
+      "Infrastructure project staffing",
+      "Technical outsourcing projects",
+      "Facility and admin staffing tenders"
+    ],
+
+    "strength_indicators": [
+      "Client is JV of GAIL & BPCL",
+      "High-value contract (~1.85 Cr)",
+      "Multi-year execution with completion certificate",
+      "Deployment across technical and non-technical roles",
+      "Detailed rate and compliance structure",
+      "Proven execution in energy sector",
+      "Scalable manpower model"
+    ]
+  },
+
+  "financial_behavior": {
+    "billing_consistency": "High",
+    "revenue_pattern": "Recurring per resource with structured rate card",
+    "scalability": "High (multi-role manpower expansion capability)"
+  },
+
+  "relationship_strength": {
+    "repeat_engagement": true,
+    "extensions_granted": true,
+    "client_trust_level": "High",
+    "continuity_responsibility": "Handled successfully"
+  },
+
+  "important_clauses": [
+    "Performance Bank Guarantee required",
+    "Contract duration of 2 years with extension clause",
+    "Monthly billing based on manpower deployment",
+    "CTC-based rates including statutory compliance",
+    "Provision for extra hours payment",
+    "Agency service charges defined per resource",
+    "GST applicable at 18%",
+    "Formal acceptance via FOA",
+    "Extension at client’s discretion"
+  ]
+}

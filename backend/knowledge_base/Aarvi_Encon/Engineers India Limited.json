@@ -1,0 +1,139 @@
+{
+  "company_name": "Aarvi Encon Private Limited",
+
+  "client_name": "Engineers India Limited",
+
+  "client_type": "Government PSU / Engineering Consultancy",
+
+  "projects_summary": {
+    "project_type": "Technical Manpower Supply",
+    "engagement_type": "Long-term contract",
+    "work_order_reference": "8530/LOA/LT/17-18/1001/01",
+    "work_order_date": "30-11-2017",
+
+    "execution_years": ["2019", "2020", "2021"],
+    "duration": "Multi-year engagement (approx. 3+ years)",
+
+    "billing_model": "Monthly invoicing (RA bills)",
+
+    "financials": {
+      "total_invoice_value_inr": 608293.52,
+      "base_value_inr": 515502.99,
+      "tax_component_inr": 92790.54,
+      "average_monthly_invoice_inr": 35000,
+      "invoice_range_inr": "30000 - 50000",
+      "revenue_pattern": "Stable recurring revenue"
+    }
+  },
+
+  "projects": [
+    {
+      "project_name": "Technical Manpower Supply for Refinery Project",
+
+      "client": "Engineers India Limited",
+      "end_client": "IOCL Panipat Refinery",
+
+      "location": "Panipat, Haryana",
+
+      "scope_of_work": [
+        "Deployment of technical manpower",
+        "Support services for refinery operations",
+        "Engineering support services",
+        "Monthly manpower-based billing",
+        "Execution under PSU engineering consultancy"
+      ],
+
+      "execution_model": "Manpower-based (SAC: 998311)",
+
+      "billing_cycle": "Monthly (RA bills)",
+
+      "duration": "Multi-year (2019–2021 observed)",
+
+      "invoice_summary": {
+        "total_invoices_count": 18,
+        "total_value_inr": 608293.52,
+        "base_value_inr": 515502.99,
+        "tax_component_inr": 92790.54,
+        "monthly_invoice_range_inr": "30000 - 50000"
+      },
+
+      "sample_invoices": [
+        {
+          "month": "April 2020",
+          "invoice_value_inr": 33570.29
+        },
+        {
+          "month": "May 2020",
+          "invoice_value_inr": 34255.40
+        },
+        {
+          "month": "February 2021",
+          "invoice_value_inr": 49984.80
+        }
+      ],
+
+      "key_highlights": [
+        "Multi-year continuous engagement",
+        "Execution under PSU client (EIL)",
+        "Refinery project exposure (IOCL Panipat)",
+        "Stable monthly billing model",
+        "Demonstrates long-term client retention",
+        "Consistent recurring revenue stream"
+      ]
+    }
+  ],
+
+  "core_capabilities": [
+    "Technical Manpower Supply",
+    "Refinery Project Support",
+    "Oil & Gas Sector Execution",
+    "Long-term Contract Execution",
+    "Monthly Billing & RA Invoicing",
+    "PSU Client Handling",
+    "Compliance with Government Contracting Standards"
+  ],
+
+  "tender_relevance": {
+    "strong_sectors": [
+      "Oil & Gas",
+      "Refinery Projects",
+      "Government Engineering Projects"
+    ],
+
+    "suitable_for": [
+      "Manpower supply tenders",
+      "PSU contracts",
+      "Long-term service agreements",
+      "Refinery and petrochemical projects"
+    ],
+
+    "strength_indicators": [
+      "Multi-year engagement with Engineers India Limited",
+      "Consistent monthly invoicing pattern",
+      "Execution in refinery environment",
+      "Government PSU client experience",
+      "Proven long-term contract stability"
+    ]
+  },
+
+  "financial_behavior": {
+    "billing_consistency": "High",
+    "payment_model": "Client approval based",
+    "invoice_frequency": "Monthly",
+    "cash_flow_indicator": "Stable recurring inflow"
+  },
+
+  "relationship_strength": {
+    "long_term_engagement": true,
+    "client_trust_level": "High",
+    "continuity_indicator": "Strong"
+  },
+
+  "important_clauses": [
+    "Monthly invoicing based on manpower deployment",
+    "GST applicable on services",
+    "Payment subject to client approval",
+    "Standard PSU contract compliance",
+    "Invoices aligned with work order reference and billing cycle"
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "company_name": "Aarvi Encon Limited",
+
+  "client": "Dow Chemical International Private Limited",
+  "industry": "Chemical / Engineering Services",
+  "location": "Chennai, Tamil Nadu, India",
+
+  "agreement_details": {
+    "agreement_type": "Outsourcing Agreement",
+    "agreement_number": "SVCS_Agmt(DCIPL)/2019/15",
+    "initial_agreement_date": "11-07-2019",
+    "addendums": [
+      {
+        "reference": "Addendum I",
+        "date": "02-06-2022"
+      },
+      {
+        "reference": "Addendum II",
+        "date": "18-07-2023"
+      }
+    ]
+  },
+
+  "project_type": [
+    "Engineering Services",
+    "Technical Manpower Supply",
+    "IT & Allied Services"
+  ],
+
+  "services_provided": [
+    "Process Engineering",
+    "Mechanical Integrity Engineering",
+    "Instrumentation Engineering",
+    "Instrumentation Design",
+    "Cost Management",
+    "Civil Engineering & Design",
+    "Electrical Design",
+    "Piping Stress Engineering",
+    "Material Engineering",
+    "Static Equipment Engineering",
+    "Piping Design",
+    "ERS Specialist Services",
+    "Data Visualization",
+    "Reliability Engineering",
+    "Cost Estimation",
+    "Process Design",
+    "Construction Information Analysis",
+    "Software Development",
+    "PCE Design",
+    "Expediting Services",
+    "Rotary & Package Engineering",
+    "SAP Technology Support",
+    "Cost Control",
+    "Static Design Engineering"
+  ],
+
+  "manpower_strength": {
+    "engineering_personnel": "150+ engineers deployed"
+  },
+
+  "financials": {
+    "total_billing_inr": 516725819,
+    "billing_period": {
+      "start": "11-07-2019",
+      "end": "Till date (as per certificate date)"
+    },
+    "remarks": "Approximate total billing value"
+  },
+
+  "performance_feedback": {
+    "status": "Ongoing project",
+    "client_feedback": "Reasonably satisfied with services"
+  },
+
+  "execution_model": {
+    "type": "Outsourcing / manpower-based",
+    "billing": "Continuous billing based on deployed engineering resources"
+  },
+
+  "technical_capabilities": [
+    "Multi-discipline engineering support",
+    "Engineering design and analysis",
+    "Process and plant engineering",
+    "Digital and IT engineering support",
+    "Cross-functional engineering deployment"
+  ],
+
+  "key_strengths": [
+    "Long-term engagement (2019–2023+ ongoing)",
+    "Very high-value execution (~51+ Cr billing)",
+    "Large-scale manpower deployment (150+ engineers)",
+    "Multi-domain engineering expertise",
+    "Global chemical company client",
+    "Continuous contract with multiple addendums",
+    "Strong performance feedback from client"
+  ],
+
+  "tender_relevance": {
+    "strong_sectors": [
+      "Chemical",
+      "Petrochemical",
+      "Engineering Design",
+      "IT & Digital Engineering"
+    ],
+    "suitable_for": [
+      "Engineering service contracts",
+      "Technical manpower tenders",
+      "Design and consulting projects",
+      "IT-enabled engineering services"
+    ],
+    "strength_indicators": [
+      "High billing value (₹51+ Cr)",
+      "150+ engineers deployed",
+      "Long-term outsourcing engagement",
+      "Multi-discipline engineering capability"
+    ]
+  },
+
+  "document_type": "Client Certificate / Experience Letter",
+
+  "document_date": "November 2023",
+
+  "raw_text_summary": [
+    "Aarvi Encon Limited has been associated with Dow Chemical International Pvt Ltd since July 2019 under outsourcing agreement.",
+    "Services include engineering, technical and IT-related roles across multiple disciplines.",
+    "More than 150 engineering personnel have been deployed.",
+    "Total billing is approximately INR 51.67 crore.",
+    "Client confirms satisfaction and ongoing engagement."
+  ]
+}

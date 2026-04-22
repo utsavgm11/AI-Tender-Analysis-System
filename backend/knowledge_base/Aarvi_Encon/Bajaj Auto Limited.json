@@ -1,0 +1,71 @@
+{
+  "client": "Bajaj Auto Limited",
+  "project_type": "Safety Manpower Deployment",
+  "industry": "Automobile Manufacturing",
+
+  "work_description": "Deputation and provision of safety supervisor / safety officer services at Bajaj Auto Aurangabad plant",
+
+  "project_duration": {
+    "start_year": 2016,
+    "end_year": 2017
+  },
+
+  "orders": [
+    {
+      "po_number": "7700021404",
+      "date": "22-06-2016",
+      "value_inr": 269982,
+      "scope": "Deputation of safety supervisor at Aurangabad plant"
+    },
+    {
+      "po_number": "3110000460",
+      "date": "18-09-2017",
+      "value_inr": 359976,
+      "duration": "12 months",
+      "scope": "Providing safety officer services at Aurangabad plant"
+    }
+  ],
+
+  "total_combined_value_inr": 629958,
+
+  "roles_deployed": [
+    "Safety Officer",
+    "Safety Supervisor"
+  ],
+
+  "scope_details": [
+    "Safety supervision at plant",
+    "Implementation of safety standards as per IS standards",
+    "Compliance with BAL safety guidelines",
+    "Maintaining reports, documents and check sheets",
+    "Monitoring safety practices at site"
+  ],
+
+  "working_conditions": {
+    "working_hours": "08:00 AM to 05:00 PM",
+    "billing_cycle": "Monthly",
+    "replacement_policy": "Replacement required if personnel found incompetent",
+    "discipline_requirement": "Must follow Bajaj Auto plant discipline"
+  },
+
+  "commercial_terms": {
+    "payment_terms": "Immediate against certified invoice",
+    "tax": "Service tax / GST applicable",
+    "tds": "Applicable as per IT rules"
+  },
+
+  "contract_type": "Manpower Service Order",
+
+  "project_location": "Bajaj Auto Limited, Aurangabad (Waluj Plant)",
+
+  "raw_text": [
+    {
+      "file_name": "PO 2016",
+      "content": "Order for deputation of safety supervisor at Aurangabad plant with total order value INR 269982."
+    },
+    {
+      "file_name": "PO 2017",
+      "content": "Order for providing safety officer services for 12 months at Bajaj Auto Aurangabad plant with total value INR 359976."
+    }
+  ]
+}

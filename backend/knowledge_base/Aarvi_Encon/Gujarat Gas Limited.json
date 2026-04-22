@@ -1,0 +1,114 @@
+{
+  "company_name": "Aarvi Encon Private Limited",
+
+  "client_name": "Gujarat Gas Limited",
+
+  "client_type": "Government Gas Distribution Company (GSPC Group)",
+
+  "project_type": "Completion Certificate",
+
+  "projects_summary": {
+    "total_projects": 1,
+    "total_executed_value_inr": 270000000,
+    "highest_project_value_inr": 270000000,
+    "engagement_type": "Large-scale manpower services",
+    "duration": "September 2017 to March 2021 (3 years 7 months)"
+  },
+
+  "projects": [
+    {
+      "project_name": "Manpower Services Across Gujarat Gas Limited",
+
+      "client": "Gujarat Gas Limited",
+
+      "locations": [
+        "Multiple locations across Gujarat"
+      ],
+
+      "scope_of_work": [
+        "Deployment of manpower across business locations",
+        "Operational support services",
+        "Multi-site workforce management"
+      ],
+
+      "execution_model": "Large-scale manpower contract",
+
+      "duration": "3 years 7 months",
+
+      "scale": {
+        "personnel_deployed": "275+",
+        "deployment_type": "Multi-location workforce"
+      },
+
+      "financials": {
+        "contract_value_inr": 270000000,
+        "executed_value_inr": 270000000
+      },
+
+      "performance_feedback": "Contract executed successfully; certificate issued for tender participation",
+
+      "document_type": "Completion Certificate",
+
+      "key_highlights": [
+        "₹27 Crore project (highest in dataset)",
+        "275+ personnel deployed",
+        "Multi-location execution across Gujarat",
+        "Long-term contract (3+ years)",
+        "Government-linked client",
+        "Full contract value successfully executed"
+      ]
+    }
+  ],
+
+  "core_capabilities": [
+    "Large-scale Manpower Deployment",
+    "Multi-location Workforce Management",
+    "Industrial Operations Support",
+    "Gas Distribution Sector Experience",
+    "Long-term Contract Execution",
+    "High-volume Resource Management"
+  ],
+
+  "tender_relevance": {
+    "strong_sectors": [
+      "Oil & Gas Distribution",
+      "PSU / Government Projects",
+      "Industrial Operations"
+    ],
+
+    "suitable_for": [
+      "Large manpower supply tenders",
+      "Multi-location contracts",
+      "Government and PSU projects",
+      "Long-term service agreements"
+    ],
+
+    "strength_indicators": [
+      "₹27 Crore project execution",
+      "275+ manpower deployed",
+      "3+ years contract duration",
+      "Multi-location operations",
+      "Government-linked client",
+      "Full contract completion"
+    ]
+  },
+
+  "financial_strength": {
+    "very_high_value_project_experience": true,
+    "largest_project_in_dataset_inr": 270000000,
+    "execution_capacity_indicator": "Very High"
+  },
+
+  "relationship_strength": {
+    "large_scale_engagement": true,
+    "client_trust_level": "Very High"
+  },
+
+  "important_clauses": [
+    "Full contract value executed successfully",
+    "Large workforce deployment across locations",
+    "Long-term manpower services contract",
+    "Certificate issued for tender participation",
+    "Execution under government-linked organization"
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "company_name": "Aarvi Encon Private Limited",
+
+  "client_name": "ABB Limited",
+
+  "client_category": "MNC / Industrial EPC Client",
+
+  "projects_summary": {
+    "total_projects": 2,
+    "total_executed_value_inr": 3531248,
+    "highest_single_order_value_inr": 3309000,
+    "nature_of_work": "Electrical Commissioning & Supervision Services",
+    "execution_model": "Manpower-based technical services (monthly billing)"
+  },
+
+  "projects": [
+    {
+      "project_name": "Electrical System Commissioning Services",
+      "po_number": "3791057654",
+      "po_date": "2012-01-04",
+      "client": "ABB Limited",
+      "location": "Peenya Industrial Area, Bangalore",
+
+      "scope_of_work": [
+        "Commissioning of electrical systems",
+        "Deployment of technical manpower",
+        "Monthly service execution"
+      ],
+
+      "duration": "6 months",
+      "execution_period": "Jan 2012 - June 2012",
+
+      "financials": {
+        "monthly_rate_inr": 36000,
+        "base_order_value_inr": 216000,
+        "total_order_value_inr": 238248
+      },
+
+      "key_highlights": [
+        "Continuous 6-month execution",
+        "Client: ABB Limited (reputed MNC)",
+        "Electrical commissioning domain experience"
+      ]
+    },
+
+    {
+      "project_name": "Supervision for Erection & Commissioning",
+      "po_number": "3791054805",
+      "po_date": "2011-10-04",
+      "client": "ABB Limited",
+      "location": "Bangalore",
+
+      "scope_of_work": [
+        "Supervision of electrical erection",
+        "Commissioning supervision",
+        "Plant electrical supervision"
+      ],
+
+      "duration": "Extended with multiple amendments",
+
+      "financials": {
+        "base_order_value_inr": 3000000,
+        "total_order_value_inr": 3309000
+      },
+
+      "amendments": [
+        "Scope revision during execution",
+        "Extension of services",
+        "Additional work orders added"
+      ],
+
+      "key_highlights": [
+        "High-value order (~33 Lakhs)",
+        "Repeat engagement with ABB",
+        "Scope expansion during project lifecycle",
+        "Handled contract amendments successfully"
+      ]
+    }
+  ],
+
+  "core_capabilities": [
+    "Electrical System Commissioning",
+    "Erection & Commissioning Supervision",
+    "Industrial Plant Electrical Services",
+    "Technical Manpower Deployment",
+    "Handling Long-term Service Contracts",
+    "Execution under MNC clients (ABB)"
+  ],
+
+  "tender_relevance": {
+    "suitable_for": [
+      "Electrical commissioning tenders",
+      "Manpower-based service contracts",
+      "Industrial plant projects",
+      "Short to medium duration contracts"
+    ],
+
+    "strength_indicators": [
+      "Experience with reputed client (ABB)",
+      "Repeat orders from same client",
+      "Execution of extended contracts",
+      "Ability to handle scope changes"
+    ]
+  },
+
+  "key_contractual_strengths": [
+    "Fixed-price contract execution",
+    "Compliance with statutory requirements (PF, ESI, Tax)",
+    "Execution under strict invoicing and documentation norms",
+    "Ability to work under structured corporate procurement systems"
+  ],
+
+  "important_clauses": [
+    "Prices are firm and fixed with no escalation",
+    "Payment based on client approval",
+    "Service duration extendable based on performance",
+    "Full statutory compliance required"
+  ]
+}
