@@ -2,6 +2,7 @@ import google.generativeai as genai
 import json
 import os
 import glob
+import re
 from config import GEMINI_API_KEY
 from logic import analyze_tender_eligibility
 
@@ -9,81 +10,84 @@ from logic import analyze_tender_eligibility
 genai.configure(api_key=GEMINI_API_KEY)
 
 # ------------------ MODEL HANDLING ------------------
-
 model = None
 
 def get_model():
-    """Find best available Gemini model (prioritize 2.5 Flash)."""
+    """Find best available Gemini model."""
     try:
-        available_models = [
-            m.name for m in genai.list_models()
-            if 'generateContent' in m.supported_generation_methods
-        ]
-
-        # Debug (optional - remove later)
-        print("Available models:", available_models)
-
-        if 'models/gemini-2.5-flash' in available_models:
-            return genai.GenerativeModel('models/gemini-2.5-flash')
-
-        elif 'models/gemini-1.5-flash-latest' in available_models:
-            return genai.GenerativeModel('models/gemini-1.5-flash-latest')
-
-        elif 'models/gemini-1.5-flash' in available_models:
-            return genai.GenerativeModel('models/gemini-1.5-flash')
-
+        # Prioritize 2.5 Flash for best results and speed
+        return genai.GenerativeModel('gemini-2.5-flash')
     except Exception as e:
-        print(f"Error fetching models: {e}")
-
-    # Safe fallback
-    return genai.GenerativeModel('models/gemini-1.5-flash')
-
+        print(f"Error initializing model: {e}")
+        return genai.GenerativeModel('gemini-1.5-flash')
 
 def get_active_model():
-    """Lazy load model to avoid startup crash."""
+    """Lazy load model."""
     global model
     if model is None:
         model = get_model()
     return model
 
+# ------------------ SCHEMA PROTECTOR ------------------
+def ensure_complete_schema(data, error_msg=None):
+    """
+    Ensures all 17 fields are present. 
+    If a field is missing, it adds it with 'Not Specified'.
+    Prevents Pydantic 500 Internal Server Errors.
+    """
+    template = {
+        "tender_no": "Not Specified",
+        "client_name": "Not Specified",
+        "bid_decision": "Not Specified",
+        "key_eligibility": "Not Specified",
+        "financial_eligibility": "Not Specified",
+        "technical_eligibility": "Not Specified",
+        "min_experience": "Not Specified",
+        "net_worth_check": "Not Specified",
+        "similar_work": "Not Specified",
+        "scope_of_work": "Not Specified",
+        "manpower_requirement": "Not Specified",
+        "mandatory_compliance": "Not Specified",
+        "penalty_terms": "Not Specified",
+        "pq_status": "Not Specified",
+        "win_probability": "Not Specified",
+        "profit_forecast": "Not Specified",
+        "strategic_advice": "Not Specified"
+    }
+    
+    # If the AI failed completely, put the error in the UI gracefully
+    if error_msg:
+        template["strategic_advice"] = f"Error during analysis: {str(error_msg)[:100]}"
+        template["bid_decision"] = "Analysis Failed"
+    
+    # Merge the AI data into the safe template
+    if isinstance(data, dict):
+        for key in template.keys():
+            if key in data and data[key]:
+                # Force everything to be a string just in case
+                template[key] = str(data[key])
+                
+    return template
 
 # ------------------ KNOWLEDGE BASE ------------------
-
 def get_knowledge_base():
-    """Load all JSON files from Aarvi knowledge base."""
-    
-    # Always use relative path (safe)
     path = os.path.join("knowledge_base", "Aarvi_Encon", "*.json")
-    
     knowledge = []
-    
     for file_path in glob.glob(path):
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 knowledge.append(json.load(f))
-        except json.JSONDecodeError:
-            print(f"Skipping invalid JSON: {file_path}")
-    
+        except Exception:
+            pass # Skip invalid files
     return json.dumps(knowledge)
 
-
 # ------------------ MAIN AI FUNCTION ------------------
-
 def generate_tender_summary(tender_text=None, custom_prompt=None, strategy_context=None):
-
     model = get_active_model()
 
     # -------- CHAT MODE --------
     if custom_prompt:
-        chat_prompt = f"""
-        You are a strategic bidding AI.
-
-        Context:
-        {strategy_context}
-
-        User Question:
-        {custom_prompt}
-        """
+        chat_prompt = f"Context: {strategy_context}\n\nQuestion: {custom_prompt}"
         try:
             response = model.generate_content(chat_prompt)
             return response.text
@@ -92,91 +96,73 @@ def generate_tender_summary(tender_text=None, custom_prompt=None, strategy_conte
 
     # -------- LOGIC PRE-CHECK --------
     logic_results = analyze_tender_eligibility(tender_text)
-
-    # -------- KNOWLEDGE BASE --------
     kb_data = get_knowledge_base()
 
     # -------- PROMPT --------
+    # -------- PROMPT --------
     prompt = f"""
     ROLE: Chief Bidding Officer at Aarvi Encon.
+    
+    KNOWLEDGE BASE: {kb_data}
+    PRE-CHECK DECISION: {logic_results['decision_message']}
 
-    KNOWLEDGE BASE:
-    {kb_data}
+    STRICT RULES:
+    1. NO ASSUMPTIONS: If a specific value or requirement is not explicitly stated in the tender text, output "Not Specified". 
+    2. DATA ONLY: Base all calculations solely on the provided Tender Text and Knowledge Base.
 
-    HARDCODED PRE-CHECK:
-    - Decision: {logic_results['decision_message']}
-    - Sectors: {logic_results['matched_sectors']}
-    - Services: {logic_results['matched_services']}
+    KPI CALCULATION LOGIC:
+    - pq_status: 
+        Compare 'Financial' and 'Technical' requirements in the tender vs. Aarvi's history in Knowledge Base.
+        If all met: "Eligible". If most met but missing 1 doc: "Risky". If criteria are higher than Aarvi's capacity: "Ineligible".
+    
+    - win_probability: 
+        Analyze: 1. Previous work with this specific client? 2. Similar projects executed? 3. Local presence in the project state?
+        Assign a percentage (0-100%). If no similar work or client history found, output "Not Specified".
+    
+    - profit_forecast: 
+        Look for "Service Charges", "Management Fee", or "Profit Margin" clauses. 
+        If the tender mentions a minimum floor price or fixed percentage (e.g., 3.85%), evaluate if it's "Healthy" or "Low Margin".
+        If no pricing terms found: "Not Specified".
 
-    IMPORTANT:
-    You MUST follow the pre-check decision strictly.
+    INSTRUCTIONS:
+    - Output ONLY valid JSON.
+    - pq_status: 1-2 words.
+    - win_probability: Percentage (e.g. 85%) or "Not Specified".
+    - profit_forecast: 1-2 words.
+    - For all other fields: 3-4 short bullet points.
 
-    OUTPUT:
-    Return ONLY valid JSON.
-
+    JSON SCHEMA:
     {{
-      "tender_no": "",
-      "client_name": "",
-      "bid_decision": "",
-      "key_eligibility": "",
-      "financial_eligibility": "",
-      "technical_eligibility": "",
-      "min_experience": "",
-      "net_worth_check": "",
-      "similar_work": "",
-      "scope_of_work": "",
-      "mandatory_compliance": "",
-      "penalty_terms": "",
-      "pq_status": "",
-      "win_probability": "",
-      "profit_forecast": "",
-      "manpower_requirement": "",
-      "strategic_advice": ""
+      "tender_no": "", "client_name": "", "bid_decision": "", "key_eligibility": "",
+      "financial_eligibility": "", "technical_eligibility": "", "min_experience": "",
+      "net_worth_check": "", "similar_work": "", "scope_of_work": "",
+      "manpower_requirement": "", "mandatory_compliance": "", "penalty_terms": "",
+      "pq_status": "", "win_probability": "", "profit_forecast": "", "strategic_advice": ""
     }}
 
-    TENDER:
-    {tender_text[:25000]}
+    TENDER TEXT: {tender_text[:20000]}
     """
 
     # -------- AI CALL --------
     try:
-        response = model.generate_content(prompt)
-
-        raw_text = (
-            response.text
-            .replace("```json", "")
-            .replace("```", "")
-            .strip()
+        response = model.generate_content(
+            prompt,
+            generation_config={"response_mime_type": "application/json"}
         )
-
-        try:
-            return json.loads(raw_text)
-
-        except json.JSONDecodeError:
-            print("Invalid JSON from AI:\n", raw_text)
-            return {
-                "error": "Invalid JSON response",
-                "raw_output": raw_text
-            }
+        
+        # --- ROBUST JSON EXTRACTION ---
+        # Look for the first '{{' and last '}}' to strip out any markdown/filler
+        match = re.search(r'\{.*\}', response.text, re.DOTALL)
+        if match:
+            json_str = match.group(0)
+            data = json.loads(json_str)
+            return ensure_complete_schema(data)
+        else:
+            # Fallback if regex fails but response is raw JSON
+            data = json.loads(response.text)
+            return ensure_complete_schema(data)
 
     except Exception as e:
-        print(f"AI Generation Failed: {e}")
-        return {
-            "tender_no": "ERROR",
-            "client_name": "ERROR",
-            "bid_decision": logic_results.get('decision_message', 'ERROR'),
-            "key_eligibility": str(e),
-            "financial_eligibility": "N/A",
-            "technical_eligibility": "N/A",
-            "min_experience": "N/A",
-            "net_worth_check": "N/A",
-            "similar_work": "N/A",
-            "scope_of_work": "N/A",
-            "mandatory_compliance": "N/A",
-            "penalty_terms": "N/A",
-            "pq_status": "Error",
-            "win_probability": "Error",
-            "profit_forecast": "Error",
-            "manpower_requirement": "N/A",
-            "strategic_advice": "Failed to generate report."
-        }
+        print(f"CRITICAL ERROR: {e}")
+        # Return a fully filled error object to prevent 500 crashes
+        return ensure_complete_schema({}, error_msg=e)

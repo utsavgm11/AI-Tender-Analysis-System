@@ -7,16 +7,14 @@ import io
 import os
 from pydantic import BaseModel
 from typing import Optional
+from datetime import datetime, timedelta
 
-# Importing your modular components
 from ai_service import generate_tender_summary
 from file_parser import extract_text_from_upload 
-# Ensure models.py is saved in the same backend folder!
 from models import AnalysisResponse 
 
 app = FastAPI()
 
-# Enable CORS for React Frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -25,20 +23,31 @@ app.add_middleware(
 )
 
 def get_db_connection():
-    # Absolute path to ensure DB is found regardless of where terminal is opened
     base_dir = os.path.dirname(os.path.abspath(__file__))
     db_path = os.path.join(base_dir, 'tender_data.db')
+    
+    # Auto-create table with the new pre_bidding_date column if it doesn't exist
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS tenders (
+            tender_no TEXT PRIMARY KEY, name_of_client TEXT, tender_status TEXT, 
+            received_date TEXT, due_date TEXT, pre_bidding_date TEXT, location TEXT, 
+            tender_open_price REAL, quoted_value REAL, description TEXT, project_manager TEXT, 
+            emd TEXT, emd_status TEXT, tender_fee_status TEXT, price_status TEXT, 
+            source TEXT, comments TEXT, docs_prepared_by TEXT, financial_year TEXT
+        )
+    """)
+    conn.commit()
     return conn
 
-# Database Model for SQLite
 class Tender(BaseModel):
     tender_no: str
     name_of_client: str
     tender_status: str
     received_date: Optional[str] = None
     due_date: Optional[str] = None
+    pre_bidding_date: Optional[str] = None  # NEW FIELD
     location: Optional[str] = None
     tender_open_price: Optional[float] = None
     quoted_value: Optional[float] = 0.0
@@ -53,37 +62,35 @@ class Tender(BaseModel):
     docs_prepared_by: Optional[str] = None
     financial_year: Optional[str] = "2023-2024"
 
-# --- AI ENDPOINTS ---
+@app.get("/health")
+async def health_check():
+    return {"status": "online"}
 
-@app.post("/analyze-tender", response_model=AnalysisResponse)
-async def analyze_tender(file: UploadFile = File(...)):
-    # 1. Parse PDF/File using the modular parser
-    tender_text = await extract_text_from_upload(file) 
+# --- NOTIFICATION ENDPOINT ---
+@app.get("/tenders/upcoming-prebid")
+def get_upcoming_prebids():
+    conn = get_db_connection()
+    tenders = conn.execute("SELECT * FROM tenders WHERE pre_bidding_date IS NOT NULL AND pre_bidding_date != ''").fetchall()
+    conn.close()
     
-    # 2. Check for parser errors or empty files
-    if tender_text.startswith("Error"):
-        # Wrap the error in the schema so the frontend doesn't crash
-        return {"aarvi_intelligence": {"tender_no": "PARSE_ERROR", "client_name": tender_text, "bid_decision": "NO-BID", "key_eligibility": "", "financial_eligibility": "", "technical_eligibility": "", "min_experience": "", "net_worth_check": "", "similar_work": "", "scope_of_work": "", "mandatory_compliance": "", "penalty_terms": "", "pq_status": "", "win_probability": "", "profit_forecast": "", "manpower_requirement": "", "strategic_advice": "Check PDF format."}}
-
-    if len(tender_text.strip()) < 50:
-        return {"aarvi_intelligence": {"tender_no": "EMPTY_FILE", "client_name": "The file contains no readable text. If it's a scanned PDF, an OCR parser is required.", "bid_decision": "NO-BID", "key_eligibility": "", "financial_eligibility": "", "technical_eligibility": "", "min_experience": "", "net_worth_check": "", "similar_work": "", "scope_of_work": "", "mandatory_compliance": "", "penalty_terms": "", "pq_status": "", "win_probability": "", "profit_forecast": "", "manpower_requirement": "", "strategic_advice": ""}}
-
-    # 3. Get AI Summary
-    analysis_dict = generate_tender_summary(tender_text=tender_text)
+    today = datetime.now()
+    two_days_later = today + timedelta(days=2)
     
-    # 4. Return validated data
-    return {"aarvi_intelligence": analysis_dict}
+    upcoming = []
+    for t in tenders:
+        try:
+            pbd = datetime.strptime(t['pre_bidding_date'], '%Y-%m-%d')
+            # If the meeting is today or within the next 2 days
+            if today.date() <= pbd.date() <= two_days_later.date():
+                upcoming.append(dict(t))
+        except Exception as e:
+            continue
+            
+    # Sort nearest date first
+    upcoming.sort(key=lambda x: x['pre_bidding_date'])
+    return upcoming
 
-@app.post("/chat")
-async def chat_tender(data: dict):
-    reply = generate_tender_summary(
-        custom_prompt=data.get("query"), 
-        strategy_context=data.get("context")
-    )
-    return {"reply": reply}
-
-# --- DATABASE ROUTES ---
-
+# --- STANDARD DB ROUTES ---
 @app.get("/tenders")
 def get_tenders():
     conn = get_db_connection()
@@ -97,13 +104,13 @@ def add_tender(t: Tender):
     try:
         conn.execute("""
             INSERT INTO tenders (
-                tender_no, name_of_client, tender_status, received_date, due_date, 
+                tender_no, name_of_client, tender_status, received_date, due_date, pre_bidding_date,
                 location, tender_open_price, quoted_value, description, project_manager, 
                 emd, emd_status, tender_fee_status, price_status, source, comments, 
                 docs_prepared_by, financial_year
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
-            t.tender_no, t.name_of_client, t.tender_status, t.received_date, t.due_date,
+            t.tender_no, t.name_of_client, t.tender_status, t.received_date, t.due_date, t.pre_bidding_date,
             t.location, t.tender_open_price, t.quoted_value, t.description, t.project_manager,
             t.emd, t.emd_status, t.tender_fee_status, t.price_status, t.source, t.comments,
             t.docs_prepared_by, t.financial_year
@@ -121,13 +128,13 @@ def edit_tender_full(tender_no: str, t: Tender):
     try:
         conn.execute("""
             UPDATE tenders SET 
-                name_of_client=?, tender_status=?, received_date=?, due_date=?, 
+                name_of_client=?, tender_status=?, received_date=?, due_date=?, pre_bidding_date=?,
                 location=?, tender_open_price=?, quoted_value=?, description=?, 
                 project_manager=?, emd=?, emd_status=?, tender_fee_status=?, 
                 price_status=?, source=?, comments=?, docs_prepared_by=?, financial_year=?
             WHERE tender_no=?
         """, (
-            t.name_of_client, t.tender_status, t.received_date, t.due_date,
+            t.name_of_client, t.tender_status, t.received_date, t.due_date, t.pre_bidding_date,
             t.location, t.tender_open_price, t.quoted_value, t.description,
             t.project_manager, t.emd, t.emd_status, t.tender_fee_status,
             t.price_status, t.source, t.comments, t.docs_prepared_by,

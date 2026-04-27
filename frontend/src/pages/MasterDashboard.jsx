@@ -2,10 +2,10 @@ import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { 
   Target, Clock, CheckCircle, XCircle, FileText, 
-  Search, Plus, Edit3, X, BarChart2 
+  Search, Plus, Edit3, X 
 } from 'lucide-react';
 
-const MasterDashboard = ({ onViewAnalytics }) => {
+const MasterDashboard = () => {
   const [tenders, setTenders] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
@@ -16,9 +16,9 @@ const MasterDashboard = ({ onViewAnalytics }) => {
     tender_no: '', name_of_client: '', tender_status: 'Pending', 
     received_date: '', due_date: '', location: '', 
     tender_open_price: '', quoted_value: '', description: '', 
-    project_manager: '', emd: '', emd_status: '', 
-    tender_fee_status: '', price_status: '', source: '', 
-    comments: '', docs_prepared_by: '', financial_year: '2023-2024'
+    project_manager: '', emd: '', emd_status: 'Pending', 
+    tender_fee_status: 'Pending', price_status: 'Pending', source: '', 
+    comments: '', docs_prepared_by: '', financial_year: '2023-2024', pre_bidding_date: '',
   });
 
   const API_URL = "http://127.0.0.1:8001";
@@ -47,9 +47,10 @@ const MasterDashboard = ({ onViewAnalytics }) => {
       tender_no: '', name_of_client: '', tender_status: 'Pending', 
       received_date: '', due_date: '', location: '', 
       tender_open_price: '', quoted_value: '', description: '', 
-      project_manager: '', emd: '', emd_status: '', 
-      tender_fee_status: '', price_status: '', source: '', 
-      comments: '', docs_prepared_by: '', financial_year: '2023-2024'
+      project_manager: '', emd: '', emd_status: 'Pending', 
+      tender_fee_status: 'Pending', price_status: 'Pending', source: '', 
+      comments: '', docs_prepared_by: '', financial_year: '2023-2024',
+      pre_bidding_date: ''
     });
     setIsModalOpen(true);
   };
@@ -60,24 +61,35 @@ const MasterDashboard = ({ onViewAnalytics }) => {
       ...tender,
       received_date: tender.received_date ? tender.received_date.split(' ')[0] : '',
       due_date: tender.due_date ? tender.due_date.split(' ')[0] : '', 
+      pre_bidding_date: tender.pre_bidding_date ? tender.pre_bidding_date.split(' ')[0] : '',
     });
     setIsModalOpen(true);
   };
 
   const handleSaveTender = async (e) => {
     e.preventDefault();
+    
+    // DATA CLEANING: Convert empty strings to null for numbers to fix 422 errors
+    const cleanedData = {
+      ...formData,
+      tender_open_price: formData.tender_open_price === '' ? null : parseFloat(formData.tender_open_price),
+      quoted_value: formData.quoted_value === '' ? null : parseFloat(formData.quoted_value),
+      pre_bidding_date: formData.pre_bidding_date === '' ? null : formData.pre_bidding_date
+    };
+
     try {
       setLoading(true);
       if (modalMode === 'add') {
-        await axios.post(`${API_URL}/tenders`, formData);
+        await axios.post(`${API_URL}/tenders`, cleanedData);
       } else {
-        await axios.put(`${API_URL}/tenders/${encodeURIComponent(formData.tender_no)}`, formData);
+        await axios.put(`${API_URL}/tenders/${encodeURIComponent(formData.tender_no)}`, cleanedData);
       }
       setIsModalOpen(false);
       fetchTenders().finally(() => setLoading(false));
     } catch (err) {
       setLoading(false);
-      alert("Failed to save: " + (err.response?.data?.error || err.message));
+      console.error("Save Error Details:", err.response?.data);
+      alert("Failed to save: " + (err.response?.data?.detail ? JSON.stringify(err.response.data.detail) : err.message));
     }
   };
 
@@ -112,7 +124,11 @@ const MasterDashboard = ({ onViewAnalytics }) => {
     lost: tenders.filter(t => t.tender_status === 'Tender Lost').length,
   }), [tenders, today]);
 
-  if (loading) return <div className="p-20 text-center font-bold text-slate-400">Loading Database...</div>;
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  if (loading && tenders.length === 0) return <div className="p-20 text-center font-bold text-slate-400">Loading Database...</div>;
 
   return (
     <div className="relative p-8 h-full bg-slate-50 overflow-y-auto">
@@ -126,34 +142,50 @@ const MasterDashboard = ({ onViewAnalytics }) => {
       <div className="flex justify-between items-center mb-6">
         <div className="relative w-96">
           <Search className="absolute left-3 top-2.5 text-slate-400" size={18} />
-          <input className="w-full pl-10 py-2 rounded-xl border outline-none" placeholder="Search Client or Tender..." onChange={(e) => setSearchTerm(e.target.value)} />
+          <input className="w-full pl-10 py-2 rounded-xl border outline-none focus:ring-2 focus:ring-indigo-500 transition-all" placeholder="Search Client or Tender..." onChange={(e) => setSearchTerm(e.target.value)} />
         </div>
         <div className="flex gap-3">
-          <button onClick={openAddModal} className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2"><Plus size={16}/> Add Tender</button>
-          <button onClick={handleDownload} className="bg-slate-800 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2"><FileText size={16} /> Export</button>
-          <button onClick={onViewAnalytics} className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold flex gap-2 items-center"><BarChart2 size={16} /> Analytics</button>
+          <button onClick={openAddModal} className="bg-emerald-600 hover:bg-emerald-700 transition-colors text-white px-5 py-2 rounded-lg font-bold flex items-center gap-2"><Plus size={16}/> Add Tender</button>
+          <button onClick={handleDownload} className="bg-slate-800 hover:bg-slate-900 transition-colors text-white px-5 py-2 rounded-lg font-bold flex items-center gap-2"><FileText size={16} /> Export CSV</button>
         </div>
       </div>
 
       <div className="bg-white rounded-2xl border overflow-hidden shadow-sm">
         <table className="w-full text-left">
-          <thead className="bg-slate-900 text-white text-xs">
-            <tr><th className="p-4">CLIENT</th><th className="p-4">TENDER NO</th><th className="p-4">DUE DATE</th><th className="p-4">STATUS</th><th className="p-4 text-center">ACTION</th></tr>
+          <thead className="bg-slate-900 text-white text-xs uppercase tracking-wider">
+            <tr>
+              <th className="p-4">Client</th>
+              <th className="p-4">Tender No</th>
+              <th className="p-4">Due Date</th>
+              <th className="p-4">Status</th>
+              <th className="p-4 text-center">Action</th>
+            </tr>
           </thead>
           <tbody>
             {sortedTenders.map((t) => (
-              <tr key={t.tender_no} className={`border-b text-sm transition-all ${getRowStyle(t.due_date)}`}>
+              <tr key={t.tender_no} className={`border-b text-sm transition-all hover:bg-slate-50 ${getRowStyle(t.due_date)}`}>
                 <td className="p-4 font-bold text-slate-700">{t.name_of_client}</td>
                 <td className="p-4 font-mono text-slate-500">{t.tender_no}</td>
                 <td className="p-4 font-bold">{t.due_date ? new Date(t.due_date).toLocaleDateString() : 'N/A'}</td>
                 <td className="p-4">
-                  <select value={t.tender_status || 'Pending'} onChange={(e) => handleStatusChange(t.tender_no, e.target.value)} className="bg-transparent border p-1 rounded font-black text-[10px] uppercase text-indigo-600 outline-none">
-                    <option value="Pending">Pending</option><option value="Tender Quoted">Tender Quoted</option>
-                    <option value="Tender Won">Tender Won</option><option value="Tender Lost">Tender Lost</option>
-                    <option value="Tender Regret">Tender Regret</option><option value="Tender Cancelled">Tender Cancelled</option>
+                  <select 
+                    value={t.tender_status || 'Pending'} 
+                    onChange={(e) => handleStatusChange(t.tender_no, e.target.value)} 
+                    className="bg-transparent border p-1 rounded font-black text-[10px] uppercase text-indigo-600 outline-none cursor-pointer hover:bg-indigo-50"
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Tender Quoted">Tender Quoted</option>
+                    <option value="Tender Won">Tender Won</option>
+                    <option value="Tender Lost">Tender Lost</option>
+                    <option value="Tender Regret">Tender Regret</option>
+                    <option value="Tender Cancelled">Tender Cancelled</option>
                   </select>
                 </td>
-                <td className="p-4 text-center"><button onClick={() => openEditModal(t)} className="p-2 text-slate-400 hover:text-indigo-600"><Edit3 size={18} /></button></td>
+                <td className="p-4 text-center">
+                  <button onClick={() => openEditModal(t)} className="p-2 text-slate-400 hover:text-indigo-600 transition-colors">
+                    <Edit3 size={18} />
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -161,13 +193,38 @@ const MasterDashboard = ({ onViewAnalytics }) => {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white p-8 rounded-3xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl relative">
-            <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-slate-400"><X size={24} /></button>
-            <h2 className="text-2xl font-black mb-6">{modalMode === 'add' ? 'Add Tender' : 'Edit Tender'}</h2>
-            <form onSubmit={handleSaveTender} className="space-y-4">
-               {/* Inputs go here */}
-               <button type="submit" className="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold">Save Record</button>
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white p-8 rounded-[2rem] w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl relative custom-scrollbar">
+            <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-slate-400 hover:text-slate-800 transition-colors"><X size={24} /></button>
+            <h2 className="text-2xl font-black mb-6 text-slate-800">{modalMode === 'add' ? 'Add New Tender' : 'Edit Tender Details'}</h2>
+            <form onSubmit={handleSaveTender} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <InputField label="Tender No *" name="tender_no" value={formData.tender_no} onChange={handleChange} required disabled={modalMode === 'edit'} />
+                <InputField label="Name of Client *" name="name_of_client" value={formData.name_of_client} onChange={handleChange} required />
+                <SelectField label="Tender Status" name="tender_status" value={formData.tender_status} onChange={handleChange} options={['Pending', 'Tender Quoted', 'Tender Won', 'Tender Lost', 'Tender Regret', 'Tender Cancelled']} />
+                <InputField label="Received Date" name="received_date" type="date" value={formData.received_date} onChange={handleChange} />
+                <InputField label="Due Date" name="due_date" type="date" value={formData.due_date} onChange={handleChange} />
+                <InputField label="Pre-Bidding Date" name="pre_bidding_date" type="date" value={formData.pre_bidding_date} onChange={handleChange} />
+                <InputField label="Location" name="location" value={formData.location} onChange={handleChange} />
+                <InputField label="Tender Open Price" name="tender_open_price" value={formData.tender_open_price} onChange={handleChange} />
+                <InputField label="Quoted Value" name="quoted_value" value={formData.quoted_value} onChange={handleChange} />
+                <SelectField label="Price Status" name="price_status" value={formData.price_status} onChange={handleChange} options={['Pending', 'Submitted', 'Not Applicable']} />
+                <InputField label="Project Manager" name="project_manager" value={formData.project_manager} onChange={handleChange} />
+                <InputField label="Docs Prepared By" name="docs_prepared_by" value={formData.docs_prepared_by} onChange={handleChange} />
+                <InputField label="Financial Year" name="financial_year" value={formData.financial_year} onChange={handleChange} />
+                <InputField label="EMD Value" name="emd" value={formData.emd} onChange={handleChange} />
+                <SelectField label="EMD Status" name="emd_status" value={formData.emd_status} onChange={handleChange} options={['Pending', 'Submitted', 'Exempted', 'Returned']} />
+                <SelectField label="Tender Fee Status" name="tender_fee_status" value={formData.tender_fee_status} onChange={handleChange} options={['Pending', 'Paid', 'Exempted']} />
+                <InputField label="Source (Portal/Email)" name="source" value={formData.source} onChange={handleChange} />
+              </div>
+              <div className="grid grid-cols-1 gap-6">
+                <div><label className="block text-[11px] uppercase font-bold text-slate-500 mb-2">Description</label><textarea name="description" value={formData.description} onChange={handleChange} rows="2" className="w-full p-3 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"></textarea></div>
+                <div><label className="block text-[11px] uppercase font-bold text-slate-500 mb-2">Comments</label><textarea name="comments" value={formData.comments} onChange={handleChange} rows="2" className="w-full p-3 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"></textarea></div>
+              </div>
+              <div className="pt-4 flex justify-end gap-3 border-t">
+                <button type="button" onClick={() => setIsModalOpen(false)} className="px-6 py-3 font-bold text-slate-500 hover:bg-slate-100 rounded-xl transition-colors">Cancel</button>
+                <button type="submit" disabled={loading} className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition-colors flex items-center gap-2">{loading ? 'Saving...' : 'Save Tender Record'}</button>
+              </div>
             </form>
           </div>
         </div>
@@ -177,9 +234,23 @@ const MasterDashboard = ({ onViewAnalytics }) => {
 };
 
 const StatCard = ({ title, value, icon }) => (
-  <div className="bg-white p-6 rounded-2xl border shadow-sm flex items-center justify-between">
-    <div><p className="text-[10px] font-bold text-slate-400 uppercase">{title}</p><h3 className="text-2xl font-black">{value}</h3></div>
-    <div className="p-3 bg-slate-50 rounded-xl">{icon}</div>
+  <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
+    <div><p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{title}</p><h3 className="text-3xl font-black text-slate-800 mt-1">{value}</h3></div>
+    <div className="p-4 bg-slate-50 rounded-2xl">{icon}</div>
+  </div>
+);
+
+const InputField = ({ label, name, type = "text", value, onChange, required = false, disabled = false }) => (
+  <div>
+    <label className="block text-[11px] uppercase font-bold text-slate-500 mb-2">{label}</label>
+    <input type={type} name={name} value={value} onChange={onChange} required={required} disabled={disabled} className={`w-full p-3 border border-slate-200 rounded-xl outline-none transition-colors ${disabled ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500'}`} />
+  </div>
+);
+
+const SelectField = ({ label, name, value, onChange, options }) => (
+  <div>
+    <label className="block text-[11px] uppercase font-bold text-slate-500 mb-2">{label}</label>
+    <select name={name} value={value} onChange={onChange} className="w-full p-3 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-white">{options.map(opt => <option key={opt} value={opt}>{opt}</option>)}</select>
   </div>
 );
 
