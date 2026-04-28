@@ -1,67 +1,84 @@
 import React, { useMemo } from 'react';
 import { MapContainer, TileLayer, CircleMarker, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { cityCoords } from '../utils/geoData';
+import { cityCoords } from '../../utils/geoData';
 
 const TenderMap = ({ tenders }) => {
-  // 1. Process and Aggregate Data
+
+  // 1. Process and Aggregate Data (FIXED)
   const locationStats = useMemo(() => {
     const stats = {};
-    
+
+    const invalidLocations = [
+      "pan india", "central", "nr", "south region",
+      "west india", "india", "all india"
+    ];
+
     tenders.forEach(t => {
       if (!t.location) return;
 
-      // Normalize the city name: " mumbai " -> "Mumbai"
-      const rawCity = t.location.trim();
-      const normalizedCity = rawCity.charAt(0).toUpperCase() + rawCity.slice(1).toLowerCase();
+      // ✅ Normalize properly
+      let city = t.location.toLowerCase().trim();
 
-      // Check if we have coordinates for this city
-      if (cityCoords[normalizedCity]) {
-        stats[normalizedCity] = (stats[normalizedCity] || 0) + 1;
+      // ✅ Handle multiple locations like "Coimbatore / bengaluru"
+      city = city.split('/')[0].trim();
+
+      // ❌ Ignore invalid values
+      if (invalidLocations.includes(city)) return;
+
+      // ✅ Check coordinates
+      if (cityCoords[city]) {
+        stats[city] = (stats[city] || 0) + 1;
       } else {
-        // Silently log missing cities to console for your reference
-        console.warn(`Missing coordinates for: ${normalizedCity}`);
+        console.warn(`Missing coordinates for: ${city}`);
       }
     });
-    
+
     return stats;
   }, [tenders]);
 
-  // 2. India's Central Coordinates
+  // 2. India center
   const indiaCenter = [20.5937, 78.9629];
 
   return (
     <div className="h-full w-full rounded-3xl overflow-hidden border border-slate-200 shadow-inner min-h-[400px]">
-      <MapContainer 
-        center={indiaCenter} 
-        zoom={5} 
+      <MapContainer
+        center={indiaCenter}
+        zoom={5}
         style={{ height: '100%', width: '100%', background: '#f8fafc' }}
         scrollWheelZoom={false}
       >
-        {/* Modern Clean Map Tiles */}
+        {/* Clean Map Theme */}
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          attribution='&copy; OpenStreetMap contributors'
         />
-        
+
         {Object.entries(locationStats).map(([city, count]) => {
           const position = cityCoords[city];
-          
+
+          // ✅ Capitalize for display
+          const displayCity =
+            city.charAt(0).toUpperCase() + city.slice(1);
+
           return (
-            <CircleMarker 
+            <CircleMarker
               key={city}
               center={position}
-              // Scaling: Minimum radius 8, max radius grows with count
-              radius={Math.max(8, Math.min(count * 1.5, 40))} 
-              fillColor="#6366f1" // Indigo
-              color="#4338ca"     // Darker Indigo border
+              radius={Math.max(8, Math.min(count * 1.5, 40))}
+              fillColor="#6366f1"
+              color="#4338ca"
               weight={1.5}
               fillOpacity={0.5}
             >
-              <Tooltip direction="top" offset={[0, -5]} opacity={1} permanent={false}>
+              <Tooltip direction="top" offset={[0, -5]} opacity={1}>
                 <div className="p-1">
-                  <p className="font-black text-slate-800 text-xs uppercase">{city}</p>
-                  <p className="text-indigo-600 font-bold text-sm">{count} Tenders</p>
+                  <p className="font-black text-slate-800 text-xs uppercase">
+                    {displayCity}
+                  </p>
+                  <p className="text-indigo-600 font-bold text-sm">
+                    {count} Tenders
+                  </p>
                 </div>
               </Tooltip>
             </CircleMarker>

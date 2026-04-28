@@ -1,17 +1,13 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
 import sqlite3
-import pandas as pd
-import io
 import os
 from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime, timedelta
 
-from ai_service import generate_tender_summary
+# Import AI Services
+from ai_service import generate_tender_summary, chat_with_tender
 from file_parser import extract_text_from_upload 
-from models import AnalysisResponse 
 
 app = FastAPI()
 
@@ -22,32 +18,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ----------------- DB SETUP -----------------
 def get_db_connection():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     db_path = os.path.join(base_dir, 'tender_data.db')
-    
-    # Auto-create table with the new pre_bidding_date column if it doesn't exist
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS tenders (
-            tender_no TEXT PRIMARY KEY, name_of_client TEXT, tender_status TEXT, 
-            received_date TEXT, due_date TEXT, pre_bidding_date TEXT, location TEXT, 
-            tender_open_price REAL, quoted_value REAL, description TEXT, project_manager TEXT, 
-            emd TEXT, emd_status TEXT, tender_fee_status TEXT, price_status TEXT, 
-            source TEXT, comments TEXT, docs_prepared_by TEXT, financial_year TEXT
-        )
-    """)
-    conn.commit()
     return conn
 
+# ----------------- MODELS -----------------
 class Tender(BaseModel):
     tender_no: str
     name_of_client: str
     tender_status: str
     received_date: Optional[str] = None
     due_date: Optional[str] = None
-    pre_bidding_date: Optional[str] = None  # NEW FIELD
+    pre_bidding_date: Optional[str] = None
     location: Optional[str] = None
     tender_open_price: Optional[float] = None
     quoted_value: Optional[float] = 0.0
@@ -62,35 +48,74 @@ class Tender(BaseModel):
     docs_prepared_by: Optional[str] = None
     financial_year: Optional[str] = "2023-2024"
 
+class ChatRequest(BaseModel):
+    query: str
+    context: dict
+
+# ----------------- STARTUP DEBUG -----------------
+@app.on_event("startup")
+def print_routes():
+    print("\n--- REGISTERED ROUTES ---")
+    for route in app.routes:
+        if hasattr(route, "path"):
+            print(f"Path: {route.path:30} | Methods: {route.methods}")
+    print("-------------------------\n")
+
+# ----------------- HEALTH CHECK -----------------
 @app.get("/health")
 async def health_check():
     return {"status": "online"}
 
-# --- NOTIFICATION ENDPOINT ---
+# ----------------- AI ROUTES -----------------
+@app.post("/analyze-tender")
+async def analyze_tender(file: UploadFile = File(...)):
+    try:
+        # Await the file parsing to resolve the 'coroutine' error
+        tender_text = await extract_text_from_upload(file)
+        if not tender_text:
+            raise HTTPException(status_code=400, detail="Could not extract text from file.")
+            
+        result = generate_tender_summary(tender_text=tender_text)
+        return {"aarvi_intelligence": result}
+    except Exception as e:
+        print(f"Error in /analyze-tender: {e}")
+        return {"error": str(e)}
+
+@app.post("/chat/")
+async def chat_endpoint(req: ChatRequest):
+    try:
+        reply = chat_with_tender(query=req.query, context=req.context)
+        return {"reply": reply}
+    except Exception as e:
+        print(f"Error in /chat/: {e}")
+        return {"error": str(e)}
+
+# ----------------- KPI & TENDER ROUTES -----------------
+@app.get("/kpi-stats")
+def get_kpi_stats(year: str = "All"):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    query = """
+    SELECT 
+        COUNT(*) AS total_count,
+        ROUND(CAST(SUM(CASE WHEN tender_status = 'Tender Won' THEN 1 ELSE 0 END) AS FLOAT) * 100 / 
+        NULLIF(SUM(CASE WHEN tender_status IN ('Tender Won', 'Tender Lost', 'Tender Regret') THEN 1 ELSE 0 END), 0), 1) AS win_rate,
+        SUM(CASE WHEN tender_status = 'Tender Won' THEN quoted_value ELSE 0 END) AS total_won_value,
+        AVG(quoted_value) AS avg_value
+    FROM tenders WHERE (? = 'All' OR financial_year = ?)
+    """
+    cur.execute(query, (year, year))
+    row = cur.fetchone()
+    conn.close()
+    return dict(row) if row else {}
+
 @app.get("/tenders/upcoming-prebid")
 def get_upcoming_prebids():
     conn = get_db_connection()
-    tenders = conn.execute("SELECT * FROM tenders WHERE pre_bidding_date IS NOT NULL AND pre_bidding_date != ''").fetchall()
+    tenders = conn.execute("SELECT * FROM tenders WHERE pre_bidding_date IS NOT NULL").fetchall()
     conn.close()
-    
-    today = datetime.now()
-    two_days_later = today + timedelta(days=2)
-    
-    upcoming = []
-    for t in tenders:
-        try:
-            pbd = datetime.strptime(t['pre_bidding_date'], '%Y-%m-%d')
-            # If the meeting is today or within the next 2 days
-            if today.date() <= pbd.date() <= two_days_later.date():
-                upcoming.append(dict(t))
-        except Exception as e:
-            continue
-            
-    # Sort nearest date first
-    upcoming.sort(key=lambda x: x['pre_bidding_date'])
-    return upcoming
+    return [dict(t) for t in tenders]
 
-# --- STANDARD DB ROUTES ---
 @app.get("/tenders")
 def get_tenders():
     conn = get_db_connection()
@@ -102,77 +127,17 @@ def get_tenders():
 def add_tender(t: Tender):
     conn = get_db_connection()
     try:
-        conn.execute("""
-            INSERT INTO tenders (
-                tender_no, name_of_client, tender_status, received_date, due_date, pre_bidding_date,
-                location, tender_open_price, quoted_value, description, project_manager, 
-                emd, emd_status, tender_fee_status, price_status, source, comments, 
-                docs_prepared_by, financial_year
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            t.tender_no, t.name_of_client, t.tender_status, t.received_date, t.due_date, t.pre_bidding_date,
-            t.location, t.tender_open_price, t.quoted_value, t.description, t.project_manager,
-            t.emd, t.emd_status, t.tender_fee_status, t.price_status, t.source, t.comments,
-            t.docs_prepared_by, t.financial_year
-        ))
+        conn.execute("INSERT INTO tenders VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", 
+                     (t.tender_no, t.name_of_client, t.tender_status, t.received_date, t.due_date, 
+                      t.pre_bidding_date, t.location, t.tender_open_price, t.quoted_value, 
+                      t.description, t.project_manager, t.emd, t.emd_status, t.tender_fee_status, 
+                      t.price_status, t.source, t.comments, t.docs_prepared_by, t.financial_year))
         conn.commit()
-        return {"message": "Tender added successfully"}
+        return {"message": "Success"}
     except Exception as e:
         return {"error": str(e)}
     finally:
         conn.close()
-
-@app.put("/tenders/{tender_no:path}")
-def edit_tender_full(tender_no: str, t: Tender):
-    conn = get_db_connection()
-    try:
-        conn.execute("""
-            UPDATE tenders SET 
-                name_of_client=?, tender_status=?, received_date=?, due_date=?, pre_bidding_date=?,
-                location=?, tender_open_price=?, quoted_value=?, description=?, 
-                project_manager=?, emd=?, emd_status=?, tender_fee_status=?, 
-                price_status=?, source=?, comments=?, docs_prepared_by=?, financial_year=?
-            WHERE tender_no=?
-        """, (
-            t.name_of_client, t.tender_status, t.received_date, t.due_date, t.pre_bidding_date,
-            t.location, t.tender_open_price, t.quoted_value, t.description,
-            t.project_manager, t.emd, t.emd_status, t.tender_fee_status,
-            t.price_status, t.source, t.comments, t.docs_prepared_by,
-            t.financial_year, tender_no
-        ))
-        conn.commit()
-        return {"message": "Tender updated completely"}
-    except Exception as e:
-        return {"error": str(e)}
-    finally:
-        conn.close()
-
-@app.patch("/tenders/{tender_no:path}")
-def update_tender_status(tender_no: str, payload: dict):
-    conn = get_db_connection()
-    try:
-        conn.execute("UPDATE tenders SET tender_status = ? WHERE tender_no = ?", (payload.get("tender_status"), tender_no))
-        conn.commit()
-        return {"message": "Status updated"}
-    except Exception as e:
-        return {"error": str(e)}
-    finally:
-        conn.close()
-
-@app.get("/export-tenders")
-def export_tenders():
-    conn = get_db_connection()
-    df = pd.read_sql_query("SELECT * FROM tenders", conn)
-    conn.close()
-    output = io.BytesIO()
-    with pd.ExcelWriter(output, engine='openpyxl') as writer:
-        df.to_excel(writer, index=False)
-    output.seek(0)
-    return StreamingResponse(
-        output,
-        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        headers={"Content-Disposition": "attachment; filename=Tender_Export.xlsx"}
-    )
 
 if __name__ == "__main__":
     import uvicorn

@@ -1,153 +1,120 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
+import { ArrowLeft } from 'lucide-react';
 import { 
-  PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend, 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid 
-} from 'recharts';
-import { IndianRupee, Target, Award, AlertCircle, RefreshCw, ArrowLeft } from 'lucide-react';
+  BiddingTrendChart, 
+  ClientBarChart, 
+  StatusPieChart, 
+  TenderMap,
+  KPICardGroup,
+  ClientPerformanceChart // Added missing comma above
+} from '../components/charts'; 
 
 const AnalyticsDashboard = ({ onBack }) => {
   const [tenders, setTenders] = useState([]);
+  const [kpiData, setKpiData] = useState({});
+  const [selectedYear, setSelectedYear] = useState('All');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchData = async () => {
-    setLoading(true);
+  // 1. Fetch Logic (Parallel Fetching for Performance)
+  const fetchData = useCallback(async () => {
     try {
-      const res = await axios.get('http://127.0.0.1:8000/tenders');
-      setTenders(res.data);
+      const [tenderRes, kpiRes] = await Promise.all([
+        axios.get('http://127.0.0.1:8001/tenders'),
+        axios.get(`http://127.0.0.1:8001/kpi-stats?year=${selectedYear}`)
+      ]);
+      
+      setTenders(tenderRes.data);
+      setKpiData(kpiRes.data);
       setError(null);
     } catch (err) {
-      setError("Unable to connect to the database. Is the backend running?", err);
+      console.error("Fetch error:", err);
+      setError("Unable to connect to the database.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedYear]);
 
+  // 2. Live Polling (Every 30 seconds)
   useEffect(() => {
-    // Define and call the function entirely inside the hook
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const res = await axios.get('http://127.0.0.1:8001/tenders');
-        setTenders(res.data);
-        setError(null);
-      } catch (err) {
-        console.error("Fetch error:", err);
-        setError("Unable to connect to the database.");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
-  }, []);
+    const interval = setInterval(fetchData, 30000);
+    return () => clearInterval(interval);
+  }, [fetchData]);
 
-  // --- MEMOIZED CALCULATIONS ---
-  const statusData = useMemo(() => {
-    const counts = tenders.reduce((acc, t) => {
-      acc[t.tender_status] = (acc[t.tender_status] || 0) + 1;
-      return acc;
-    }, {});
-    return Object.keys(counts).map(key => ({ name: key, value: counts[key] }));
+  // 3. Derived State: Filters
+  const availableYears = useMemo(() => {
+    const years = [...new Set(tenders.map(t => t.financial_year))];
+    return ['All', ...years.sort().reverse()];
   }, [tenders]);
 
-  const locationData = useMemo(() => {
-    const locs = tenders.reduce((acc, t) => {
-      const loc = t.location || 'Unknown';
-      acc[loc] = (acc[loc] || 0) + 1;
-      return acc;
-    }, {});
-    return Object.keys(locs)
-      .map(key => ({ name: key, count: locs[key] }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 5);
-  }, [tenders]);
+  const filteredTenders = useMemo(() => {
+    if (selectedYear === 'All') return tenders;
+    return tenders.filter(t => t.financial_year === selectedYear);
+  }, [tenders, selectedYear]);
 
-  const stats = useMemo(() => {
-    const totalValue = tenders.reduce((sum, t) => sum + (Number(t.quoted_value) || 0), 0);
-    const won = tenders.filter(t => t.tender_status === 'Won').length;
-    const closed = tenders.filter(t => ['Won', 'Lost'].includes(t.tender_status)).length;
-    const winRate = closed > 0 ? ((won / closed) * 100).toFixed(1) : 0;
-    const open = tenders.filter(t => t.tender_status === 'Pending').length;
-    return { totalValue, won, winRate, open };
-  }, [tenders]);
-
-  const COLORS = ['#10b981', '#ef4444', '#f59e0b', '#3b82f6', '#6366f1', '#94a3b8'];
-
-  // --- UI RENDER ---
   return (
     <div className="min-h-screen p-8 bg-slate-50">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <div>
-          <button onClick={onBack} className="flex items-center gap-1 text-slate-400 hover:text-indigo-600 font-bold mb-2 transition-colors">
-            <ArrowLeft size={16} /> Back to Table
-          </button>
+          {/* Restored Back button for proper navigation */}
+          {onBack && (
+            <button onClick={onBack} className="flex items-center gap-1 text-slate-400 hover:text-indigo-600 font-bold mb-2">
+              <ArrowLeft size={16} /> Back
+            </button>
+          )}
           <h1 className="text-3xl font-black text-slate-800">Executive Insights</h1>
         </div>
-        <button onClick={fetchData} className="p-3 bg-white rounded-xl shadow-sm border border-slate-200 hover:bg-slate-50 transition-all">
-          <RefreshCw size={20} className={loading ? "animate-spin text-indigo-600" : "text-slate-400"} />
-        </button>
+        
+        <select 
+          value={selectedYear} 
+          onChange={(e) => setSelectedYear(e.target.value)}
+          className="p-3 bg-white border border-slate-200 rounded-xl font-bold text-slate-700 shadow-sm outline-none focus:ring-2 focus:ring-indigo-500"
+        >
+          {availableYears.map(year => (
+            <option key={year} value={year}>{year === 'All' ? 'All Years' : year}</option>
+          ))}
+        </select>
       </div>
 
-      {error && <div className="p-4 mb-6 bg-rose-50 text-rose-600 rounded-xl font-bold text-center border border-rose-200">{error}</div>}
+      {error && <div className="p-4 mb-6 bg-rose-50 text-rose-600 rounded-xl text-center border border-rose-200">{error}</div>}
 
-      {!loading && !error && (
+      {!loading && (
         <>
-          {/* KPI GRID */}
-          <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
-            <KPICard title="Total Portfolio" value={`₹${(stats.totalValue / 10000000).toFixed(2)} Cr`} color="border-indigo-500" icon={<IndianRupee />} />
-            <KPICard title="Success Rate" value={`${stats.winRate}%`} color="border-emerald-500" icon={<Target />} />
-            <KPICard title="Tenders Won" value={stats.won} color="border-amber-500" icon={<Award />} />
-            <KPICard title="Open Tenders" value={stats.open} color="border-blue-500" icon={<AlertCircle />} />
-          </div>
+          {/* KPI GRID - Top Level */}
+          <KPICardGroup stats={kpiData} />
 
-          {/* CHARTS */}
+          {/* CHARTS GRID */}
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+            
+            {/* ROW 2: Status & Trend (1 column each on large screens) */}
             <div className="p-6 bg-white border border-slate-200 shadow-sm rounded-3xl">
-              <h2 className="mb-6 text-xs font-black text-slate-400 uppercase tracking-widest">Status Distribution</h2>
-              <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie data={statusData} innerRadius={80} outerRadius={110} paddingAngle={5} dataKey="value">
-                      {statusData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
-                    </Pie>
-                    <Tooltip />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
+              <StatusPieChart tenders={filteredTenders} />
+            </div>
+            <div className="p-6 bg-white border border-slate-200 shadow-sm rounded-3xl">
+              <BiddingTrendChart tenders={filteredTenders} />
             </div>
 
+            {/* ROW 3: Client Breakdown (1 column each on large screens) */}
             <div className="p-6 bg-white border border-slate-200 shadow-sm rounded-3xl">
-              <h2 className="mb-6 text-xs font-black text-slate-400 uppercase tracking-widest">Top 5 Locations</h2>
-              <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={locationData} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                    <XAxis type="number" hide />
-                    <YAxis dataKey="name" type="category" width={100} tick={{fontSize: 12, fontWeight: 'bold'}} />
-                    <Tooltip />
-                    <Bar dataKey="count" fill="#6366f1" radius={[0, 10, 10, 0]} barSize={30} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
+              <ClientBarChart tenders={filteredTenders} />
             </div>
+            <div className="p-6 bg-white border border-slate-200 shadow-sm rounded-3xl">
+              <ClientPerformanceChart tenders={filteredTenders} />
+            </div>
+
+            {/* ROW 4: Tender Map (Full Width - Spans 2 columns) */}
+            <div className="p-6 bg-white border border-slate-200 shadow-sm rounded-3xl col-span-1 lg:col-span-2 h-96">
+              <TenderMap tenders={filteredTenders} />
+            </div>
+
           </div>
         </>
       )}
     </div>
   );
 };
-
-const KPICard = ({ title, value, icon, color }) => (
-  <div className={`bg-white p-6 rounded-3xl border border-b-4 ${color} shadow-sm flex items-center justify-between`}>
-    <div>
-      <p className="text-[10px] font-black uppercase text-slate-400 mb-1">{title}</p>
-      <h3 className="text-2xl font-black text-slate-800 tracking-tight">{value}</h3>
-    </div>
-    <div className="p-3 bg-slate-50 rounded-2xl text-slate-500">{icon}</div>
-  </div>
-);
 
 export default AnalyticsDashboard;

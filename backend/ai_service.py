@@ -9,160 +9,115 @@ from logic import analyze_tender_eligibility
 # Configure API Key
 genai.configure(api_key=GEMINI_API_KEY)
 
-# ------------------ MODEL HANDLING ------------------
-model = None
-
 def get_model():
-    """Find best available Gemini model."""
+    """Returns the Gemini 2.5 Flash Lite model."""
     try:
-        # Prioritize 2.5 Flash for best results and speed
-        return genai.GenerativeModel('gemini-2.5-flash')
-    except Exception as e:
-        print(f"Error initializing model: {e}")
-        return genai.GenerativeModel('gemini-1.5-flash')
+        return genai.GenerativeModel('gemini-2.5-flash-lite')
+    except:
+        return genai.GenerativeModel('gemini-2.0-flash')
 
-def get_active_model():
-    """Lazy load model."""
-    global model
-    if model is None:
-        model = get_model()
-    return model
-
-# ------------------ SCHEMA PROTECTOR ------------------
 def ensure_complete_schema(data, error_msg=None):
-    """
-    Ensures all 17 fields are present. 
-    If a field is missing, it adds it with 'Not Specified'.
-    Prevents Pydantic 500 Internal Server Errors.
-    """
+    """Ensures all fields are present for the UI. Prevents crashes."""
     template = {
-        "tender_no": "Not Specified",
-        "client_name": "Not Specified",
-        "bid_decision": "Not Specified",
-        "key_eligibility": "Not Specified",
-        "financial_eligibility": "Not Specified",
-        "technical_eligibility": "Not Specified",
-        "min_experience": "Not Specified",
-        "net_worth_check": "Not Specified",
-        "similar_work": "Not Specified",
-        "scope_of_work": "Not Specified",
-        "manpower_requirement": "Not Specified",
-        "mandatory_compliance": "Not Specified",
-        "penalty_terms": "Not Specified",
-        "pq_status": "Not Specified",
-        "win_probability": "Not Specified",
-        "profit_forecast": "Not Specified",
-        "strategic_advice": "Not Specified"
+        "tender_no": "Not Specified", "client_name": "Not Specified", "bid_decision": "Not Specified",
+        "pq_status": "Not Specified", "win_probability": "Not Specified", "profit_forecast": "Not Specified",
+        "strategic_advice": "Not Specified", "scope_of_work": "Not Specified",
+        "key_eligibility": "Not Specified", "mandatory_compliance": "Not Specified",
+        "bqc_financial": "Not Specified", "bqc_technical": "Not Specified",
+        "pqc_financial": "Not Specified", "pqc_technical": "Not Specified",
+        "manpower_requirement": "Not Specified", "manpower_qual": "Not Specified",
+        "manpower_count": "Not Specified", "shift_duty": "Not Specified",
+        "manpower_per_shift": "Not Specified", "financial_eligibility": "Not Specified",
+        "technical_eligibility": "Not Specified", "similar_work": "Not Specified",
+        "penalty_terms": "Not Specified","payment_terms": "Not Specified"
     }
     
-    # If the AI failed completely, put the error in the UI gracefully
     if error_msg:
         template["strategic_advice"] = f"Error during analysis: {str(error_msg)[:100]}"
         template["bid_decision"] = "Analysis Failed"
     
-    # Merge the AI data into the safe template
     if isinstance(data, dict):
         for key in template.keys():
             if key in data and data[key]:
-                # Force everything to be a string just in case
                 template[key] = str(data[key])
                 
     return template
 
-# ------------------ KNOWLEDGE BASE ------------------
 def get_knowledge_base():
+    """Retrieves past projects to use for RAG."""
     path = os.path.join("knowledge_base", "Aarvi_Encon", "*.json")
     knowledge = []
     for file_path in glob.glob(path):
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 knowledge.append(json.load(f))
-        except Exception:
-            pass # Skip invalid files
+        except:
+            pass
     return json.dumps(knowledge)
 
-# ------------------ MAIN AI FUNCTION ------------------
-def generate_tender_summary(tender_text=None, custom_prompt=None, strategy_context=None):
-    model = get_active_model()
-
-    # -------- CHAT MODE --------
-    if custom_prompt:
-        chat_prompt = f"Context: {strategy_context}\n\nQuestion: {custom_prompt}"
-        try:
-            response = model.generate_content(chat_prompt)
-            return response.text
-        except Exception as e:
-            return f"Chat Error: {str(e)}"
-
-    # -------- LOGIC PRE-CHECK --------
+def generate_tender_summary(tender_text=None):
+    model = get_model()
+    # 1. First run the logic checkpoint (Sector/Service Match)
     logic_results = analyze_tender_eligibility(tender_text)
+    # 2. Retrieve past projects (RAG)
     kb_data = get_knowledge_base()
 
-    # -------- PROMPT --------
-    # -------- PROMPT --------
     prompt = f"""
     ROLE: Chief Bidding Officer at Aarvi Encon.
     
-    KNOWLEDGE BASE: {kb_data}
-    PRE-CHECK DECISION: {logic_results['decision_message']}
+    KNOWLEDGE BASE (Aarvi Past Projects): 
+    {kb_data}
 
-    STRICT RULES:
-    1. NO ASSUMPTIONS: If a specific value or requirement is not explicitly stated in the tender text, output "Not Specified". 
-    2. DATA ONLY: Base all calculations solely on the provided Tender Text and Knowledge Base.
+    TENDER ANALYSIS PRE-CHECK (Logic Engine Result): 
+    {logic_results['decision_message']}
 
-    KPI CALCULATION LOGIC:
-    - pq_status: 
-        Compare 'Financial' and 'Technical' requirements in the tender vs. Aarvi's history in Knowledge Base.
-        If all met: "Eligible". If most met but missing 1 doc: "Risky". If criteria are higher than Aarvi's capacity: "Ineligible".
-    
-    - win_probability: 
-        Analyze: 1. Previous work with this specific client? 2. Similar projects executed? 3. Local presence in the project state?
-        Assign a percentage (0-100%). If no similar work or client history found, output "Not Specified".
-    
-    - profit_forecast: 
-        Look for "Service Charges", "Management Fee", or "Profit Margin" clauses. 
-        If the tender mentions a minimum floor price or fixed percentage (e.g., 3.85%), evaluate if it's "Healthy" or "Low Margin".
-        If no pricing terms found: "Not Specified".
+    TASK: 
+    Act as a Bidding Strategist. Analyze the tender text and compare it against the Knowledge Base.
 
     INSTRUCTIONS:
-    - Output ONLY valid JSON.
-    - pq_status: 1-2 words.
-    - win_probability: Percentage (e.g. 85%) or "Not Specified".
-    - profit_forecast: 1-2 words.
-    - For all other fields: 3-4 short bullet points.
-
-    JSON SCHEMA:
+    1. ELIGIBILITY: Evaluate Financial and Technical Eligibility. Do we qualify? Compare tender requirements vs Knowledge Base.
+    2. SIMILAR WORK: Look at the Tender's 'Similar Work' requirements. Match these against the KNOWLEDGE BASE. If a match is found, list the project name and why it qualifies.
+    3. KPI INFERENCE: 
+       - Win Probability: Estimate based on alignment with Knowledge Base and Sector match.
+       - Profit Forecast: Estimate based on Tender Value vs likely Manpower/Ops cost (Standard Industry Margin).
+       - PQ Status: Determine if we meet criteria (Pass/Fail).
+    
+    JSON SCHEMA (Output ONLY JSON):
     {{
-      "tender_no": "", "client_name": "", "bid_decision": "", "key_eligibility": "",
-      "financial_eligibility": "", "technical_eligibility": "", "min_experience": "",
-      "net_worth_check": "", "similar_work": "", "scope_of_work": "",
-      "manpower_requirement": "", "mandatory_compliance": "", "penalty_terms": "",
-      "pq_status": "", "win_probability": "", "profit_forecast": "", "strategic_advice": ""
+      "tender_no": "", "client_name": "", "bid_decision": "", 
+      "pq_status": "", "win_probability": "", "profit_forecast": "",
+      "bqc_financial": "", "bqc_technical": "", "pqc_financial": "", "pqc_technical": "",
+      "scope_of_work": "", "manpower_requirement": "", "manpower_qual": "", 
+      "manpower_count": "", "shift_duty": "", "manpower_per_shift": "",
+      "financial_eligibility": "", "technical_eligibility": "", "similar_work": "",
+      "mandatory_compliance": "", "penalty_terms": "","payment_terms": "", "strategic_advice": ""
     }}
 
-    TENDER TEXT: {tender_text[:20000]}
+    TENDER TEXT: 
+    {tender_text}
     """
 
-    # -------- AI CALL --------
     try:
         response = model.generate_content(
             prompt,
             generation_config={"response_mime_type": "application/json"}
         )
         
-        # --- ROBUST JSON EXTRACTION ---
-        # Look for the first '{{' and last '}}' to strip out any markdown/filler
         match = re.search(r'\{.*\}', response.text, re.DOTALL)
-        if match:
-            json_str = match.group(0)
-            data = json.loads(json_str)
-            return ensure_complete_schema(data)
-        else:
-            # Fallback if regex fails but response is raw JSON
-            data = json.loads(response.text)
-            return ensure_complete_schema(data)
-
+        data = json.loads(match.group(0)) if match else json.loads(response.text)
+            
+        return ensure_complete_schema(data)
     except Exception as e:
-        print(f"CRITICAL ERROR: {e}")
-        # Return a fully filled error object to prevent 500 crashes
+        print(f"CRITICAL AI ERROR: {e}")
         return ensure_complete_schema({}, error_msg=e)
+
+def chat_with_tender(query: str, context: dict):
+    model = get_model()
+    chat_prompt = f"""
+    You are an expert bidding strategist at Aarvi Encon.
+    Context of the current tender: {json.dumps(context)}
+    User Question: {query}
+    Provide a concise, strategic answer.
+    """
+    response = model.generate_content(chat_prompt)
+    return response.text
