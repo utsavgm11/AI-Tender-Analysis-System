@@ -4,47 +4,17 @@ import os
 import glob
 import re
 from config import GEMINI_API_KEY
-from logic import analyze_tender_eligibility
+from logic import evaluate_tender_rules 
 
-# Configure API Key
 genai.configure(api_key=GEMINI_API_KEY)
 
 def get_model():
-    """Returns the Gemini 2.5 Flash Lite model."""
     try:
         return genai.GenerativeModel('gemini-2.5-flash-lite')
     except:
         return genai.GenerativeModel('gemini-2.0-flash')
 
-def ensure_complete_schema(data, error_msg=None):
-    """Ensures all fields are present for the UI. Prevents crashes."""
-    template = {
-        "tender_no": "Not Specified", "client_name": "Not Specified", "bid_decision": "Not Specified",
-        "pq_status": "Not Specified", "win_probability": "Not Specified", "profit_forecast": "Not Specified",
-        "strategic_advice": "Not Specified", "scope_of_work": "Not Specified",
-        "key_eligibility": "Not Specified", "mandatory_compliance": "Not Specified",
-        "bqc_financial": "Not Specified", "bqc_technical": "Not Specified",
-        "pqc_financial": "Not Specified", "pqc_technical": "Not Specified",
-        "manpower_requirement": "Not Specified", "manpower_qual": "Not Specified",
-        "manpower_count": "Not Specified", "shift_duty": "Not Specified",
-        "manpower_per_shift": "Not Specified", "financial_eligibility": "Not Specified",
-        "technical_eligibility": "Not Specified", "similar_work": "Not Specified",
-        "penalty_terms": "Not Specified","payment_terms": "Not Specified"
-    }
-    
-    if error_msg:
-        template["strategic_advice"] = f"Error during analysis: {str(error_msg)[:100]}"
-        template["bid_decision"] = "Analysis Failed"
-    
-    if isinstance(data, dict):
-        for key in template.keys():
-            if key in data and data[key]:
-                template[key] = str(data[key])
-                
-    return template
-
 def get_knowledge_base():
-    """Retrieves past projects to use for RAG."""
     path = os.path.join("knowledge_base", "Aarvi_Encon", "*.json")
     knowledge = []
     for file_path in glob.glob(path):
@@ -55,69 +25,133 @@ def get_knowledge_base():
             pass
     return json.dumps(knowledge)
 
-def generate_tender_summary(tender_text=None):
+def clean_price_to_float(price_str):
+    """Converts price strings like '25 Lakh', '2,500,000', or '25,00,000' to a float."""
+    if not price_str or price_str == "Not Specified":
+        return 0.0
+    
+    # Remove commas and convert to lower
+    text = str(price_str).lower().replace(',', '')
+    
+    # Simple regex to get the number
+    num = re.findall(r"[-+]?\d*\.\d+|\d+", text)
+    if not num:
+        return 0.0
+    val = float(num[0])
+    
+    # Handle multipliers
+    if 'lakh' in text or 'lac' in text:
+        val *= 100000
+    elif 'crore' in text or 'cr' in text:
+        val *= 10000000
+        
+    return val
+
+def format_for_ui(value):
+    if not value or value == "Not Specified" or value == []:
+        return "Not Specified"
+    if isinstance(value, list):
+        formatted = ""
+        for item in value:
+            if isinstance(item, str):
+                formatted += f"• {item.strip()}\n"
+            elif isinstance(item, dict):
+                formatted += "\n".join([f"**{str(k).replace('_', ' ').title()}**: {v}" for k, v in item.items()]) + "\n"
+        return formatted.strip()
+    return str(value).strip()
+
+def ensure_ui_schema(ai_data: dict, logic_data: dict, error_msg: str = None) -> dict:
+    template = {
+        "tender_no": "Not Specified", "client_name": "Not Specified", "description": "Not Specified","tender_open_price": "Not Specified", # Ensure this is here
+        "emd": "Not Specified",
+        "bqc_financial": "Not Specified", "bqc_technical": "Not Specified",
+        "pqc_financial": "Not Specified", "pqc_technical": "Not Specified",
+        "mandatory_compliance": "Not Specified", "scope_of_work": "Not Specified",
+        "manpower_count": "Not Specified", "manpower_qual": "Not Specified",
+        "shift_duty": "Not Specified", "payment_terms": "Not Specified",
+        "penalty_terms": "Not Specified", "similar_work": "Not Specified",
+        "bid_decision": "PENDING", "pq_status": "PENDING", 
+        "win_probability": "PENDING", "profit_forecast": "PENDING", 
+        "strategic_advice": "Not Specified", "tender_open_price": "Not Specified",
+        "compliance_status": "Not Specified", "compliance_reason": "Not Specified"
+    }
+    
+    if error_msg:
+        template["strategic_advice"] = f"Error: {error_msg}"
+        return template
+
+    for key in ai_data:
+        if key in template:
+            template[key] = format_for_ui(ai_data[key])
+            
+    for key in logic_data:
+        if key in template:
+            template[key] = str(logic_data[key])
+
+    return template
+
+def generate_tender_summary(tender_text: str = None):
+    if not tender_text:
+        return ensure_ui_schema({}, {}, "Empty tender document provided.")
+
     model = get_model()
-    # 1. First run the logic checkpoint (Sector/Service Match)
-    logic_results = analyze_tender_eligibility(tender_text)
-    # 2. Retrieve past projects (RAG)
     kb_data = get_knowledge_base()
 
     prompt = f"""
-    ROLE: Chief Bidding Officer at Aarvi Encon.
+    ROLE: Expert Tender Data Extractor.
+    KNOWLEDGE BASE (Past Projects): {kb_data}
+
+    TASK: Scan the TENDER TEXT and map findings to the JSON schema below.
     
-    KNOWLEDGE BASE (Aarvi Past Projects): 
-    {kb_data}
-
-    TENDER ANALYSIS PRE-CHECK (Logic Engine Result): 
-    {logic_results['decision_message']}
-
-    TASK: 
-    Act as a Bidding Strategist. Analyze the tender text and compare it against the Knowledge Base.
-
-    INSTRUCTIONS:
-    1. ELIGIBILITY: Evaluate Financial and Technical Eligibility. Do we qualify? Compare tender requirements vs Knowledge Base.
-    2. SIMILAR WORK: Look at the Tender's 'Similar Work' requirements. Match these against the KNOWLEDGE BASE. If a match is found, list the project name and why it qualifies.
-    3. KPI INFERENCE: 
-       - Win Probability: Estimate based on alignment with Knowledge Base and Sector match.
-       - Profit Forecast: Estimate based on Tender Value vs likely Manpower/Ops cost (Standard Industry Margin).
-       - PQ Status: Determine if we meet criteria (Pass/Fail).
+    CRITICAL INSTRUCTIONS:
+    1. bqc_financial: EXTRACT ONLY explicit "Turnover" or "Net Worth" conditions. If not stated, return "Not Specified". DO NOT HALLUCINATE OR ESTIMATE.
+    2. tender_open_price: Extract the total contract value.
+    3. emd: Look for 'EMD', 'Earnest Money Deposit', or 'Bid Security'. Extract the amount or percentage. If multiple, prioritize the amount. If not stated, return 'Not Specified'.
     
-    JSON SCHEMA (Output ONLY JSON):
+    JSON SCHEMA (Output ONLY valid JSON):
     {{
-      "tender_no": "", "client_name": "", "bid_decision": "", 
-      "pq_status": "", "win_probability": "", "profit_forecast": "",
-      "bqc_financial": "", "bqc_technical": "", "pqc_financial": "", "pqc_technical": "",
-      "scope_of_work": "", "manpower_requirement": "", "manpower_qual": "", 
-      "manpower_count": "", "shift_duty": "", "manpower_per_shift": "",
-      "financial_eligibility": "", "technical_eligibility": "", "similar_work": "",
-      "mandatory_compliance": "", "penalty_terms": "","payment_terms": "", "strategic_advice": ""
+      "tender_no": "Find the Tender/RFQ number",
+      "client_name": "Extract Client Name",
+      "description": "Short summary",
+      "tender_open_price": "Extract numerical contract value",
+      "emd": "Extract the EMD amount or percentage",
+      "bqc_financial": "Extract ONLY Turnover/Net Worth conditions",
+      "bqc_technical": "Extract BQC Technical requirements",
+      "pqc_financial": "Extract PBG/Retention clauses",
+      "pqc_technical": "Extract Qualification/Experience requirements",
+      "mandatory_compliance": "Extract PF/ESI/Compliance rules",
+      "scope_of_work": ["..."],
+      "manpower_count": "Extract headcount",
+      "manpower_qual": "Extract educational requirements",
+      "shift_duty": "Extract shift/working hours",
+      "payment_terms": "Extract payment timeline",
+      "penalty_terms": "Extract LD clauses",
+      "similar_work": "Match with Knowledge Base"
     }}
 
-    TENDER TEXT: 
-    {tender_text}
+    TENDER TEXT: {tender_text}
     """
 
     try:
-        response = model.generate_content(
-            prompt,
-            generation_config={"response_mime_type": "application/json"}
-        )
-        
+        response = model.generate_content(prompt, generation_config={"response_mime_type": "application/json"})
         match = re.search(r'\{.*\}', response.text, re.DOTALL)
-        data = json.loads(match.group(0)) if match else json.loads(response.text)
-            
-        return ensure_complete_schema(data)
-    except Exception as e:
-        print(f"CRITICAL AI ERROR: {e}")
-        return ensure_complete_schema({}, error_msg=e)
+        ai_extracted_data = json.loads(match.group(0)) if match else json.loads(response.text)
+        
+        # --- NEW: HARD 25 LAKH FILTER ---
+        price_val = clean_price_to_float(ai_extracted_data.get("tender_open_price"))
+        
+        logic_decisions = evaluate_tender_rules(ai_extracted_data, kb_data, tender_text)
+        
+        if price_val > 0 and price_val < 2500000:
+            logic_decisions["bid_decision"] = "NO BID - Under 25 Lakh"
+            logic_decisions["strategic_advice"] = f"NO BID: The tender value (₹{price_val:,.0f}) falls below the company's minimum viability threshold of 25 Lakh INR."
+            logic_decisions["pq_status"] = "Fail"
 
-def chat_with_tender(query: str, context: dict):
+        return ensure_ui_schema(ai_extracted_data, logic_decisions)
+    except Exception as e:
+        return ensure_ui_schema({}, {}, error_msg=str(e))
+
+def chat_with_tender(query: str, context: dict, full_text: str = ""):
     model = get_model()
-    chat_prompt = f"""
-    You are an expert bidding strategist at Aarvi Encon.
-    Context of the current tender: {json.dumps(context)}
-    User Question: {query}
-    Provide a concise, strategic answer.
-    """
-    response = model.generate_content(chat_prompt)
-    return response.text
+    prompt = f"Context: {json.dumps(context)}\nFull Doc: {full_text[:50000]}\nQuery: {query}\n\nStrictly answer based on Full Doc using Markdown bullets."
+    return model.generate_content(prompt).text

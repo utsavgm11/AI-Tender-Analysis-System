@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
-import { Send, FileUp, Loader2, Bot, User, CheckCircle2, FileText } from 'lucide-react';
+import { Send, FileUp, Loader2, Bot, User, CheckCircle2 } from 'lucide-react';
 import DecisionCard from '../components/ui/DecisionCard';
 
 const AnalysisChat = () => {
   const [messages, setMessages] = useState([
-    { type: 'ai', text: 'Welcome! Please upload a tender document to begin the strategic analysis.' }
+    { type: 'ai', text: 'Welcome! Please upload your tender document(s) to begin the strategic analysis.' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -14,38 +14,40 @@ const AnalysisChat = () => {
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
 
-  // Auto-scroll to the latest message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
   const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
 
-    setMessages(prev => [...prev, { type: 'user', text: `📄 Uploading: ${file.name}` }]);
+    // UI Update: List the files being uploaded
+    const fileNames = Array.from(files).map(f => f.name).join(', ');
+    setMessages(prev => [...prev, { type: 'user', text: `📄 Uploading ${files.length} file(s): ${fileNames}` }]);
     setIsLoading(true);
 
     const formData = new FormData();
-    formData.append('file', file);
+    // CRITICAL: Append each file with the key 'files' to match backend List[UploadFile]
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i]);
+    }
 
     try {
-      // Pointing to backend on port 8001
-      const response = await axios.post('http://127.0.0.1:8001/analyze-tender', formData);
+      const response = await axios.post('http://127.0.0.1:8001/analyze-tender', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       
       if (response.data.aarvi_intelligence) {
         setActiveTender(response.data.aarvi_intelligence);
       }
       
-      setMessages(prev => [...prev, { type: 'ai', result: response.data }]);
-    } // In AnalysisChat.jsx, update the catch block:
- catch (e) {
-  // Capture the specific error from the server
-  const errorMsg = e.response?.data?.error || e.message; 
-  console.error("Full Error:", e.response?.data);
-  setMessages(prev => [...prev, { type: 'ai', text: `Analysis failed: ${errorMsg}` }]);
-}
-    finally {
+      setMessages(prev => [...prev, { type: 'ai', result: response.data.aarvi_intelligence }]);
+    } catch (e) {
+      const errorMsg = e.response?.data?.detail || e.message; 
+      console.error("Full Error:", e.response?.data);
+      setMessages(prev => [...prev, { type: 'ai', text: `Analysis failed: ${errorMsg}` }]);
+    } finally {
       setIsLoading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
@@ -57,7 +59,7 @@ const AnalysisChat = () => {
     if (!activeTender) {
       setMessages(prev => [...prev, 
         { type: 'user', text: input },
-        { type: 'ai', text: "Please upload a tender document first so I can provide specific strategic advice." }
+        { type: 'ai', text: "Please upload the tender files first so I can analyze them." }
       ]);
       setInput('');
       return;
@@ -71,11 +73,11 @@ const AnalysisChat = () => {
     try {
       const response = await axios.post('http://127.0.0.1:8001/chat/', { 
         query: userQuery,
-        context: activeTender 
+        context: activeTender,
+        full_text: activeTender.full_text || "" 
       });
       setMessages(prev => [...prev, { type: 'ai', text: response.data.reply }]);
     } catch (e) {
-      console.error(e);
       setMessages(prev => [...prev, { type: 'ai', text: "I'm having trouble accessing my strategic memory right now." }]);
     } finally {
       setIsLoading(false);
@@ -129,14 +131,22 @@ const AnalysisChat = () => {
         <div className="max-w-4xl mx-auto flex items-center gap-2 bg-slate-100 rounded-2xl p-1.5 border focus-within:border-blue-400 transition-all">
           <label className="cursor-pointer p-2.5 hover:bg-white rounded-xl text-slate-500 transition-colors">
             <FileUp size={22} />
-            <input type="file" className="hidden" ref={fileInputRef} onChange={handleFileUpload} accept=".pdf,.doc,.docx" />
+            {/* Added 'multiple' attribute here */}
+            <input 
+              type="file" 
+              className="hidden" 
+              ref={fileInputRef} 
+              onChange={handleFileUpload} 
+              accept=".pdf,.doc,.docx" 
+              multiple 
+            />
           </label>
           <input 
             value={input} 
             onChange={(e) => setInput(e.target.value)} 
             onKeyDown={(e) => e.key === 'Enter' && handleChat()} 
             className="flex-1 bg-transparent p-2.5 outline-none text-sm" 
-            placeholder={activeTender ? "Ask about margins, risks, or technicals..." : "Upload a tender to start..."} 
+            placeholder={activeTender ? "Ask about margins, risks, or technicals..." : "Upload your tender files..."} 
           />
           <button 
             onClick={handleChat} 
