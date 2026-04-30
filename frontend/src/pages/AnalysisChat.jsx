@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid'; // Generates unique session IDs
 import { Send, FileUp, Loader2, Bot, User, CheckCircle2 } from 'lucide-react';
 import DecisionCard from '../components/ui/DecisionCard';
 
-const AnalysisChat = () => {
-  const [messages, setMessages] = useState([
-    { type: 'ai', text: 'Welcome! Please upload your tender document(s) to begin the strategic analysis.' }
-  ]);
+// We now accept currentSessionId and onSessionSelect from App/MainDashboard
+const AnalysisChat = ({ currentSessionId, onSessionSelect }) => {
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [activeTender, setActiveTender] = useState(null);
@@ -14,21 +14,96 @@ const AnalysisChat = () => {
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
 
+  // 1. Auto-scroll to bottom on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
+  // 2. Fetch History when currentSessionId changes
+  useEffect(() => {
+    if (currentSessionId) {
+      setIsLoading(true);
+      axios.get(`http://127.0.0.1:8001/chats/history/${currentSessionId}`)
+        .then(res => {
+          let restoredTender = null;
+          const loadedMessages = res.data.map(m => {
+            try {
+              // Check if the message content is our JSON tender result
+              const parsed = JSON.parse(m.text);
+              if (parsed && parsed.isTenderResult) {
+                restoredTender = parsed.data; // Restore context
+                return { type: m.type, result: parsed.data };
+              }
+            } catch (e) {
+              // If it's not JSON, it's a normal text message
+            }
+            return { type: m.type, text: m.text };
+          });
+          
+          setMessages(loadedMessages);
+          setActiveTender(restoredTender); // Allow user to keep chatting about this tender
+        })
+        .catch(err => console.error("Error loading history:", err))
+        .finally(() => setIsLoading(false));
+    } else {
+      // New Chat State
+      setMessages([{ type: 'ai', text: 'Welcome! Please upload your tender document(s) to begin the strategic analysis.' }]);
+      setActiveTender(null);
+    }
+  }, [currentSessionId]);
+
+  // 3. Helper to save messages to the database
+  const persistMessage = async (sessionId, role, content, title = null) => {
+    try {
+      // If content is an object (like the DecisionCard data), stringify it specially
+      const contentStr = typeof content === 'object' 
+        ? JSON.stringify({ isTenderResult: true, data: content }) 
+        : content;
+
+      await axios.post('http://127.0.0.1:8001/chats/message', {
+        session_id: sessionId,
+        role: role,
+        content: contentStr,
+        title: title
+      });
+    } catch (e) {
+      console.error("Failed to save message to DB", e);
+    }
+  };
+
+  // 4. Handle File Uploads
   const handleFileUpload = async (event) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
-    // UI Update: List the files being uploaded
+    // Session Management
+    let sid = currentSessionId;
+    let isNewSession = false;
+    if (!sid) {
+      sid = uuidv4();
+      isNewSession = true;
+      onSessionSelect(sid);
+    }
+
     const fileNames = Array.from(files).map(f => f.name).join(', ');
-    setMessages(prev => [...prev, { type: 'user', text: `📄 Uploading ${files.length} file(s): ${fileNames}` }]);
+    const userMsg = `📄 Uploading ${files.length} file(s): ${fileNames}`;
+    
+    setMessages(prev => [...prev, { type: 'user', text: userMsg }]);
     setIsLoading(true);
 
+    // AI Title Generation for new chats
+    let chatTitle = "New Analysis";
+    if (isNewSession) {
+      try {
+        const titleRes = await axios.post('http://127.0.0.1:8001/chats/generate-title', { first_message: userMsg });
+        chatTitle = titleRes.data.title;
+      } catch (e) {}
+    }
+
+    // Save user upload message
+    await persistMessage(sid, 'user', userMsg, isNewSession ? chatTitle : null);
+
     const formData = new FormData();
-    // CRITICAL: Append each file with the key 'files' to match backend List[UploadFile]
     for (let i = 0; i < files.length; i++) {
       formData.append('files', files[i]);
     }
@@ -38,31 +113,34 @@ const AnalysisChat = () => {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
-      if (response.data.aarvi_intelligence) {
-        setActiveTender(response.data.aarvi_intelligence);
-      }
+      const tenderData = response.data.aarvi_intelligence;
+      if (tenderData) setActiveTender(tenderData);
       
-      setMessages(prev => [...prev, { type: 'ai', result: response.data.aarvi_intelligence }]);
+      setMessages(prev => [...prev, { type: 'ai', result: tenderData }]);
+      await persistMessage(sid, 'ai', tenderData); // Save the analysis object
+
     } catch (e) {
       const errorMsg = e.response?.data?.detail || e.message; 
-      console.error("Full Error:", e.response?.data);
-      setMessages(prev => [...prev, { type: 'ai', text: `Analysis failed: ${errorMsg}` }]);
+      const errorText = `Analysis failed: ${errorMsg}`;
+      setMessages(prev => [...prev, { type: 'ai', text: errorText }]);
+      await persistMessage(sid, 'ai', errorText);
     } finally {
       setIsLoading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
+  // 5. Handle Text Chat
   const handleChat = async () => {
     if (!input.trim()) return;
     
-    if (!activeTender) {
-      setMessages(prev => [...prev, 
-        { type: 'user', text: input },
-        { type: 'ai', text: "Please upload the tender files first so I can analyze them." }
-      ]);
-      setInput('');
-      return;
+    let sid = currentSessionId;
+    let isNewSession = false;
+    
+    if (!sid) {
+      sid = uuidv4();
+      isNewSession = true;
+      onSessionSelect(sid);
     }
 
     const userQuery = input;
@@ -70,15 +148,31 @@ const AnalysisChat = () => {
     setInput('');
     setIsLoading(true);
 
+    let chatTitle = "New Analysis";
+    if (isNewSession) {
+      try {
+        const titleRes = await axios.post('http://127.0.0.1:8001/chats/generate-title', { first_message: userQuery });
+        chatTitle = titleRes.data.title;
+      } catch (e) {}
+    }
+
+    await persistMessage(sid, 'user', userQuery, isNewSession ? chatTitle : null);
+
     try {
       const response = await axios.post('http://127.0.0.1:8001/chat/', { 
         query: userQuery,
-        context: activeTender,
-        full_text: activeTender.full_text || "" 
+        context: activeTender || {},
+        full_text: activeTender?.full_text || "" 
       });
-      setMessages(prev => [...prev, { type: 'ai', text: response.data.reply }]);
+      
+      const aiReply = response.data.reply;
+      setMessages(prev => [...prev, { type: 'ai', text: aiReply }]);
+      await persistMessage(sid, 'ai', aiReply);
+
     } catch (e) {
-      setMessages(prev => [...prev, { type: 'ai', text: "I'm having trouble accessing my strategic memory right now." }]);
+      const errorText = "I'm having trouble accessing my strategic memory right now.";
+      setMessages(prev => [...prev, { type: 'ai', text: errorText }]);
+      await persistMessage(sid, 'ai', errorText);
     } finally {
       setIsLoading(false);
     }
@@ -88,12 +182,12 @@ const AnalysisChat = () => {
     <div className="flex flex-col h-full bg-slate-50 relative">
       {/* Context Indicator */}
       {activeTender && (
-        <div className="bg-blue-900 text-white px-4 py-2 flex items-center justify-between text-xs font-medium">
+        <div className="bg-blue-900 text-white px-4 py-2 flex items-center justify-between text-xs font-medium shrink-0 shadow-md z-10">
           <div className="flex items-center gap-2">
             <CheckCircle2 size={14} className="text-emerald-400" />
             <span>Consulting on: {activeTender.tender_no || "Active Tender"}</span>
           </div>
-          <span className="opacity-60">{activeTender.client_name}</span>
+          <span className="opacity-60 truncate max-w-[200px]">{activeTender.client_name}</span>
         </div>
       )}
 
@@ -105,10 +199,10 @@ const AnalysisChat = () => {
               <DecisionCard result={m.result} onClose={() => {}} />
             ) : (
               <div className={`flex items-start gap-3 max-w-[85%] md:max-w-2xl ${m.type === 'user' ? 'flex-row-reverse' : ''}`}>
-                <div className={`p-2 rounded-lg ${m.type === 'ai' ? 'bg-blue-100 text-blue-600' : 'bg-slate-200 text-slate-600'}`}>
+                <div className={`p-2 rounded-lg shrink-0 ${m.type === 'user' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'}`}>
                   {m.type === 'ai' ? <Bot size={18} /> : <User size={18} />}
                 </div>
-                <div className={`p-4 rounded-2xl shadow-sm text-sm leading-relaxed ${
+                <div className={`p-4 rounded-2xl shadow-sm text-sm leading-relaxed whitespace-pre-wrap ${
                   m.type === 'user' ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white border rounded-tl-none text-slate-800'
                 }`}>
                   {m.text}
@@ -127,11 +221,10 @@ const AnalysisChat = () => {
       </div>
 
       {/* Chat Input Bar */}
-      <div className="p-4 bg-white border-t">
+      <div className="p-4 bg-white border-t shrink-0">
         <div className="max-w-4xl mx-auto flex items-center gap-2 bg-slate-100 rounded-2xl p-1.5 border focus-within:border-blue-400 transition-all">
           <label className="cursor-pointer p-2.5 hover:bg-white rounded-xl text-slate-500 transition-colors">
             <FileUp size={22} />
-            {/* Added 'multiple' attribute here */}
             <input 
               type="file" 
               className="hidden" 
@@ -150,7 +243,8 @@ const AnalysisChat = () => {
           />
           <button 
             onClick={handleChat} 
-            className={`p-2.5 rounded-xl ${input.trim() ? 'bg-blue-600 text-white' : 'text-slate-400'}`}
+            disabled={!input.trim()}
+            className={`p-2.5 rounded-xl transition-all ${input.trim() ? 'bg-blue-600 text-white shadow-md hover:bg-blue-700' : 'text-slate-400'}`}
           >
             <Send size={20} />
           </button>

@@ -62,7 +62,7 @@ def format_for_ui(value):
 
 def ensure_ui_schema(ai_data: dict, logic_data: dict, error_msg: str = None) -> dict:
     template = {
-        "tender_no": "Not Specified", "client_name": "Not Specified", "description": "Not Specified","tender_open_price": "Not Specified", # Ensure this is here
+        "tender_no": "Not Specified", "client_name": "Not Specified", "description": "Not Specified", "tender_open_price": "Not Specified", 
         "emd": "Not Specified",
         "bqc_financial": "Not Specified", "bqc_technical": "Not Specified",
         "pqc_financial": "Not Specified", "pqc_technical": "Not Specified",
@@ -154,4 +154,36 @@ def generate_tender_summary(tender_text: str = None):
 def chat_with_tender(query: str, context: dict, full_text: str = ""):
     model = get_model()
     prompt = f"Context: {json.dumps(context)}\nFull Doc: {full_text[:50000]}\nQuery: {query}\n\nStrictly answer based on Full Doc using Markdown bullets."
-    return model.generate_content(prompt).text
+    return model.generate_content(prompt).text  
+
+# ----------------- NEW ADDITION FOR CHAT HISTORY -----------------
+def generate_chat_title(first_message: str) -> str:
+    """
+    Generates a concise, 3-4 word title for the sidebar based on the first interaction.
+    """
+    if not first_message:
+        return "New Analysis"
+        
+    model = get_model()
+    # Limit the input to the first 1000 characters to save tokens and speed up response
+    prompt = f"""
+    Generate a short, concise, 3 to 4 word title for a business chat session based on this first message or document snippet:
+    "{first_message[:1000]}"
+    
+    Rules:
+    - Output ONLY the title.
+    - Do not use quotes, punctuation, or conversational filler.
+    - Focus on the Client Name or primary subject (e.g., "ONGC Maintenance Tender" or "HPCL Manpower Bid").
+    """
+    try:
+        response = model.generate_content(prompt)
+        title = response.text.strip().replace('"', '').replace('\n', '')
+        
+        # Fallback if the AI ignores the length constraint
+        if len(title) > 35:
+            title = title[:32] + "..."
+            
+        return title
+    except Exception as e:
+        print(f"Error generating chat title: {e}")
+        return "New Analysis"

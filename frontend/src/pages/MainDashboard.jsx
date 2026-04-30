@@ -9,7 +9,8 @@ import Navbar from '../components/layout/Navbar';
 import Sidebar from '../components/layout/Sidebar';
 import Footer from '../components/layout/Footer';
 
-const MainDashboard = () => {
+// ACCEPT PROPS FROM App.jsx
+const MainDashboard = ({ currentSessionId, onSessionSelect }) => {
   const dashboardSectionRef = useRef(null);
   
   // Tabs: 'analysis' (Chat), 'dashboard' (Table), 'analytics' (Charts)
@@ -50,12 +51,14 @@ const MainDashboard = () => {
         ref={dashboardSectionRef}
         className="relative z-10 h-screen w-full bg-slate-50 flex shadow-[0_-20px_50px_rgba(0,0,0,0.5)]"
       >
-        {/* Sidebar with Navigation Props */}
+        {/* Sidebar with Navigation Props AND Chat Session Props */}
         <Sidebar 
           isOpen={isSidebarOpen} 
           onClose={() => setIsSidebarOpen(false)} 
           activeTab={activeTab} 
           setActiveTab={setActiveTab} 
+          currentSessionId={currentSessionId}
+          onSessionSelect={onSessionSelect}
         />
 
         {/* Main Content Area */}
@@ -68,7 +71,13 @@ const MainDashboard = () => {
           
           {/* Dynamic Content Area - Switching between Chat, Table, and Charts */}
           <main className="flex-1 overflow-auto relative bg-white">
-            {activeTab === 'analysis' && <AnalysisChat />}
+            {/* PASS PROPS TO ANALYSIS CHAT */}
+            {activeTab === 'analysis' && (
+              <AnalysisChat 
+                currentSessionId={currentSessionId} 
+                onSessionSelect={onSessionSelect} 
+              />
+            )}
             {activeTab === 'dashboard' && <MasterDashboard />}
             {activeTab === 'analytics' && <AnalyticsDashboard />}
           </main>

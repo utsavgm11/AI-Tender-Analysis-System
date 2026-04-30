@@ -10,17 +10,27 @@ const NotificationPage = () => {
   const [editData, setEditData] = useState(null);
   const navigate = useNavigate();
 
-  const fetchUpcoming = async () => {
-    try {
-      const res = await axios.get("http://127.0.0.1:8001/tenders/upcoming-prebid");
-      setTenders(res.data);
-    } catch (err) {
-      console.error("Error fetching notifications:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+ const fetchUpcoming = async () => {
+  setLoading(true);
+  try {
+    const res = await axios.get("http://127.0.0.1:8001/tenders/upcoming-prebid");
+    
+    // Get today's date in YYYY-MM-DD format for comparison
+    const today = new Date().toISOString().split('T')[0];
 
+    // Filter: Only keep tenders where pre_bidding_date is today or in the future
+    const filteredTenders = res.data.filter(t => {
+      if (!t.pre_bidding_date) return false;
+      return t.pre_bidding_date >= today;
+    });
+
+    setTenders(filteredTenders);
+  } catch (err) {
+    console.error("Error fetching notifications:", err);
+  } finally {
+    setLoading(false);
+  }
+};
   useEffect(() => { fetchUpcoming(); }, []);
 
   const openEditModal = (tender) => {
