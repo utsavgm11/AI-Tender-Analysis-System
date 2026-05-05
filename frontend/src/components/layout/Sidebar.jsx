@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { 
   LayoutGrid, FileText, BarChart2, X, Plus, 
-  MessageSquare, Edit3, Share2, Trash2 
+  MessageSquare, Edit3, Share2, Trash2, Search // Added Search icon
 } from 'lucide-react';
 
 // --- Sub-component for individual chat items ---
@@ -93,19 +93,26 @@ const ChatItem = ({ chat, currentSessionId, onSelect, onRename, onDelete }) => {
 // --- Main Sidebar Component ---
 const Sidebar = ({ isOpen, onClose, activeTab, setActiveTab, currentSessionId, onSessionSelect }) => {
   const [sessions, setSessions] = useState([]);
+  const [searchQuery, setSearchQuery] = useState(''); // Added search state
 
-  const fetchSessions = async () => {
+  // Updated fetch logic to include search query
+  const fetchSessions = async (query = searchQuery) => {
     try {
-      const res = await axios.get("http://127.0.0.1:8001/chats/sessions");
+      const res = await axios.get(`http://127.0.0.1:8001/chats/sessions?q=${encodeURIComponent(query)}`);
       setSessions(res.data);
     } catch (err) {
       console.error("Error fetching sessions:", err);
     }
   };
 
+  // Added debouncing so it doesn't spam the server on every keystroke
   useEffect(() => {
-    fetchSessions();
-  }, [currentSessionId]);
+    const delayDebounceFn = setTimeout(() => {
+      fetchSessions(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [currentSessionId, searchQuery]);
 
   const handleRename = async (sessionId, newTitle) => {
     try {
@@ -184,10 +191,36 @@ const Sidebar = ({ isOpen, onClose, activeTab, setActiveTab, currentSessionId, o
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+            
+            {/* --- NEW: Conversation Search Bar --- */}
+            <div className="mb-4">
+              <div className="relative group">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors" />
+                <input 
+                  type="text"
+                  placeholder="Search conversations..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-slate-800/50 border border-slate-700 text-xs text-white pl-9 pr-8 py-2 rounded-xl outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all placeholder:text-slate-500"
+                />
+                {/* Clear Search Button */}
+                {searchQuery && (
+                  <button 
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                  >
+                    <X size={12} />
+                  </button>
+                )}
+              </div>
+            </div>
+
             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 px-2">Recent Analyses</p>
             <div className="space-y-1">
               {sessions.length === 0 ? (
-                <p className="text-xs text-slate-500 px-2 italic">No recent chats.</p>
+                <p className="text-xs text-slate-500 px-2 italic">
+                  {searchQuery ? "No matches found." : "No recent chats."}
+                </p>
               ) : (
                 sessions.map(chat => (
                   <ChatItem 

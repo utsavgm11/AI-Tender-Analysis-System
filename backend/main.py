@@ -56,6 +56,7 @@ class Tender(BaseModel):
     pre_bid_time: Optional[str] = None
     mode_of_conduct: Optional[str] = None
     platform_or_address: Optional[str] = None
+
 class ChatRequest(BaseModel):
     query: str
     context: dict
@@ -118,11 +119,22 @@ async def chat_endpoint(req: ChatRequest):
 
 # ----------------- CHAT HISTORY ROUTES -----------------
 @app.get("/chats/sessions")
-def get_sessions():
+def get_sessions(q: Optional[str] = None):
+    """
+    Fetches chat sessions. 
+    If 'q' is provided, it filters sessions by title for the sidebar search feature.
+    """
     conn = get_db_connection()
-    sessions = conn.execute("SELECT * FROM chat_sessions ORDER BY created_at DESC").fetchall()
-    conn.close()
-    return [dict(s) for s in sessions]
+    try:
+        if q:
+            # Search for the query string within the title (case-insensitive)
+            query = "SELECT * FROM chat_sessions WHERE title LIKE ? ORDER BY created_at DESC"
+            sessions = conn.execute(query, (f"%{q}%",)).fetchall()
+        else:
+            sessions = conn.execute("SELECT * FROM chat_sessions ORDER BY created_at DESC").fetchall()
+        return [dict(s) for s in sessions]
+    finally:
+        conn.close()
 
 @app.get("/chats/history/{session_id}")
 def get_history(session_id: str):

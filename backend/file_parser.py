@@ -1,74 +1,95 @@
 import io
 import re
-import PyPDF2
 import docx
 import pandas as pd
+import fitz  # PyMuPDF
 from fastapi import UploadFile
+import easyocr
+import numpy as np
+import warnings
+
+# Suppress hardware/optimization warnings from Torch for a cleaner demo terminal
+warnings.filterwarnings("ignore", category=UserWarning, module="torch.utils.data.dataloader")
+
+# Global reader initialization for efficiency (English language)
+# gpu=False ensures it runs on any standard office computer
+print("--- Initializing AI OCR Engine ---")
+reader = easyocr.Reader(['en'], gpu=False)
 
 async def extract_text_from_upload(file: UploadFile) -> str:
     """
-    Handles the file reading asynchronously from the FastAPI endpoint.
+    Handles asynchronous file reading and passes bytes to extraction logic.
     """
     file_bytes = await file.read()
     raw_text = extract_text_from_file(file_bytes, file.filename)
-    
-    # NEW: Apply cleaning before sending to AI/Logic
     return clean_extracted_text(raw_text)
 
 def clean_extracted_text(text: str) -> str:
     """
-    Cleans the raw text to reduce API token usage and improve AI accuracy.
-    Removes excessive whitespaces, consecutive blank lines, and weird artifacts.
+    Optimizes text for AI analysis by removing artifacts and excessive whitespace.
     """
-    if not text:
-        return ""
-    
-    # Replace 3 or more newlines with just 2
+    if not text: return ""
+    # Remove non-standard ASCII junk common in PSU scanned documents
+    text = re.sub(r'[^\x00-\x7F]+', ' ', text)
+    # Collapse multiple newlines and spaces to save AI tokens
     text = re.sub(r'\n{3,}', '\n\n', text)
-    # Replace multiple spaces with a single space
     text = re.sub(r'[ \t]+', ' ', text)
-    # Strip leading/trailing whitespace
     return text.strip()
 
 def extract_text_from_file(file_bytes: bytes, filename: str) -> str:
     """
-    Core extraction logic for various file types.
+    Extracts text from PDF, Word, and Excel with specialized PDF table handling.
     """
     text = ""
-    filename_lower = filename.lower()
+    fn_lower = filename.lower()
 
     try:
-        # 1. Handle PDF Files
-        if filename_lower.endswith(".pdf"):
-            reader = PyPDF2.PdfReader(io.BytesIO(file_bytes))
-            for page in reader.pages:
-                extracted = page.extract_text()
-                if extracted:
-                    text += extracted + "\n"
+        # 1. ENHANCED PDF HANDLING
+        if fn_lower.endswith(".pdf"):
+            with fitz.open(stream=file_bytes, filetype="pdf") as doc:
+                for i, page in enumerate(doc):
+                    # Try high-speed structural text extraction first
+                    # 'blocks' preserves paragraph and table-row relationships
+                    blocks = page.get_text("blocks")
+                    # Sort blocks: Top-to-Bottom, then Left-to-Right
+                    blocks.sort(key=lambda b: (b[1], b[0]))
+                    extracted = "\n".join([b[4] for b in blocks if b[4].strip()])
+                    
+                    # Page contains viable text layer
+                    if len(extracted.strip()) > 100:
+                        text += f"\n--- Page {i+1} ---\n{extracted}\n"
+                    else:
+                        # OCR FALLBACK: Page is a scanned image (common for BQC pages)
+                        # matrix=fitz.Matrix(1.5, 1.5) provides a balance of speed and 
+                        # accuracy for reading financial numbers
+                        pix = page.get_pixmap(matrix=fitz.Matrix(1.5, 1.5))
+                        img_data = pix.tobytes("png")
+                        
+                        # detail=0 returns only text; paragraph=True speeds up logical grouping
+                        ocr_results = reader.readtext(img_data, detail=0, paragraph=True)
+                        text += f"\n--- Page {i+1} (OCR Scan) ---\n" + "\n".join(ocr_results) + "\n"
 
-        # 2. Handle Word Documents
-        elif filename_lower.endswith((".docx", ".doc")):
-            doc = docx.Document(io.BytesIO(file_bytes))
-            for para in doc.paragraphs:
-                if para.text.strip():  # Only add non-empty paragraphs
-                    text += para.text + "\n"
+        # 2. WORD DOCUMENT HANDLING
+        elif fn_lower.endswith((".docx", ".doc")):
+            doc_obj = docx.Document(io.BytesIO(file_bytes))
+            # Extract from tables (BQC is often in tables in Word docs)
+            for table in doc_obj.tables:
+                for row in table.rows:
+                    text += " | ".join([cell.text.strip() for cell in row.cells]) + "\n"
+            # Extract standard paragraphs
+            text += "\n".join([p.text for p in doc_obj.paragraphs if p.text.strip()])
 
-        # 3. Handle Excel Sheets
-        elif filename_lower.endswith((".xlsx", ".xls", ".xlsm")):
-            dfs = pd.read_excel(io.BytesIO(file_bytes), sheet_name=None, engine='openpyxl')
-            
-            text += f"--- EXCEL DATA START: {filename} ---\n"
-            for sheet_name, df in dfs.items():
-                if df.empty: continue
-                text += f"\n[SHEET: {sheet_name}]\n"
-                # Convert DataFrame to a clean string representation
-                text += df.to_string(index=False) + "\n"
-            text += "\n--- EXCEL DATA END ---\n"
-            
-        else:
-            return "Error: Unsupported file format."
+        # 3. EXCEL HANDLING
+        elif fn_lower.endswith((".xlsx", ".xls", ".xlsm")):
+            with pd.ExcelFile(io.BytesIO(file_bytes)) as xls:
+                for sheet in xls.sheet_names:
+                    df = pd.read_excel(xls, sheet_name=sheet)
+                    if not df.empty:
+                        text += f"\n[SHEET: {sheet}]\n{df.to_string(index=False)}\n"
+        
+        else: return "Error: Unsupported file format."
 
     except Exception as e:
-        return f"Error reading file: {str(e)}"
+        return f"Error reading file {filename}: {str(e)}"
 
     return text
