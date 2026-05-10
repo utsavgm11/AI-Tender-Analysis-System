@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import MainDashboard from './pages/MainDashboard';
 import AnalyticsDashboard from './pages/AnalyticsDashboard';
 import NotificationPage from './pages/NotificationPage';
 import SharedChat from './pages/SharedChat';
 
-// Helper component for conditional rendering
+// IMPORTANT: Import the Landing Page
+import LandingPage from './pages/LandingPage'; 
+
 const Layout = ({ children }) => {
   const location = useLocation();
   
-  // HIDE Navbar on "/" (Dashboard with Sidebar) 
-  // and HIDE Navbar on "/share" (Standalone shared view)
   const isSpecialPage = location.pathname === '/' || location.pathname.startsWith('/share/');
 
   return (
@@ -25,14 +25,39 @@ const Layout = ({ children }) => {
 };
 
 function App() {
-  // Lift the session state up to the App level so it persists 
   const [currentSessionId, setCurrentSessionId] = useState(null);
+  
+  // --- 1. SIMPLE AUTH STATE ---
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState(null);
 
+  // --- 2. CHECK STORAGE ON LOAD ---
+  useEffect(() => {
+    const role = localStorage.getItem('userRole');
+    if (role && role !== 'undefined' && role !== 'null') {
+      setIsAuthenticated(true);
+      setUserRole(role);
+    }
+  }, []);
+
+  // --- 3. THE UNLOCK FUNCTION ---
+  // LandingPage calls this when the backend says "Success"
+  const handleLoginSuccess = (role) => {
+    setIsAuthenticated(true);
+    setUserRole(role);
+  };
+
+  // --- 4. THE GATE ---
+  // If not logged in, stop here and ONLY show the Landing Page
+  if (!isAuthenticated) {
+    return <LandingPage onLoginSuccess={handleLoginSuccess} />;
+  }
+
+  // --- 5. YOUR ORIGINAL WORKING APP ---
   return (
     <Router>
       <Layout>
         <Routes>
-          {/* Main App Dashboard */}
           <Route 
             path="/" 
             element={
@@ -43,12 +68,19 @@ function App() {
             } 
           />
           
-          {/* Internal Pages */}
-          <Route path="/analytics" element={<AnalyticsDashboard />} />
-          <Route path="/notifications" element={<NotificationPage />} />
+          {/* Protected Analytics Route */}
+          <Route 
+            path="/analytics" 
+            element={
+              userRole === 'admin' 
+                ? <AnalyticsDashboard /> 
+                : <Navigate to="/" replace /> 
+            } 
+          />
           
-          {/* NEW: Standalone Shared Chat View */}
+          <Route path="/notifications" element={<NotificationPage />} />
           <Route path="/share/:id" element={<SharedChat />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Layout>
     </Router>

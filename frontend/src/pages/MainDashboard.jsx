@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import LandingPage from './LandingPage';
+//import LandingPage from './LandingPage';
 import AnalysisChat from './AnalysisChat';
 import MasterDashboard from './MasterDashboard'; 
 import AnalyticsDashboard from './AnalyticsDashboard'; // New BI View
@@ -41,10 +41,7 @@ const MainDashboard = ({ currentSessionId, onSessionSelect }) => {
   return (
     <div className="w-full bg-[#0f172a]">
       
-      {/* SECTION 1: THE SMART LANDING PAGE */}
-      <section className="h-screen w-full sticky top-0 z-0">
-        <LandingPage onStart={handleStart} />
-      </section>
+     
 
       {/* SECTION 2: THE MAIN APPLICATION INTERFACE */}
       <section 

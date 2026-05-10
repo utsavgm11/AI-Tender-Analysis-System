@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { 
   LayoutGrid, FileText, BarChart2, X, Plus, 
-  MessageSquare, Edit3, Share2, Trash2, Search // Added Search icon
+  MessageSquare, Edit3, Share2, Trash2, Search, LogOut // Added LogOut icon
 } from 'lucide-react';
 
 // --- Sub-component for individual chat items ---
@@ -93,9 +93,18 @@ const ChatItem = ({ chat, currentSessionId, onSelect, onRename, onDelete }) => {
 // --- Main Sidebar Component ---
 const Sidebar = ({ isOpen, onClose, activeTab, setActiveTab, currentSessionId, onSessionSelect }) => {
   const [sessions, setSessions] = useState([]);
-  const [searchQuery, setSearchQuery] = useState(''); // Added search state
+  const [searchQuery, setSearchQuery] = useState(''); 
+  
+  // --- NEW: Get User Role ---
+  const userRole = localStorage.getItem('userRole');
 
-  // Updated fetch logic to include search query
+  // --- NEW: Logout Handler ---
+  const handleLogout = () => {
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userEmail');
+    window.location.href = "/"; // Instantly redirects and drops them back to the Secure Gate
+  };
+
   const fetchSessions = async (query = searchQuery) => {
     try {
       const res = await axios.get(`http://127.0.0.1:8001/chats/sessions?q=${encodeURIComponent(query)}`);
@@ -105,7 +114,6 @@ const Sidebar = ({ isOpen, onClose, activeTab, setActiveTab, currentSessionId, o
     }
   };
 
-  // Added debouncing so it doesn't spam the server on every keystroke
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       fetchSessions(searchQuery);
@@ -126,7 +134,6 @@ const Sidebar = ({ isOpen, onClose, activeTab, setActiveTab, currentSessionId, o
   const handleDelete = async (sessionId) => {
     try {
       await axios.delete(`http://127.0.0.1:8001/chats/sessions/${sessionId}`);
-      // If we deleted the currently active chat, reset to "New Analysis" state
       if (currentSessionId === sessionId) {
         onSessionSelect(null);
       }
@@ -171,28 +178,32 @@ const Sidebar = ({ isOpen, onClose, activeTab, setActiveTab, currentSessionId, o
               <Plus size={18} /> New Analysis
             </button>
 
-            <button 
-              onClick={() => { setActiveTab('dashboard'); if (window.innerWidth < 768) onClose(); }} 
-              className={`flex items-center gap-3 w-full p-3 rounded-xl font-bold transition-all ${
-                activeTab === 'dashboard' ? 'bg-blue-600 text-white' : 'hover:bg-slate-800 text-slate-300'
-              }`}
-            >
-              <FileText size={18} /> Master Dashboard
-            </button>
+            {/* --- NEW: PROTECTED ROUTES (Admin Only) --- */}
+            {userRole === 'admin' && (
+              <>
+                <button 
+                  onClick={() => { setActiveTab('dashboard'); if (window.innerWidth < 768) onClose(); }} 
+                  className={`flex items-center gap-3 w-full p-3 rounded-xl font-bold transition-all ${
+                    activeTab === 'dashboard' ? 'bg-blue-600 text-white' : 'hover:bg-slate-800 text-slate-300'
+                  }`}
+                >
+                  <FileText size={18} /> Master Dashboard
+                </button>
 
-            <button 
-              onClick={() => { setActiveTab('analytics'); if (window.innerWidth < 768) onClose(); }} 
-              className={`flex items-center gap-3 w-full p-3 rounded-xl font-bold transition-all ${
-                activeTab === 'analytics' ? 'bg-blue-600 text-white' : 'hover:bg-slate-800 text-slate-300'
-              }`}
-            >
-              <BarChart2 size={18} /> Analytics Dashboard
-            </button>
+                <button 
+                  onClick={() => { setActiveTab('analytics'); if (window.innerWidth < 768) onClose(); }} 
+                  className={`flex items-center gap-3 w-full p-3 rounded-xl font-bold transition-all ${
+                    activeTab === 'analytics' ? 'bg-blue-600 text-white' : 'hover:bg-slate-800 text-slate-300'
+                  }`}
+                >
+                  <BarChart2 size={18} /> Analytics Dashboard
+                </button>
+              </>
+            )}
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
             
-            {/* --- NEW: Conversation Search Bar --- */}
             <div className="mb-4">
               <div className="relative group">
                 <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors" />
@@ -203,7 +214,6 @@ const Sidebar = ({ isOpen, onClose, activeTab, setActiveTab, currentSessionId, o
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-slate-800/50 border border-slate-700 text-xs text-white pl-9 pr-8 py-2 rounded-xl outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all placeholder:text-slate-500"
                 />
-                {/* Clear Search Button */}
                 {searchQuery && (
                   <button 
                     onClick={() => setSearchQuery('')}
@@ -240,6 +250,17 @@ const Sidebar = ({ isOpen, onClose, activeTab, setActiveTab, currentSessionId, o
             </div>
           </div>
         </div>
+
+        {/* --- NEW: LOGOUT SECTION --- */}
+        <div className="p-4 border-t border-slate-800 shrink-0">
+          <button 
+            onClick={handleLogout}
+            className="flex items-center gap-3 w-full p-3 rounded-xl font-bold text-red-400 hover:bg-red-500/10 transition-all"
+          >
+            <LogOut size={18} /> Secure Logout
+          </button>
+        </div>
+
       </aside>
     </>
   );

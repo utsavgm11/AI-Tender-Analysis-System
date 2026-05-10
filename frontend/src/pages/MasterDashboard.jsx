@@ -2,12 +2,13 @@ import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { 
   Target, Clock, CheckCircle, XCircle, FileText, 
-  Search, Plus, Edit3, X, Trash2 // Added Trash2
+  Search, Plus, Edit3, X, Trash2
 } from 'lucide-react';
 
 const MasterDashboard = () => {
   const [tenders, setTenders] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedFY, setSelectedFY] = useState('All'); // NEW: Financial Year State
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('add');
@@ -92,7 +93,6 @@ const MasterDashboard = () => {
     }
   };
 
-  // NEW: Delete Tender Function
   const handleDeleteTender = async (tenderNo) => {
     if (window.confirm(`Are you sure you want to permanently delete Tender: ${tenderNo}?`)) {
       try {
@@ -108,13 +108,25 @@ const MasterDashboard = () => {
     }
   };
 
-  const handleDownload = () => window.open(`${API_URL}/export-tenders`, '_blank');
+  // UPDATED: Dynamic Export based on selected FY
+  const handleDownload = () => {
+    const url = selectedFY === 'All' 
+      ? `${API_URL}/export-tenders` 
+      : `${API_URL}/export-tenders?fy=${selectedFY}`;
+    window.open(url, '_blank');
+  };
 
   const today = useMemo(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
     return d;
   }, []);
+
+  // NEW: Dynamically grab all available Financial Years from the data
+  const availableFYs = useMemo(() => {
+    const years = [...new Set(tenders.map(t => t.financial_year))].filter(Boolean);
+    return ['All', ...years.sort().reverse()];
+  }, [tenders]);
 
   const getRowStyle = (dateStr) => {
     if (!dateStr) return '';
@@ -125,19 +137,34 @@ const MasterDashboard = () => {
     return ''; 
   };
 
-  // UPDATED: Sorting logic to keep Pending/New items visible
+  // UPDATED: Comprehensive Sorting & Filtering Logic
   const sortedTenders = useMemo(() => {
-    return tenders.filter(t => 
-      t.name_of_client?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      t.tender_no?.toLowerCase().includes(searchTerm.toLowerCase())
-    ).sort((a, b) => {
-      // Prioritize Pending/New items at the top
-      if (a.tender_status === 'Pending' && b.tender_status !== 'Pending') return -1;
-      if (a.tender_status !== 'Pending' && b.tender_status === 'Pending') return 1;
-      // Secondary sort by due date
-      return new Date(a.due_date || '9999-12-31') - new Date(b.due_date || '9999-12-31');
+    // 1. Filter by Search term AND Financial Year
+    const filtered = tenders.filter(t => {
+      const matchesSearch = t.name_of_client?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                            t.tender_no?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesFY = selectedFY === 'All' || t.financial_year === selectedFY;
+      return matchesSearch && matchesFY;
     });
-  }, [tenders, searchTerm]);
+
+    // 2. Sort: Active up top (ascending), Expired at bottom (descending)
+    return filtered.sort((a, b) => {
+      const dateA = a.due_date ? new Date(a.due_date) : new Date('9999-12-31');
+      const dateB = b.due_date ? new Date(b.due_date) : new Date('9999-12-31');
+      
+      const isAActive = dateA >= today;
+      const isBActive = dateB >= today;
+
+      if (isAActive && !isBActive) return -1;
+      if (!isAActive && isBActive) return 1;
+
+      // Both active: closest deadline first
+      if (isAActive && isBActive) return dateA - dateB;
+
+      // Both expired: most recent first
+      return dateB - dateA;
+    });
+  }, [tenders, searchTerm, selectedFY, today]);
 
   const stats = useMemo(() => ({
     totalActive: tenders.filter(t => t.due_date && new Date(t.due_date) >= today && !['Tender Won', 'Tender Lost', 'Tender Cancelled', 'Tender Regret'].includes(t.tender_status)).length,
@@ -162,10 +189,24 @@ const MasterDashboard = () => {
       </div>
 
       <div className="flex justify-between items-center mb-6">
-        <div className="relative w-96">
-          <Search className="absolute left-3 top-2.5 text-slate-400" size={18} />
-          <input className="w-full pl-10 py-2 rounded-xl border outline-none focus:ring-2 focus:ring-indigo-500 transition-all" placeholder="Search Client or Tender..." onChange={(e) => setSearchTerm(e.target.value)} />
+        {/* UPDATED: Added Financial Year Dropdown next to Search */}
+        <div className="flex gap-4 items-center">
+          <div className="relative w-96">
+            <Search className="absolute left-3 top-2.5 text-slate-400" size={18} />
+            <input className="w-full pl-10 py-2 rounded-xl border outline-none focus:ring-2 focus:ring-indigo-500 transition-all" placeholder="Search Client or Tender..." onChange={(e) => setSearchTerm(e.target.value)} />
+          </div>
+          
+          <select 
+            value={selectedFY} 
+            onChange={(e) => setSelectedFY(e.target.value)}
+            className="bg-white border border-slate-200 px-4 py-2 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-medium text-slate-600 cursor-pointer"
+          >
+            {availableFYs.map(fy => (
+              <option key={fy} value={fy}>{fy === 'All' ? 'All Financial Years' : fy}</option>
+            ))}
+          </select>
         </div>
+
         <div className="flex gap-3">
           <button onClick={openAddModal} className="bg-emerald-600 hover:bg-emerald-700 transition-colors text-white px-5 py-2 rounded-lg font-bold flex items-center gap-2"><Plus size={16}/> Add Tender</button>
           <button onClick={handleDownload} className="bg-slate-800 hover:bg-slate-900 transition-colors text-white px-5 py-2 rounded-lg font-bold flex items-center gap-2"><FileText size={16} /> Export CSV</button>
@@ -244,7 +285,6 @@ const MasterDashboard = () => {
                 <div><label className="block text-[11px] uppercase font-bold text-slate-500 mb-2">Comments</label><textarea name="comments" value={formData.comments} onChange={handleChange} rows="2" className="w-full p-3 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"></textarea></div>
               </div>
               
-              {/* UPDATED: Modal Footer with Delete button in Edit mode */}
               <div className="pt-4 flex justify-between items-center border-t">
                 {modalMode === 'edit' ? (
                   <button 
