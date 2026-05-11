@@ -27,7 +27,7 @@ app = FastAPI()
 # ----------------- LIVE OCR PROGRESS STORE -----------------
 progress_store = {}
 
-# ----------------- CORS -----------------
+# ----------------- CORS (UPDATED FOR PRODUCTION) -----------------
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -36,16 +36,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ----------------- DATABASE -----------------
+# ----------------- DATABASE (UPDATED FOR PRODUCTION) -----------------
 def get_db_connection():
     try:
-        conn = psycopg2.connect(
-            host="localhost",
-            database="tender_system",
-            user="postgres",
-            password="Utsavgm@506",
-            cursor_factory=RealDictCursor
-        )
+        # Pulls from Render Environment Variable if available, otherwise uses local
+        db_url = os.getenv("DATABASE_URL")
+        
+        if db_url:
+            # Use Neon/Cloud URL
+            conn = psycopg2.connect(db_url, cursor_factory=RealDictCursor)
+        else:
+            # Fallback for local development
+            conn = psycopg2.connect(
+                host="localhost",
+                database="tender_system",
+                user="postgres",
+                password="Utsavgm@506",
+                cursor_factory=RealDictCursor
+            )
         return conn
     except Exception as e:
         print(f"❌ Database Connection Error: {e}")
@@ -110,9 +118,11 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # ----------------- STARTUP -----------------
 @app.on_event("startup")
 def print_routes():
+    # Detect if we are on Render via the PORT env var
+    port = os.getenv("PORT", "8001")
     print("\n==============================================")
     print("   AARVI ENCON TENDER SYSTEM ONLINE")
-    print("   PORT: 8001")
+    print(f"   PORT: {port}")
     print("   DB: POSTGRESQL")
     print("   OCR ENGINE: TESSERACT")
     print("   AI ENGINE: GEMINI FLASH")
@@ -412,11 +422,10 @@ def get_kpi_stats(year: str = "All"):
                             WHEN tender_status IN ('Tender Won', 'Tender Lost') THEN 1
                             ELSE 0
                         END
-                    ), 0
+                    ) AS NUMERIC
                 ),
             1) AS win_rate,
             
-            -- THIS IS THE FIXED BLOCK --
             SUM(
                 CASE
                     WHEN tender_status = 'Tender Won' THEN CAST(NULLIF(tender_open_price::text, '') AS NUMERIC)
@@ -443,7 +452,6 @@ def get_kpi_stats(year: str = "All"):
         row = cur.fetchone()
         result = dict(row) if row else {}
         
-        # Ensure we don't return "None" to the frontend if math is zero
         if result.get("active_pipeline") is None:
             result["active_pipeline"] = 0
         if result.get("total_won_value") is None:
@@ -460,8 +468,6 @@ def get_upcoming_prebids():
     conn = get_db_connection()
     try:
         cur = conn.cursor()
-        # REMOVED: AND pre_bidding_date != ''
-        # Postgres only needs IS NOT NULL for timestamp columns
         query = """
             SELECT * FROM tenders
             WHERE pre_bidding_date >= %s
@@ -665,4 +671,6 @@ def update_tender(tender_no: str, t: Tender):
 # ----------------- MAIN -----------------
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8001)
+    # Use environment variables for port to support cloud hosting properly
+    port = int(os.getenv("PORT", 8001))
+    uvicorn.run(app, host="0.0.0.0", port=port)
