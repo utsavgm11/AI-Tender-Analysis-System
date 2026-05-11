@@ -1,13 +1,18 @@
-import sqlite3
 import os
+import psycopg2
+from psycopg2.extras import RealDictCursor
 
 def get_db_connection():
-    # Get the directory where database.py actually lives
-    base_dir = os.path.dirname(os.path.abspath(__file__))
+    # This looks for the 'DATABASE_URL' you set in the Vercel Dashboard
+    connection_string = os.environ.get('DATABASE_URL')
     
-    # Connect directly to the db in that same folder
-    db_path = os.path.join(base_dir, 'tender_data.db')
-    
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row 
+    if not connection_string:
+        raise ValueError("DATABASE_URL not found in environment variables!")
+
+    # Connect to Neon Postgres
+    # RealDictCursor makes the rows behave like dictionaries (same as sqlite3.Row)
+    conn = psycopg2.connect(
+        connection_string, 
+        cursor_factory=RealDictCursor
+    )
     return conn
