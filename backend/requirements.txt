@@ -9,7 +9,7 @@ python-dotenv
 python-jose[cryptography]
 # Explicitly list bcrypt for password hashing reliability on Linux
 bcrypt==4.0.1
-passlib
+passlib[bcrypt]
 authlib
 
 # --- Database (PostgreSQL) ---
