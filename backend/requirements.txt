@@ -1,29 +1,36 @@
-# Web Server & API
+# --- Web Server & API ---
 fastapi
-uvicorn
+uvicorn[standard]
 python-multipart
 
-# Environment & Security
+# --- Environment & Security ---
 python-dotenv
+# Use python-jose for JWT handling; cryptography is a required sub-dependency
 python-jose[cryptography]
-passlib[bcrypt]
+# Explicitly list bcrypt for password hashing reliability on Linux
+bcrypt
+passlib
 authlib
 
-# Database (PostgreSQL)
+# --- Database (PostgreSQL) ---
 sqlalchemy
+# 'binary' version is required for cloud environments like Render/Heroku
 psycopg2-binary
 
-# AI, LLM & OCR
-google-generativeai
+# --- AI & OCR ---
+# Use 'google-genai' as 'google-generativeai' is deprecated in 2026
+google-genai
 pytesseract
 Pillow
 
-# Document Processing (PDF, Word, Excel)
+# --- Document Processing ---
+# High-performance PDF parsing
 pymupdf
 python-docx
 pandas
 openpyxl
 
-# Utilities
+# --- Utilities ---
 typing-extensions
-uuid
+# NOTE: 'uuid' is a built-in Python library. Do NOT list it here 
+# as it can conflict with the standard library.
