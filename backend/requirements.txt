@@ -8,7 +8,7 @@ python-dotenv
 # Use python-jose for JWT handling; cryptography is a required sub-dependency
 python-jose[cryptography]
 # Explicitly list bcrypt for password hashing reliability on Linux
-bcrypt
+bcrypt==4.0.1
 passlib
 authlib
 
