@@ -417,12 +417,14 @@ def get_kpi_stats(year: str = "All"):
                     ) AS NUMERIC
                 ) * 100.0 /
                 NULLIF(
-                    SUM(
-                        CASE
-                            WHEN tender_status IN ('Tender Won', 'Tender Lost') THEN 1
-                            ELSE 0
-                        END
-                    ) AS NUMERIC
+                    CAST(
+                        SUM(
+                            CASE
+                                WHEN tender_status IN ('Tender Won', 'Tender Lost') THEN 1
+                                ELSE 0
+                            END
+                        ) AS NUMERIC
+                    ), 0
                 ),
             1) AS win_rate,
             
@@ -460,7 +462,6 @@ def get_kpi_stats(year: str = "All"):
         return result
     finally:
         if conn: conn.close()
-
 # ----------------- UPCOMING PREBID -----------------
 @app.get("/tenders/upcoming-prebid")
 def get_upcoming_prebids():
