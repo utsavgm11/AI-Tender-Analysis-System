@@ -10,6 +10,12 @@ import {
   ClientPerformanceChart 
 } from '../components/charts'; 
 
+// --- CHANGED: Dynamic API routing ---
+// This automatically uses localhost when you are coding, and your live Vercel URL when hosted.
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://127.0.0.1:8001'
+  : 'https://YOUR_VERCEL_BACKEND_URL.vercel.app'; // ⚠️ REPLACE THIS WITH YOUR ACTUAL LIVE BACKEND LINK
+
 const AnalyticsDashboard = ({ onBack }) => {
   const [tenders, setTenders] = useState([]);
   const [kpiData, setKpiData] = useState({});
@@ -23,10 +29,10 @@ const AnalyticsDashboard = ({ onBack }) => {
   const fetchData = useCallback(async (isAutoPoll = false) => {
     if (!isAutoPoll) setIsRefreshing(true);
     try {
-      // We fetch the full list for client/map logic AND the specific filtered KPIs
+      // --- CHANGED: Replaced hardcoded 127.0.0.1 with dynamic API_BASE_URL ---
       const [tenderRes, kpiRes] = await Promise.all([
-        axios.get('http://127.0.0.1:8001/tenders'),
-        axios.get(`http://127.0.0.1:8001/kpi-stats?year=${selectedYear}`)
+        axios.get(`${API_BASE_URL}/tenders`),
+        axios.get(`${API_BASE_URL}/kpi-stats?year=${selectedYear}`)
       ]);
       
       setTenders(tenderRes.data);
