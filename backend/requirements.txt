@@ -18,7 +18,7 @@ sqlalchemy
 psycopg2-binary
 
 # --- AI & OCR ---
-google-generativeai
+google-genai
 pytesseract
 Pillow
 

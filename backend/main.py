@@ -39,26 +39,25 @@ app.add_middleware(
 # ----------------- DATABASE (UPDATED FOR PRODUCTION) -----------------
 def get_db_connection():
     try:
-        # Pulls from Render Environment Variable if available, otherwise uses local
-        db_url = os.getenv("DATABASE_URL")
+        # Your live Neon Cloud URL
+        NEON_URL = "postgresql://neondb_owner:npg_djW0Dm5HAPOa@ep-twilight-block-apopzllz-pooler.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require"
         
-        if db_url:
-            # Use Neon/Cloud URL
-            conn = psycopg2.connect(db_url, cursor_factory=RealDictCursor)
-        else:
-            # Fallback for local development
-            conn = psycopg2.connect(
-                host="localhost",
-                database="tender_system",
-                user="postgres",
-                password="Utsavgm@506",
-                cursor_factory=RealDictCursor
-            )
+        # Pulls from Render Environment if available, otherwise uses the Neon URL automatically
+        db_url = os.getenv("DATABASE_URL", NEON_URL)
+        
+        # CRITICAL FIX: If your local Windows PC has an old "sqlite" URL stuck in its memory/env variables, 
+        # this will ignore it and force the Cloud URL instead.
+        if db_url and db_url.startswith("sqlite"):
+            db_url = NEON_URL
+            
+        # Connect strictly to the cloud
+        conn = psycopg2.connect(db_url, cursor_factory=RealDictCursor)
+        
         return conn
+        
     except Exception as e:
         print(f"❌ Database Connection Error: {e}")
         return None
-    
 
 # ----------------- MODELS -----------------
 
@@ -462,6 +461,7 @@ def get_kpi_stats(year: str = "All"):
         return result
     finally:
         if conn: conn.close()
+
 # ----------------- UPCOMING PREBID -----------------
 @app.get("/tenders/upcoming-prebid")
 def get_upcoming_prebids():

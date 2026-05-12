@@ -7,6 +7,7 @@ from fastapi import UploadFile
 import pytesseract
 import os
 from PIL import Image
+import platform
 
 # --- SMART TESSERACT CONFIGURATION ---
 def configure_tesseract():

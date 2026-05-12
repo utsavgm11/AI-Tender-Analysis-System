@@ -1,19 +1,39 @@
-import google.generativeai as genai
 import json
 import os
 import glob
 import re
 from config import GEMINI_API_KEY
 from logic import evaluate_tender_rules 
+from google import genai
 
-genai.configure(api_key=GEMINI_API_KEY)
+# 1. Initialize the new Client
+client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
+
+# 2. Wrapper to keep old model.generate_content() logic working seamlessly
+class ModelWrapper:
+    def __init__(self, model_name):
+        self.model_name = model_name
+        
+    def generate_content(self, contents, **kwargs):
+        if not client:
+            raise ValueError("Gemini API Key is missing!")
+        
+        # Map old 'generation_config' to new 'config' for the new SDK
+        if 'generation_config' in kwargs:
+            kwargs['config'] = kwargs.pop('generation_config')
+            
+        return client.models.generate_content(
+            model=self.model_name,
+            contents=contents,
+            **kwargs
+        )
 
 def get_model():
     try:
         # Fallback to standard 2.0 or 1.5 flash models for stability
-        return genai.GenerativeModel('gemini-2.5-flash-lite')
+        return ModelWrapper('gemini-2.5-flash-lite')
     except:
-        return genai.GenerativeModel('gemini-2.5-flash')
+        return ModelWrapper('gemini-2.5-flash')
 
 def get_knowledge_base():
     path = os.path.join("knowledge_base", "Aarvi_Encon", "*.json")
@@ -101,6 +121,7 @@ def generate_tender_summary(tender_text: str = None):
     kb_data = get_knowledge_base()
 
     # --- UPDATED PROMPT: Combined Qualification Extraction ---
+    # --- UPDATED PROMPT: Requesting Bullet Points for Specific Fields ---
     prompt = f"""
     ROLE: Expert Tender Data Extractor.
     KNOWLEDGE BASE (Past Projects): {kb_data}
@@ -108,22 +129,22 @@ def generate_tender_summary(tender_text: str = None):
     TASK: Scan the TENDER TEXT and map findings to the JSON schema below.
     
     CRITICAL INSTRUCTIONS:
-    1. financial_qualification: COMBINE all explicit "Turnover", "Net Worth", "Security Deposit" (SD), and "PBG" (Performance Bank Guarantee) conditions. If not stated, return "Not Specified".
-    2. technical_qualification: COMBINE all "Similar Work", "Experience", and core competency requirements.
-    3. tender_open_price: Extract the total contract value.
-    4. emd: Look for 'EMD', 'Earnest Money Deposit', or 'Bid Security'. Extract the amount or percentage. If multiple, prioritize the amount. If not stated, return 'Not Specified'.
+    1. Use '•' (bullet points) and newlines for: financial_qualification, technical_qualification, mandatory_compliance, and scope_of_work.
+    2. description: Provide a 3-bullet point summary of the overall project.
+    3. financial_qualification: COMBINE all explicit "Turnover", "Net Worth", "Security Deposit", and "PBG" conditions. Use bullets for each requirement.
+    4. technical_qualification: COMBINE all "Similar Work" and "Experience" requirements into a bulleted list.
     
     JSON SCHEMA (Output ONLY valid JSON):
     {{
       "tender_no": "Find the Tender/RFQ number",
       "client_name": "Extract Client Name",
-      "description": "Short summary",
+      "description": "3-4 concise bullet points summarizing the tender",
       "tender_open_price": "Extract numerical contract value",
       "emd": "Extract the EMD amount or percentage",
-      "financial_qualification": "Combine Turnover, Net Worth, PBG, Security Deposit",
-      "technical_qualification": "Combine Similar Work, Experience, Qualification requirements",
-      "mandatory_compliance": "Extract PF/ESI/Compliance rules",
-      "scope_of_work": ["..."],
+      "financial_qualification": "Bulleted list of Turnover, Net Worth, PBG, and SD requirements",
+      "technical_qualification": "Bulleted list of Experience and Competency requirements",
+      "mandatory_compliance": "Bulleted list of PF/ESI/Statutory rules",
+      "scope_of_work": "Bulleted list of major deliverables and tasks",
       "manpower_count": "Extract headcount",
       "manpower_qual": "Extract educational requirements",
       "shift_duty": "Extract shift/working hours",
@@ -134,7 +155,6 @@ def generate_tender_summary(tender_text: str = None):
 
     TENDER TEXT: {tender_text}
     """
-
     try:
         response = model.generate_content(prompt, generation_config={"response_mime_type": "application/json"})
         
