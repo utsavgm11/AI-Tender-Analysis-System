@@ -4,6 +4,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { Send, FileUp, Loader2, Bot, User, CheckCircle2 } from 'lucide-react';
 import DecisionCard from '../components/ui/DecisionCard';
 
+// 3. Dynamic API URL (Better than hardcoding)
+ const API_BASE_URL = import.meta.env.VITE_API_URL || "https://aarvi-tender-api.onrender.com";
+
 const AnalysisChat = ({ currentSessionId, onSessionSelect, onChatUpdated }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -14,6 +17,7 @@ const AnalysisChat = ({ currentSessionId, onSessionSelect, onChatUpdated }) => {
   const fileInputRef = useRef(null);
   const messagesEndRef = useRef(null);
   const pollingInterval = useRef(null);
+
   
   // --- NEW: THE LOCK ---
   // This prevents the history fetch from wiping the screen during an upload
@@ -31,7 +35,7 @@ const AnalysisChat = ({ currentSessionId, onSessionSelect, onChatUpdated }) => {
 
     if (currentSessionId) {
       setIsLoading(true);
-      axios.get(`http://127.0.0.1:8001/chats/history/${currentSessionId}`)
+      axios.get(`${API_BASE_URL}/chats/history/${currentSessionId}`)
         .then(res => {
           let restoredTender = null;
           const loadedMessages = res.data.map(m => {
@@ -65,8 +69,7 @@ const AnalysisChat = ({ currentSessionId, onSessionSelect, onChatUpdated }) => {
       ? JSON.stringify({ isTenderResult: true, data: content }) 
       : content;
 
-    // 3. Dynamic API URL (Better than hardcoding)
-    const API_BASE_URL = import.meta.env.VITE_API_URL || "https://aarvi-tender-api.onrender.com";
+  
 
     await axios.post(`${API_BASE_URL}/chats/message`, {
       session_id: sessionId,
@@ -118,7 +121,7 @@ const AnalysisChat = ({ currentSessionId, onSessionSelect, onChatUpdated }) => {
     // --- POLLING LOGIC ---
     pollingInterval.current = setInterval(async () => {
       try {
-        const res = await axios.get(`http://127.0.0.1:8001/progress/${taskId}`);
+        const res = await axios.get(`${API_BASE_URL}/progress/${taskId}`);
         if (res.data && res.data.total > 0) {
           setProgress(res.data);
           if (res.data.current === res.data.total) {
@@ -131,7 +134,7 @@ const AnalysisChat = ({ currentSessionId, onSessionSelect, onChatUpdated }) => {
     }, 1000);
 
     try {
-      const response = await axios.post('http://127.0.0.1:8001/analyze-tender', formData, {
+      const response = await axios.post(`${API_BASE_URL}/analyze-tender`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
@@ -170,7 +173,7 @@ const AnalysisChat = ({ currentSessionId, onSessionSelect, onChatUpdated }) => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('http://127.0.0.1:8001/chat/', { 
+      const response = await axios.post(`${API_BASE_URL}/chat/`, { 
         query: userQuery,
         context: activeTender || {},
         full_text: activeTender?.full_text || "" 

@@ -238,7 +238,7 @@ async def chat_endpoint(req: ChatRequest):
             query=req.query,
             context=req.context,
             full_text=req.full_text
-        )@app.post("/login")
+        )
         return {"reply": reply}
     except Exception as e:
         return {"error": str(e)}
@@ -298,19 +298,21 @@ def get_history(session_id: str):
     finally:
         if conn: conn.close()
 
+
 @app.post("/chats/message")
 def save_chat_message(data: SaveMessage):
     conn = get_db_connection()
     try:
         cur = conn.cursor()
-        # PostgreSQL syntax for INSERT OR IGNORE
+        
+        # ✅ FIX: Added user_email to the INSERT statement
         cur.execute(
             """
-            INSERT INTO chat_sessions (session_id, title)
-            VALUES (%s, %s)
+            INSERT INTO chat_sessions (session_id, title, user_email)
+            VALUES (%s, %s, %s)
             ON CONFLICT (session_id) DO NOTHING
             """,
-            (data.session_id, data.title or "New Analysis")
+            (data.session_id, data.title or "New Analysis", data.user_email)
         )
 
         cur.execute(
@@ -324,6 +326,7 @@ def save_chat_message(data: SaveMessage):
         return {"status": "saved"}
     finally:
         if conn: conn.close()
+
 
 @app.post("/chats/generate-title")
 def generate_title(req: TitleRequest):
@@ -525,7 +528,6 @@ def get_upcoming_prebids():
     finally:
         if conn: conn.close()
 
-# ----------------- GET TENDERS -----------------
 # ----------------- GET TENDERS -----------------
 @app.get("/tenders")
 def get_tenders(manager: str = None):

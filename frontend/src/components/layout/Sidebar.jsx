@@ -117,7 +117,7 @@ const Sidebar = ({ isOpen, onClose, activeTab, setActiveTab, currentSessionId, o
     }
 
     // 3. Send the request with the 'email' parameter
-    const res = await axios.get(`${API_URL}/chats/sessions`, {
+    const res = await axios.get(`${API_BASE_URL}/chats/sessions`, {
       params: { email: userEmail } // This MUST match the backend variable name
     });
 
@@ -137,7 +137,7 @@ const Sidebar = ({ isOpen, onClose, activeTab, setActiveTab, currentSessionId, o
 
   const handleRename = async (sessionId, newTitle) => {
     try {
-      await axios.put(`http://127.0.0.1:8001/chats/sessions/${sessionId}`, { title: newTitle });
+      await axios.put(`${API_BASE_URL}/chats/sessions/${sessionId}`, { title: newTitle });
       fetchSessions();
     } catch (err) {
       console.error("Error renaming session:", err);
@@ -146,7 +146,7 @@ const Sidebar = ({ isOpen, onClose, activeTab, setActiveTab, currentSessionId, o
 
   const handleDelete = async (sessionId) => {
     try {
-      await axios.delete(`http://127.0.0.1:8001/chats/sessions/${sessionId}`);
+      await axios.delete(`${API_BASE_URL}/chats/sessions/${sessionId}`);
       if (currentSessionId === sessionId) {
         onSessionSelect(null);
       }
