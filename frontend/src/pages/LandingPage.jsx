@@ -3,14 +3,13 @@ import axios from 'axios';
 import { Shield, Zap, Database, ChevronRight, Lock } from 'lucide-react';
 
 const LandingPage = ({ onLoginSuccess }) => {
-  const [isLoginMode, setIsLoginMode] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   // This tells the app: Use the Render URL from Vercel, 
-// but fall back to your laptop if the variable isn't found.
+  // but fall back to your laptop if the variable isn't found.
   const API_BASE_URL = import.meta.env.VITE_API_URL || "https://aarvi-tender-api.onrender.com";
   
   const handleAuth = async (e) => {
@@ -19,35 +18,27 @@ const LandingPage = ({ onLoginSuccess }) => {
     setLoading(true);
 
     try {
-      if (isLoginMode) {
-        // 1. Ask backend
-        const res = await axios.post(`${API_BASE_URL}/login`, { email, password });
-        
-        // 2. Save to Vault
-        localStorage.setItem('userRole', res.data.role);
-        localStorage.setItem('userEmail', res.data.email);
-        // ✅ NEW: Save the Project Manager's Name for the Dashboards
-        localStorage.setItem('managerName', res.data.manager_name || ''); 
-        
-        // 3. The Bulletproof Gate Opener
-        if (typeof onLoginSuccess === 'function') {
-            // Standard React transition if Vite is working properly
-            onLoginSuccess(res.data.role);
-        } else {
-            // Fallback: If Vite drops the prop, reload the page. 
-            // App.jsx will instantly read the localStorage and let you in!
-            window.location.reload();
-        }
-        
+      // 1. Ask backend to authenticate
+      const res = await axios.post(`${API_BASE_URL}/login`, { email, password });
+      
+      // 2. Save to Vault
+      localStorage.setItem('userRole', res.data.role);
+      localStorage.setItem('userEmail', res.data.email);
+      // ✅ NEW: Save the Project Manager's Name for the Dashboards
+      localStorage.setItem('managerName', res.data.manager_name || ''); 
+      
+      // 3. The Bulletproof Gate Opener
+      if (typeof onLoginSuccess === 'function') {
+          // Standard React transition if Vite is working properly
+          onLoginSuccess(res.data.role);
       } else {
-        // SIGNUP
-        await axios.post(`${API_BASE_URL}/signup`, { email, password });
-        setIsLoginMode(true);
-        setError("Account created successfully! Please log in.");
+          // Fallback: If Vite drops the prop, reload the page. 
+          // App.jsx will instantly read the localStorage and let you in!
+          window.location.reload();
       }
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.detail || "An error occurred connecting to the server.");
+      setError(err.response?.data?.detail || "Invalid email or password.");
     } finally {
       setLoading(false);
     }
@@ -92,10 +83,10 @@ const LandingPage = ({ onLoginSuccess }) => {
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-emerald-500"></div>
 
             <h2 className="text-3xl font-black text-white mb-2">
-              {isLoginMode ? 'Welcome Back' : 'Create Account'}
+              Welcome Back
             </h2>
             <p className="text-sm text-slate-400 mb-8 font-medium">
-              {isLoginMode ? 'Enter your credentials to access the vault.' : 'Restricted to @aarviencon.com domain only.'}
+              Enter your credentials to access the vault.
             </p>
 
             <form onSubmit={handleAuth} className="space-y-5">
@@ -128,9 +119,9 @@ const LandingPage = ({ onLoginSuccess }) => {
                 </div>
               </div>
 
-              {/* Error / Success Messages */}
+              {/* Error Messages */}
               {error && (
-                <div className={`p-3 rounded-xl text-sm font-bold ${error.includes('successfully') ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}`}>
+                <div className="p-3 rounded-xl text-sm font-bold bg-red-500/10 text-red-400 border border-red-500/20">
                   {error}
                 </div>
               )}
@@ -140,19 +131,10 @@ const LandingPage = ({ onLoginSuccess }) => {
                 disabled={loading}
                 className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white rounded-xl font-black text-lg shadow-[0_0_20px_rgba(37,99,235,0.3)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70"
               >
-                {loading ? 'Authenticating...' : (isLoginMode ? 'Secure Login' : 'Register Account')}
+                {loading ? 'Authenticating...' : 'Secure Login'}
                 {!loading && <ChevronRight size={20} />}
               </button>
             </form>
-
-            <div className="mt-6 text-center">
-              <button 
-                onClick={() => { setIsLoginMode(!isLoginMode); setError(''); }}
-                className="text-sm font-bold text-slate-400 hover:text-white transition-colors"
-              >
-                {isLoginMode ? "Don't have an account? Sign up" : "Already have an account? Log in"}
-              </button>
-            </div>
           </div>
         </div>
         
