@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ShieldCheck, AlertTriangle, TrendingUp, DollarSign,
   Briefcase, FileText, Target, CheckCircle2, XCircle,
-  HardHat, Wallet, Users, Loader2
+  HardHat, Wallet, Users, Loader2, Download
 } from 'lucide-react';
+import html2pdf from 'html2pdf.js';
+import PrintableTenderReport from './PrintableTenderReport'; // Import the new PDF template
 
 // --- DATA CLEANER ---
 const cleanText = (val) => {
@@ -13,10 +15,11 @@ const cleanText = (val) => {
   return String(val).trim().replace(/\\n/g, '\n');
 };
 
-// Added 'progress' prop to handle real-time scanning updates
 const DecisionCard = ({ result, progress }) => {
-  
   const data = result?.aarvi_intelligence || result || {};
+  
+  // State for the download button loader
+  const [isDownloading, setIsDownloading] = useState(false);
   
   // --- EXPLICIT MAPPING FOR NEW AI LOGIC ---
   const d = {
@@ -26,14 +29,11 @@ const DecisionCard = ({ result, progress }) => {
     bid_decision: cleanText(data.bid_decision),
     pq_status: cleanText(data.pq_status),
     win_probability: cleanText(data.win_probability),
-    profit_forecast: cleanText(data.profit_forecast), // Now returns "85 / 100"
+    profit_forecast: cleanText(data.profit_forecast), 
     tender_open_price: cleanText(data.tender_open_price),
     emd: cleanText(data.emd),
-    
-    // NEW COMBINED KEYS
     financial_qualification: cleanText(data.financial_qualification),
     technical_qualification: cleanText(data.technical_qualification),
-    
     mandatory_compliance: cleanText(data.mandatory_compliance),
     compliance_status: cleanText(data.compliance_status),
     compliance_reason: cleanText(data.compliance_reason),
@@ -52,15 +52,32 @@ const DecisionCard = ({ result, progress }) => {
   const isReview = bidDecision.includes("CAUTION") || bidDecision.includes("PENDING");
   const isNoGo = bidDecision.includes("NO BID");
 
-  // Calculate Profit Score Color
   const profitScore = parseInt(d.profit_forecast) || 0;
   const profitColor = profitScore >= 75 ? 'emerald' : profitScore >= 45 ? 'amber' : 'rose';
 
+  // --- PDF DOWNLOAD LOGIC ---
+  const handleDownloadPDF = () => {
+    setIsDownloading(true);
+    const element = document.getElementById('printable-report-container');
+
+    const opt = {
+      margin:       10,
+      filename:     `Aarvi_Tender_Report_${d.tender_no !== "Not Specified" ? d.tender_no : "New"}.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    // Removed the display block/none logic because it's rendered off-screen now
+    html2pdf().set(opt).from(element).save().then(() => {
+      setIsDownloading(false);
+    });
+  };
+
   return (
-    <div className="max-w-7xl mx-auto my-8 font-sans space-y-8">
+    <div className="max-w-7xl mx-auto my-8 font-sans space-y-8 relative overflow-hidden">
       
       {/* --- LIVE PROGRESS BAR --- */}
-      {/* Pass { current: 45, total: 200 } to the progress prop to trigger this */}
       {progress && progress.total > 0 && progress.current < progress.total && (
         <div className="bg-indigo-50 border border-indigo-100 p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm animate-pulse">
           <div className="flex items-center gap-3">
@@ -83,7 +100,7 @@ const DecisionCard = ({ result, progress }) => {
 
       {/* --- HEADER --- */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
-        <div>
+        <div className="flex-1">
           <span className="bg-slate-900 text-white px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest">
             {d.tender_no !== "Not Specified" ? d.tender_no : "TENDER ID PENDING"}
           </span>
@@ -91,13 +108,28 @@ const DecisionCard = ({ result, progress }) => {
           <p className="text-slate-500 mt-1">{d.description !== "Not Specified" ? d.description : "Project Analysis Summary"}</p>
         </div>
         
-        <div className={`px-6 py-3 rounded-xl font-bold text-sm border flex items-center gap-2 ${
-          isGo ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-          isReview ? 'bg-amber-50 text-amber-700 border-amber-200' :
-          isNoGo ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-slate-50 text-slate-700 border-slate-200'
-        }`}>
-          {isGo ? <CheckCircle2 size={18} /> : isReview ? <AlertTriangle size={18} /> : <XCircle size={18} />}
-          {bidDecision}
+        {/* RIGHT SIDE ACTIONS: Download Button & Status Badge (Side-by-side fix) */}
+        <div className="flex flex-row items-center gap-3 w-full md:w-auto mt-4 md:mt-0">
+          
+          {/* NEW DOWNLOAD BUTTON */}
+          <button 
+            onClick={handleDownloadPDF}
+            disabled={isDownloading}
+            className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-bold shadow-sm transition-all active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed text-sm h-[40px]"
+          >
+            {isDownloading ? <Loader2 className="animate-spin" size={16} /> : <Download size={16} />}
+            {isDownloading ? 'Generating...' : 'Download Report'}
+          </button>
+
+          {/* EXISTING STATUS BADGE */}
+          <div className={`px-4 py-2 rounded-lg font-bold text-sm border flex items-center justify-center gap-2 h-[40px] ${
+            isGo ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+            isReview ? 'bg-amber-50 text-amber-700 border-amber-200' :
+            isNoGo ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-slate-50 text-slate-700 border-slate-200'
+          }`}>
+            {isGo ? <CheckCircle2 size={16} /> : isReview ? <AlertTriangle size={16} /> : <XCircle size={16} />}
+            {bidDecision}
+          </div>
         </div>
       </div>
 
@@ -152,7 +184,7 @@ const DecisionCard = ({ result, progress }) => {
         <DetailCard title="Penalty & Risk Clauses" icon={<AlertTriangle size={16}/>} content={d.penalty_terms} isRisk />
       </div>
 
-      {/* --- NEW: ADVANCED STRATEGIC ADVICE SECTION --- */}
+      {/* --- ADVANCED STRATEGIC ADVICE SECTION --- */}
       <div className={`p-8 rounded-2xl border shadow-sm ${isNoGo ? 'bg-rose-50 border-rose-100' : isReview ? 'bg-amber-50 border-amber-100' : 'bg-indigo-50 border-indigo-100'}`}>
         <h3 className={`font-bold mb-4 flex items-center gap-2 text-lg ${isNoGo ? 'text-rose-900' : isReview ? 'text-amber-900' : 'text-indigo-900'}`}>
           <TrendingUp size={22} className={isNoGo ? 'text-rose-600' : isReview ? 'text-amber-600' : 'text-indigo-600'} /> 
@@ -162,11 +194,19 @@ const DecisionCard = ({ result, progress }) => {
           {renderFormattedContent(d.strategic_advice)}
         </div>
       </div>
+
+      {/* --- HIDDEN PDF TEMPLATE WRAPPER (Fixed Off-Screen) --- */}
+      <div style={{ position: 'absolute', top: '-9999px', left: '-9999px' }}>
+        <div id="printable-report-container">
+          <PrintableTenderReport d={d} bidDecision={bidDecision} />
+        </div>
+      </div>
+
     </div>
   );
 };
 
-// --- SUB-COMPONENTS ---
+// --- SUB-COMPONENTS (Left exactly as you wrote them) ---
 const KpiCard = ({ title, val, icon, color }) => {
   const map = { 
     emerald: 'bg-emerald-50 text-emerald-600', 
@@ -186,7 +226,6 @@ const KpiCard = ({ title, val, icon, color }) => {
   );
 };
 
-// Updated QualItem for scrollable, equal height 2-column layout
 const QualItem = ({ title, icon, req, isRisk }) => (
   <div className={`p-6 rounded-xl border flex flex-col h-[280px] ${isRisk ? 'border-amber-200 bg-amber-50/50' : 'border-slate-100 bg-slate-50/50'}`}>
     <div className="flex justify-between items-center mb-4 pb-3 border-b border-slate-200/60">
@@ -208,7 +247,6 @@ const renderFormattedContent = (text) => {
     const isBullet = line.trim().startsWith('•') || line.trim().startsWith('-');
     const cleanLine = line.replace(/^[•-]\s*/, '');
     
-    // Bold parsing
     const parts = cleanLine.split(/(\*\*.*?\*\*)/g);
     const formattedLine = parts.map((part, i) => {
       if (part.startsWith('**') && part.endsWith('**')) {
