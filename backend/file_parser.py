@@ -6,15 +6,21 @@ import fitz  # PyMuPDF
 from fastapi import UploadFile
 import pytesseract
 import os
+import shutil  # <-- NEW: Required for finding system installations on Linux/Docker
 from PIL import Image
 import platform
 
 # --- SMART TESSERACT CONFIGURATION ---
 def configure_tesseract():
-    # 1. Check AppData (User-level install like on your office laptop)
-    appdata_path = os.path.join(os.path.expanduser('~'), 'AppData', 'Local', 'Programs', 'Tesseract-OCR', 'tesseract.exe')
+    # 1. GLOBAL LINUX/DOCKER CHECK (This makes it work on Render instantly!)
+    linux_tesseract_path = shutil.which("tesseract")
     
-    # 2. Check Program Files (System-level install - common for home laptops)
+    if linux_tesseract_path:
+        pytesseract.pytesseract.tesseract_cmd = linux_tesseract_path
+        return # Exit the function, we found it!
+
+    # 2. LOCAL WINDOWS FALLBACKS (For your local laptop)
+    appdata_path = os.path.join(os.path.expanduser('~'), 'AppData', 'Local', 'Programs', 'Tesseract-OCR', 'tesseract.exe')
     system_path = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
     if os.path.exists(appdata_path):
@@ -22,7 +28,7 @@ def configure_tesseract():
     elif os.path.exists(system_path):
         pytesseract.pytesseract.tesseract_cmd = system_path
     else:
-        print("❌ ERROR: Tesseract OCR not found in AppData or Program Files.")
+        print("❌ ERROR: Tesseract OCR not found globally or in Windows paths.")
 
 configure_tesseract()
 
