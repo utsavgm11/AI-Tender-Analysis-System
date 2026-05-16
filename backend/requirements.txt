@@ -17,17 +17,11 @@ sqlalchemy
 # 'binary' version is required for cloud environments like Render/Heroku
 psycopg2-binary
 
-# --- AI & OCR ---
+# --- AI, OCR & Document Processing ---
 google-genai
-pytesseract
+# IBM Docling handles layout-aware parsing and OCR for PDF, DOCX, and XLSX natively
+docling>=2.0.0
 Pillow
-
-# --- Document Processing ---
-# High-performance PDF parsing
-pymupdf
-python-docx
-pandas
-openpyxl
 
 # --- Utilities ---
 typing-extensions
