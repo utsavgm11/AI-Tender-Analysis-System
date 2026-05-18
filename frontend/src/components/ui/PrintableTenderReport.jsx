@@ -17,7 +17,6 @@ const renderFormalContent = (text) => {
     });
 
     return (
-      // Reduced side padding here so text has maximum width
       <div key={index} className={`mb-1 ${isBullet ? 'pl-5 pr-2 relative' : 'mt-1.5 mb-1.5 pr-2'}`}>
         {isBullet && <span className="absolute left-1 top-0 text-black font-bold text-[15px]">•</span>}
         <span className="leading-snug text-left">{formattedLine}</span>
@@ -27,10 +26,11 @@ const renderFormalContent = (text) => {
 };
 
 const PrintableTenderReport = ({ d, bidDecision }) => {
+  // Check if historical data exists for dynamic section numbering
+  const hasHistory = d.historical_competitors && d.historical_competitors !== "Not Specified" && d.historical_competitors !== "No Data";
+
   return (
-    // Reduced container padding from px-12 to px-8 to give the tables more horizontal room
-    <div id="printable-report" className="bg-white px-8 py-8 font-serif text-black" style={{ width: '750px', minHeight: '1123px' , margin: '0 auto',
-  boxSizing: 'border-box'}}>
+    <div id="printable-report" className="bg-white px-8 py-8 font-serif text-black" style={{ width: '750px', minHeight: '1123px' , margin: '0 auto', boxSizing: 'border-box'}}>
       
       {/* --- HEADER (Formal Letterhead) --- */}
       <div className="text-center border-b-2 border-black pb-4 mb-6">
@@ -43,7 +43,6 @@ const PrintableTenderReport = ({ d, bidDecision }) => {
 
       {/* --- SECTION 1.0: PROJECT METADATA --- */}
       <h3 className="text-lg font-bold mb-2 border-b border-black pb-1 uppercase">1.0 Project Identification</h3>
-      {/* Base text size reduced to 13px (text-[13px]) to ensure everything fits A4 perfectly */}
       <table className="w-full text-[13px] border-collapse mb-6 border border-black">
         <tbody>
           <tr>
@@ -53,6 +52,12 @@ const PrintableTenderReport = ({ d, bidDecision }) => {
           <tr>
             <td className="px-3 py-2 border border-black font-bold bg-gray-50">Client Organization</td>
             <td className="px-3 py-2 border border-black font-bold text-sm">{d.client_name}</td>
+          </tr>
+          <tr>
+            <td className="px-3 py-2 border border-black font-bold bg-gray-50">Financial Base</td>
+            <td className="px-3 py-2 border border-black text-left">
+              <strong>Est. Value:</strong> {d.tender_open_price} &nbsp; | &nbsp; <strong>EMD Amount:</strong> {d.emd}
+            </td>
           </tr>
           <tr>
             <td className="px-3 py-2 border border-black font-bold bg-gray-50 align-top">Project Description</td>
@@ -66,7 +71,6 @@ const PrintableTenderReport = ({ d, bidDecision }) => {
       <table className="w-full text-[13px] border-collapse mb-6 border-2 border-black">
         <tbody>
           <tr>
-            {/* Column widths strictly set to 20% for labels, 30% for data to prevent crushing */}
             <td className="px-3 py-3 border border-black font-bold w-[20%] bg-gray-100 text-left uppercase">AI Recommendation</td>
             <td className="px-3 py-3 border border-black font-extrabold text-base text-left uppercase tracking-widest w-[30%]">{bidDecision}</td>
             <td className="px-3 py-3 border border-black font-bold w-[20%] bg-gray-100 text-left uppercase">Win Probability</td>
@@ -100,8 +104,11 @@ const PrintableTenderReport = ({ d, bidDecision }) => {
           <tr>
             <td className="px-3 py-3 border border-black font-bold bg-gray-50 align-top">Manpower Allocation</td>
             <td className="px-3 py-3 border border-black align-top leading-relaxed">
-              <strong>Headcount:</strong> {d.manpower_count} <br/>
-              <strong>Shifts:</strong> {d.shift_duty}
+              <strong>Headcount Breakdown:</strong> <br/>
+              {renderFormalContent(d.manpower_count)}
+              <div className="mt-2 border-t border-gray-200 pt-1">
+                <strong>Shifts:</strong> {d.shift_duty}
+              </div>
             </td>
           </tr>
         </tbody>
@@ -129,9 +136,34 @@ const PrintableTenderReport = ({ d, bidDecision }) => {
         </tbody>
       </table>
 
-      {/* --- SECTION 5.0: CONSULTANT ADVICE --- */}
+      {/* --- SECTION 5.0: HISTORICAL COMPETITOR INTELLIGENCE (DYNAMIC) --- */}
+      {hasHistory && (
+        <div style={{ pageBreakInside: 'auto' }}>
+          <h3 className="text-lg font-bold mb-2 border-b border-black pb-1 uppercase">5.0 Historical Competitor Intelligence</h3>
+          <table className="w-full text-[13px] border-collapse mb-6 border border-black bg-orange-50/20">
+            <tbody>
+              <tr>
+                <td className="px-3 py-3 border border-black font-bold bg-gray-100 w-[25%] align-top">Client Win/Loss Record</td>
+                <td className="px-3 py-3 border border-black align-top w-[75%] font-semibold">
+                  {renderFormalContent(d.win_loss_kpi)}
+                </td>
+              </tr>
+              <tr>
+                <td className="px-3 py-3 border border-black font-bold bg-gray-100 align-top">Major Market Threats</td>
+                <td className="px-3 py-3 border border-black align-top text-red-900">
+                  {renderFormalContent(d.historical_competitors)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* --- SECTION 6.0: CONSULTANT ADVICE --- */}
       <div style={{ pageBreakInside: 'avoid' }}>
-        <h3 className="text-lg font-bold mb-2 border-b border-black pb-1 uppercase">5.0 Strategic Consultant Advice</h3>
+        <h3 className="text-lg font-bold mb-2 border-b border-black pb-1 uppercase">
+          {hasHistory ? "6.0" : "5.0"} Executive Strategic Advice
+        </h3>
         <div className="px-4 py-4 border-2 border-black bg-gray-50 text-left text-[13px]">
           {renderFormalContent(d.strategic_advice)}
         </div>
