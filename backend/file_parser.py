@@ -145,9 +145,10 @@ def extract_text_from_file(file_bytes: bytes, filename: str, task_id: str = None
                             text += f"\n--- Page {current_page} ---\n{extracted}\n"
                             print(f"  > Page {current_page}/{total_pages}: PyMuPDF Block Extraction (Digital Fallback)", flush=True)
                     else:
-                        pix = page.get_pixmap(matrix=fitz.Matrix(1.5, 1.5))
+                        pix = page.get_pixmap(matrix=fitz.Matrix(1, 1))
                         img = Image.open(io.BytesIO(pix.tobytes("png")))
-                        ocr_result = pytesseract.image_to_string(img)
+                        img = img.convert("L")
+                        ocr_result = pytesseract.image_to_string(img, lang="eng",config="--oem 1 --psm 6")
                         
                         text += f"\n--- Page {current_page} (OCR Scan) ---\n{ocr_result}\n"
                         print(f"  > Page {current_page}/{total_pages}: Tesseract OCR Scan (Image Mode)", flush=True)
