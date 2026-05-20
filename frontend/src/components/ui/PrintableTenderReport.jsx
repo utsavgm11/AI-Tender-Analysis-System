@@ -17,23 +17,71 @@ const renderFormalContent = (text) => {
     });
 
     return (
-      <div key={index} className={`mb-1 ${isBullet ? 'pl-5 pr-2 relative' : 'mt-1.5 mb-1.5 pr-2'}`}>
+      <div key={index} className={`mb-1 ${isBullet ? 'pl-5 pr-2 relative' : 'mt-1.5 mb-1.5 pr-2'}`} style={{ breakInside: 'avoid', pageBreakInside: 'avoid' }}>
         {isBullet && <span className="absolute left-1 top-0 text-black font-bold text-[15px]">•</span>}
-        <span className="leading-snug text-left">{formattedLine}</span>
+        <span className="leading-snug text-left block">{formattedLine}</span>
       </div>
     );
   });
 };
 
 const PrintableTenderReport = ({ d, bidDecision }) => {
-  // Check if historical data exists for dynamic section numbering
   const hasHistory = d.historical_competitors && d.historical_competitors !== "Not Specified" && d.historical_competitors !== "No Data";
 
   return (
-    <div id="printable-report" className="bg-white px-8 py-8 font-serif text-black" style={{ width: '750px', minHeight: '1123px' , margin: '0 auto', boxSizing: 'border-box'}}>
+    <div id="printable-report" className="bg-white px-8 py-8 font-serif text-black relative" style={{ width: '750px', minHeight: '1123px' , margin: '0 auto', boxSizing: 'border-box'}}>
+      
+      {/* 🚀 ULTIMATE PRINT LAYOUT DIRECTIVES */}
+      <style>{`
+        @media print {
+          body {
+            background: white !important;
+            color: black !important;
+          }
+          /* Ensure our modular rows never fracture horizontally */
+          .grid-row {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+            display: flex !important;
+          }
+          .section-block {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+          }
+        }
+        /* Fallback for preview screens to preserve layout equality */
+        .grid-table {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          border: 1px solid black;
+        }
+        .grid-row {
+          display: flex;
+          width: 100%;
+          border-bottom: 1px solid black;
+        }
+        .grid-row:last-child {
+          border-bottom: none;
+        }
+        .grid-label {
+          width: 25%;
+          background-color: #f9fafb;
+          font-weight: bold;
+          padding: 8px 12px;
+          border-right: 1px solid black;
+          font-size: 13px;
+        }
+        .grid-value {
+          width: 75%;
+          padding: 8px 12px;
+          font-size: 13px;
+          text-align: left;
+        }
+      `}</style>
       
       {/* --- HEADER (Formal Letterhead) --- */}
-      <div className="text-center border-b-2 border-black pb-4 mb-6">
+      <div className="text-center border-b-2 border-black pb-4 mb-6" style={{ breakInside: 'avoid' }}>
         <h1 className="text-2xl font-extrabold uppercase tracking-widest text-black">AARVI ENCON</h1>
         <h2 className="text-base font-bold uppercase tracking-widest mt-1 border-t border-black pt-1 inline-block">
           Strategic Tender Intelligence Report
@@ -42,125 +90,120 @@ const PrintableTenderReport = ({ d, bidDecision }) => {
       </div>
 
       {/* --- SECTION 1.0: PROJECT METADATA --- */}
-      <h3 className="text-lg font-bold mb-2 border-b border-black pb-1 uppercase">1.0 Project Identification</h3>
-      <table className="w-full text-[13px] border-collapse mb-6 border border-black">
-        <tbody>
-          <tr>
-            <td className="px-3 py-2 border border-black font-bold w-[25%] bg-gray-50">Tender Reference</td>
-            <td className="px-3 py-2 border border-black w-[75%]">{d.tender_no}</td>
-          </tr>
-          <tr>
-            <td className="px-3 py-2 border border-black font-bold bg-gray-50">Client Organization</td>
-            <td className="px-3 py-2 border border-black font-bold text-sm">{d.client_name}</td>
-          </tr>
-          <tr>
-            <td className="px-3 py-2 border border-black font-bold bg-gray-50">Financial Base</td>
-            <td className="px-3 py-2 border border-black text-left">
+      <div className="section-block mb-6">
+        <h3 className="text-lg font-bold mb-2 border-b border-black pb-1 uppercase">1.0 Project Identification</h3>
+        <div className="grid-table">
+          <div className="grid-row">
+            <div className="grid-label">Tender Reference</div>
+            <div className="grid-value">{d.tender_no}</div>
+          </div>
+          <div className="grid-row">
+            <div className="grid-label">Client Organization</div>
+            <div className="grid-value font-bold text-sm">{d.client_name}</div>
+          </div>
+          <div className="grid-row">
+            <div className="grid-label">Financial Base</div>
+            <div className="grid-value">
               <strong>Est. Value:</strong> {d.tender_open_price} &nbsp; | &nbsp; <strong>EMD Amount:</strong> {d.emd}
-            </td>
-          </tr>
-          <tr>
-            <td className="px-3 py-2 border border-black font-bold bg-gray-50 align-top">Project Description</td>
-            <td className="px-3 py-2 border border-black text-left italic">{d.description}</td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+          </div>
+          <div className="grid-row">
+            <div className="grid-label">Project Description</div>
+            <div className="grid-value italic">{d.description}</div>
+          </div>
+        </div>
+      </div>
 
       {/* --- SECTION 2.0: AI DECISION MATRIX --- */}
-      <h3 className="text-lg font-bold mb-2 border-b border-black pb-1 uppercase">2.0 Executive Bid Decision</h3>
-      <table className="w-full text-[13px] border-collapse mb-6 border-2 border-black">
-        <tbody>
-          <tr>
-            <td className="px-3 py-3 border border-black font-bold w-[20%] bg-gray-100 text-left uppercase">AI Recommendation</td>
-            <td className="px-3 py-3 border border-black font-extrabold text-base text-left uppercase tracking-widest w-[30%]">{bidDecision}</td>
-            <td className="px-3 py-3 border border-black font-bold w-[20%] bg-gray-100 text-left uppercase">Win Probability</td>
-            <td className="px-3 py-3 border border-black font-bold text-sm text-left w-[30%]">{d.win_probability}</td>
-          </tr>
-          <tr>
-            <td className="px-3 py-3 border border-black font-bold bg-gray-50 text-left uppercase">Profit Forecast</td>
-            <td className="px-3 py-3 border border-black font-bold text-sm text-left">{d.profit_forecast}</td>
-            <td className="px-3 py-3 border border-black font-bold bg-gray-50 text-left uppercase">PQ Status</td>
-            <td className="px-3 py-3 border border-black font-bold text-sm text-left">{d.pq_status}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div className="section-block mb-6">
+        <h3 className="text-lg font-bold mb-2 border-b border-black pb-1 uppercase">2.0 Executive Bid Decision</h3>
+        <div className="grid-table" style={{ borderWidth: '2px' }}>
+          <div className="grid-row">
+            <div className="grid-label" style={{ width: '20%', backgroundColor: '#f3f4f6' }}>AI Rec</div>
+            <div className="grid-value font-extrabold text-base uppercase tracking-widest" style={{ width: '30%' }}>{bidDecision}</div>
+            <div className="grid-label" style={{ width: '20%', backgroundColor: '#f3f4f6' }}>Win Prob</div>
+            <div className="grid-value font-bold text-sm" style={{ width: '30%' }}>{d.win_probability}</div>
+          </div>
+          <div className="grid-row">
+            <div className="grid-label" style={{ width: '20%' }}>Profit Forecast</div>
+            <div className="grid-value font-bold text-sm" style={{ width: '30%' }}>{d.profit_forecast}</div>
+            <div className="grid-label" style={{ width: '20%' }}>PQ Status</div>
+            <div className="grid-value font-bold text-sm" style={{ width: '30%' }}>{d.pq_status}</div>
+          </div>
+        </div>
+      </div>
 
       {/* --- SECTION 3.0: FINANCIAL & TECHNICAL --- */}
-      <h3 className="text-lg font-bold mb-2 border-b border-black pb-1 uppercase">3.0 Qualification & Scope</h3>
-      <table className="w-full text-[13px] border-collapse mb-6 border border-black">
-        <tbody>
-          <tr>
-            <td className="px-3 py-3 border border-black font-bold bg-gray-50 w-[25%] align-top">Financial Requirements</td>
-            <td className="px-3 py-3 border border-black align-top w-[75%]">{renderFormalContent(d.financial_qualification)}</td>
-          </tr>
-          <tr>
-            <td className="px-3 py-3 border border-black font-bold bg-gray-50 align-top">Technical Experience</td>
-            <td className="px-3 py-3 border border-black align-top">{renderFormalContent(d.technical_qualification)}</td>
-          </tr>
-          <tr>
-            <td className="px-3 py-3 border border-black font-bold bg-gray-50 align-top">Scope of Work</td>
-            <td className="px-3 py-3 border border-black align-top">{renderFormalContent(d.scope_of_work)}</td>
-          </tr>
-          <tr>
-            <td className="px-3 py-3 border border-black font-bold bg-gray-50 align-top">Manpower Allocation</td>
-            <td className="px-3 py-3 border border-black align-top leading-relaxed">
+      <div className="mb-6">
+        <h3 className="text-lg font-bold mb-2 border-b border-black pb-1 uppercase">3.0 Qualification & Scope</h3>
+        <div className="grid-table">
+          {/* Using grid-row directly guarantees this single block moves down as a unit if it doesn't fit */}
+          <div className="grid-row">
+            <div className="grid-label">Financial Requirements</div>
+            <div className="grid-value">{renderFormalContent(d.financial_qualification)}</div>
+          </div>
+          <div className="grid-row">
+            <div className="grid-label">Technical Experience</div>
+            <div className="grid-value">{renderFormalContent(d.technical_qualification)}</div>
+          </div>
+          <div className="grid-row">
+            <div className="grid-label">Scope of Work</div>
+            <div className="grid-value">{renderFormalContent(d.scope_of_work)}</div>
+          </div>
+          <div className="grid-row">
+            <div className="grid-label">Manpower Allocation</div>
+            <div className="grid-value leading-relaxed">
               <strong>Headcount Breakdown:</strong> <br/>
               {renderFormalContent(d.manpower_count)}
               <div className="mt-2 border-t border-gray-200 pt-1">
                 <strong>Shifts:</strong> {d.shift_duty}
               </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* --- SECTION 4.0: COMPLIANCE & RISK --- */}
-      <h3 className="text-lg font-bold mb-2 border-b border-black pb-1 uppercase">4.0 Risk Assessment & Compliance</h3>
-      <table className="w-full text-[13px] border-collapse mb-6 border border-black">
-        <tbody>
-          <tr>
-            <td className="px-3 py-3 border border-black font-bold bg-gray-50 w-[25%] align-top">Mandatory Compliance</td>
-            <td className="px-3 py-3 border border-black align-top w-[75%]">
+      <div className="mb-6">
+        <h3 className="text-lg font-bold mb-2 border-b  border-black pb-1 uppercase">4.0 Risk Assessment & Compliance</h3>
+        <div className="grid-table">
+          <div className="grid-row">
+            <div className="grid-label">Mandatory Compliance</div>
+            <div className="grid-value">
               <strong className="mb-2 block text-sm">Status: {d.compliance_status}</strong>
               {renderFormalContent(d.mandatory_compliance)}
-            </td>
-          </tr>
-          <tr>
-            <td className="px-3 py-3 border border-black font-bold bg-gray-50 align-top">Payment Terms</td>
-            <td className="px-3 py-3 border border-black align-top">{renderFormalContent(d.payment_terms)}</td>
-          </tr>
-          <tr>
-            <td className="px-3 py-3 border border-black font-bold bg-gray-50 align-top">Penalty & LD Clauses</td>
-            <td className="px-3 py-3 border border-black align-top font-bold">{renderFormalContent(d.penalty_terms)}</td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+          </div>
+          <div className="grid-row">
+            <div className="grid-label">Payment Terms</div>
+            <div className="grid-value">{renderFormalContent(d.payment_terms)}</div>
+          </div>
+          <div className="grid-row">
+            <div className="grid-label">Penalty & LD Clauses</div>
+            <div className="grid-value font-bold">{renderFormalContent(d.penalty_terms)}</div>
+          </div>
+        </div>
+      </div>
 
       {/* --- SECTION 5.0: HISTORICAL COMPETITOR INTELLIGENCE (DYNAMIC) --- */}
       {hasHistory && (
-        <div style={{ pageBreakInside: 'auto' }}>
+        <div className="mb-6 section-block">
           <h3 className="text-lg font-bold mb-2 border-b border-black pb-1 uppercase">5.0 Historical Competitor Intelligence</h3>
-          <table className="w-full text-[13px] border-collapse mb-6 border border-black bg-orange-50/20">
-            <tbody>
-              <tr>
-                <td className="px-3 py-3 border border-black font-bold bg-gray-100 w-[25%] align-top">Client Win/Loss Record</td>
-                <td className="px-3 py-3 border border-black align-top w-[75%] font-semibold">
-                  {renderFormalContent(d.win_loss_kpi)}
-                </td>
-              </tr>
-              <tr>
-                <td className="px-3 py-3 border border-black font-bold bg-gray-100 align-top">Major Market Threats</td>
-                <td className="px-3 py-3 border border-black align-top text-red-900">
-                  {renderFormalContent(d.historical_competitors)}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="grid-table" style={{ backgroundColor: 'rgba(251, 146, 60, 0.05)' }}>
+            <div className="grid-row">
+              <div className="grid-label" style={{ backgroundColor: '#f3f4f6' }}>Client Win/Loss Record</div>
+              <div className="grid-value font-semibold">{renderFormalContent(d.win_loss_kpi)}</div>
+            </div>
+            <div className="grid-row">
+              <div className="grid-label" style={{ backgroundColor: '#f3f4f6' }}>Major Market Threats</div>
+              <div className="grid-value text-red-900">{renderFormalContent(d.historical_competitors)}</div>
+            </div>
+          </div>
         </div>
       )}
 
       {/* --- SECTION 6.0: CONSULTANT ADVICE --- */}
-      <div style={{ pageBreakInside: 'avoid' }}>
+      <div className="section-block">
         <h3 className="text-lg font-bold mb-2 border-b border-black pb-1 uppercase">
           {hasHistory ? "6.0" : "5.0"} Executive Strategic Advice
         </h3>
@@ -170,7 +213,7 @@ const PrintableTenderReport = ({ d, bidDecision }) => {
       </div>
 
       {/* --- FOOTER --- */}
-      <div className="mt-8 pt-3 border-t border-black text-center text-[10px] font-mono uppercase tracking-widest">
+      <div className="mt-8 pt-3 border-t border-black text-center text-[10px] font-mono uppercase tracking-widest section-block">
         <p>*** Strictly Confidential - Internal Use Only - Aarvi Encon AI Engine ***</p>
         <p className="mt-1 text-gray-500">System generated report. Not for external circulation.</p>
       </div>

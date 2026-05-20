@@ -37,13 +37,21 @@ const ChatItem = ({ chat, currentSessionId, onSelect, onRename, onDelete }) => {
 
   return (
     <div 
-      className={`group flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all ${
-        isActive ? 'bg-blue-600 text-white shadow-md' : 'hover:bg-slate-800 text-slate-300'
+      className={`group flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all relative ${
+        // 🚀 ENHANCED: Boosted background contrast, added distinct left border indentation for the active state
+        isActive 
+          ? 'bg-blue-600 text-white shadow-lg font-semibold pl-4' 
+          : 'hover:bg-slate-800 text-slate-300 hover:pl-4'
       }`}
       onClick={() => !isEditing && onSelect(chat.session_id)}
     >
+      {/* 🚀 NEW: Bright high-contrast indicator pill to anchor the active selection visually */}
+      {isActive && (
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-blue-300 rounded-r-md animate-fade-in" />
+      )}
+
       <div className="flex items-center gap-3 overflow-hidden w-full">
-        <MessageSquare size={16} className={isActive ? "text-blue-200" : "text-slate-500"} />
+        <MessageSquare size={16} className={isActive ? "text-blue-100 shrink-0" : "text-slate-500 shrink-0"} />
         {isEditing ? (
           <input 
             autoFocus
@@ -55,12 +63,12 @@ const ChatItem = ({ chat, currentSessionId, onSelect, onRename, onDelete }) => {
             onClick={(e) => e.stopPropagation()}
           />
         ) : (
-          <span className="truncate text-sm font-medium pr-2">{chat.title}</span>
+          <span className="truncate text-sm pr-2">{chat.title}</span>
         )}
       </div>
       
       {!isEditing && (
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 z-10">
           <button 
             onClick={handleShare}
             className={`p-1 rounded hover:bg-white/20 transition-colors ${isActive ? 'text-blue-200' : 'text-slate-500'}`}
@@ -114,7 +122,6 @@ const Sidebar = ({ isOpen, onClose, activeTab, setActiveTab, currentSessionId, o
         params: { email: userEmail } 
       });
 
-      // FIX 1: Reverse the array so the newest chats (bottom of DB) show at the top of the UI
       const newestFirst = [...res.data].reverse();
       setSessions(newestFirst);
     } catch (err) {
@@ -123,14 +130,9 @@ const Sidebar = ({ isOpen, onClose, activeTab, setActiveTab, currentSessionId, o
   };
 
   useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      fetchSessions();
-    }, 300);
+    fetchSessions();
+  }, [currentSessionId]);
 
-    return () => clearTimeout(delayDebounceFn);
-  }, [currentSessionId, searchQuery]);
-
-  // FIX 2: Global Event Listener to catch when the AI finishes naming the chat
   useEffect(() => {
     const handleTitleUpdate = () => fetchSessions();
     window.addEventListener('refresh-sidebar', handleTitleUpdate);
@@ -164,6 +166,10 @@ const Sidebar = ({ isOpen, onClose, activeTab, setActiveTab, currentSessionId, o
     onSessionSelect(null);    
     if (window.innerWidth < 768) onClose();
   };
+
+  const filteredSessions = sessions.filter(chat => 
+    chat.title && chat.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <>
@@ -241,16 +247,17 @@ const Sidebar = ({ isOpen, onClose, activeTab, setActiveTab, currentSessionId, o
 
             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 px-2">Recent Analyses</p>
             <div className="space-y-1">
-              {sessions.length === 0 ? (
+              {filteredSessions.length === 0 ? (
                 <p className="text-xs text-slate-500 px-2 italic">
                   {searchQuery ? "No matches found." : "No recent chats."}
                 </p>
               ) : (
-                sessions.map(chat => (
+                filteredSessions.map(chat => (
                   <ChatItem 
                     key={chat.session_id} 
                     chat={chat} 
-                    currentSessionId={activeTab === 'analysis' ? currentSessionId : null}
+                    // 🚀 FIX: Passed currentSessionId directly so the highlight anchors persistently across dashboard views
+                    currentSessionId={currentSessionId}
                     onSelect={(id) => {
                       setActiveTab('analysis');
                       onSessionSelect(id);
@@ -280,3 +287,4 @@ const Sidebar = ({ isOpen, onClose, activeTab, setActiveTab, currentSessionId, o
 };
 
 export default Sidebar;
+

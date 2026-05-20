@@ -269,7 +269,7 @@ def generate_tender_summary(tender_text: str = None):
     3. financial_qualification: COMBINE all explicit "Turnover", "Net Worth", "Security Deposit", and "PBG" conditions. Use bullets for each requirement.
     4. technical_qualification: COMBINE all "Similar Work" and "Experience" requirements into a bulleted list.
     5. If exact keywords are not found, identify equivalent financial or value-related statements and extract them. Do NOT return empty if partial financial information exists.
-    6. manpower_count: If a direct grand total is not explicitly stated, extract the detailed breakdown of individual roles and their required quantities (e.g., '• Level 1 Engineer: 5 \\n• Safety Officer: 2'). Do NOT return 'Not Specified' if partial role breakdowns exist.
+    6. manpower_count:Always format this field as a clean, human-readable bulleted list. NEVER output raw Python dictionaries, JSON data blobs, or stringified code blocks (e.g., do NOT output things like "{{'total_proposed_ta': 13...}}"). State the total grand headcount clearly on the first line, followed by a clean bulleted location-wise or role-wise volume breakdown using escaped newlines ('\\n') for structural clarity
     7. COMPETITIVE HISTORICAL AUDIT: Cross-examine the current TENDER TEXT against the past project records and competitor tendencies in the KNOWLEDGE BASE. Identify structural traps, eligibility friction points, and competitor pricing baselines.
     8. NO TRUNCATION RULE: Do not truncate summaries or compress critical technical clauses to close the JSON schema quickly. Build complete, exhaustive data arrays for all fields.
     JSON SCHEMA (Output ONLY valid JSON):
@@ -282,8 +282,8 @@ def generate_tender_summary(tender_text: str = None):
       "technical_qualification": "Bulleted list of Experience and Competency requirements",
       "mandatory_compliance": "Bulleted list of PF/ESI/Statutory rules",
       "scope_of_work": "Bulleted list of major deliverables and tasks",
-      "manpower_count": "Extract total headcount. If total is missing, extract a bulleted list of specific roles and their required quantities.",
-      "manpower_qual": "Extract educational requirements",
+      "manpower_count": "State total headcount summary on line 1, then map an explicit bulleted list breakdown of every required role or location and its corresponding staffing quantity. Separate lines using escaped newlines ('\\n').",
+      "manpower_qual": "Bulleted list of exact educational requirements, age limits, vehicle requirements, and experience criteria required per profile.",
       "shift_duty": "Extract shift/working hours",
       "payment_terms": "Extract payment timeline",
       "penalty_terms": "Extract LD clauses",
