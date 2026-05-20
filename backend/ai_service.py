@@ -2,6 +2,7 @@ import json
 import os
 import glob
 import re
+from dotenv import load_dotenv
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from config import GEMINI_API_KEY
@@ -9,8 +10,14 @@ from logic import evaluate_tender_rules
 from google import genai
 
 # --- DATABASE CONNECTION ---
-NEON_URL = "postgresql://neondb_owner:npg_djW0Dm5HAPOa@ep-twilight-block-apopzllz-pooler.c-7.us-east-1.aws.neon.tech/neondb?sslmode=require"
+# Load the environment variables from your local .env file
+load_dotenv()
 
+# Securely pull the connection string into your application engine memory
+NEON_URL = os.getenv("DATABASE_URL")
+
+if not NEON_URL:
+    raise ValueError("❌ CRITICAL ERROR: DATABASE_URL is missing from your environment variables!")
 # 1. Initialize the new Client
 client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 
